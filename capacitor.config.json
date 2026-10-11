@@ -1,0 +1,7 @@
+{
+  "appId": "com.sherlocomp.btqtahfidz",
+  "appName": "BTQ Tahfidz",
+  "webDir": "www",
+  "server": { "androidScheme": "https" },
+  "android": { "allowMixedContent": false }
+}
