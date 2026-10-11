@@ -18,9 +18,9 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 17 }
       - run: npm install
-      - run: node scripts/prepare-www.js
+      - run: node prepare-www.js
       - run: npx cap add android
-      - run: node scripts/prepare-android.js
+      - run: node prepare-android.js
         env:
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
       - run: npx cap sync android
