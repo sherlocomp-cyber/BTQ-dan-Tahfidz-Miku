@@ -396,7 +396,7 @@ select[data-k]{width:100%;background:var(--card2);border:1px solid var(--ln);bor
 </script>
 <script>
 'use strict';
-const VERSI='v1.30';
+const VERSI='v1.31';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -485,8 +485,10 @@ const VIEWS={
   <div class="row" style="align-items:center"><label style="gap:8px">Logo madrasah<input type="file" id="logoIn" accept="image/*"></label>
   ${S.set.logo?`<img class="logoprev" src="${S.set.logo}" alt="Logo">`:'<span class="mut">Belum ada logo.</span>'}</div></div>
   <div class="card" style="margin-top:16px"><h3>Cadangan data</h3><p class="mut">Simpan cadangan secara berkala. File cadangan berisi pengaturan dan data siswa, dan tetap di perangkat Anda.</p>
+  <p class="mut" id="psInfo" style="margin-top:8px"></p>
   <div class="row"><button class="btn" id="bk">Unduh cadangan (JSON)</button>
   <button class="btn ghost" id="rs">Pulihkan dari cadangan</button><input type="file" id="rsIn" accept=".json,application/json" hidden>
+  <button class="btn ghost" id="psBtn" hidden>Lindungi penyimpanan</button>
   <button class="btn red" id="rst">Hapus semua data</button></div></div>
   <div class="card fold"><details><summary>Data bawaan (jarang dipakai)</summary><p class="mut" style="margin:8px 0 10px">Memuat siswa dan setoran kelas 4A bawaan aplikasi. Data yang sudah ada tidak dihapus, tetapi siswa dan setoran baru akan ditambahkan. Unduh cadangan dulu bila ragu.</p><button class="btn ghost" id="impBw">Muat data Rekap kelas 4A</button></details></div>
   <div class="card" style="margin-top:16px"><details><summary>Panduan singkat</summary><div class="mut" style="margin-top:10px">
@@ -504,11 +506,12 @@ const VIEWS={
   <p><b>Tahap di Setoran</b> – pada Setoran Tahfidz pilih "Per tahap" untuk mencatat Tahap I–V (centang Selesai bila tuntas; nilai tahap opsional, masuk ke Input Nilai › Tahapan Juz 30). Posisi tahap tampil di Rekap, mis. "Tahap 4 (belum selesai)".</p>
   <p><b>Nilai surat di Setoran</b> – pada Setoran Tahfidz, setelah memilih surat muncul pilihan nilai A / A- / B / C / –. Nilai langsung masuk ke Input Nilai › Surat (Juz 30 atau juz yang dipilih) dan tampil di rapor; dibiarkan kosong berarti nilai lama tidak diubah. Nilai juga tercatat di Riwayat setoran.</p>
   <p><b>Kelompok</b> – satu kelas dibagi 2 kelompok tahfidz dan 2 kelompok BTQ (anggota boleh berbeda). Atur di Siswa › Kelompok Tahfidz & BTQ (bagi dua otomatis atau ketuk angka per siswa; nama kelompok bisa diubah). Halaman Setoran punya tombol pilihan kelompok sehingga antrean hanya berisi siswa kelompok itu. Impor dari Rekap Nilai mengisi kelompok dari daftar siswa tahfidz/BTQ di sana.</p>
-  <p><b>5. Cadangan</b> – unduh cadangan JSON berkala; pulihkan bila ganti perangkat. Ekspor leger Excel ada di halaman Siswa › menu ⋯.</p></div></details></div>
+  <p><b>5. Cadangan</b> – unduh cadangan JSON berkala; pulihkan bila ganti perangkat. Ekspor leger Excel ada di halaman Siswa › menu ⋯. Di Pengaturan › Cadangan data ada status perlindungan penyimpanan; ketuk Lindungi penyimpanan agar browser tidak menghapus data otomatis saat memori penuh (cadangan tetap perlu).</p></div></details></div>
   <p class="mut" style="margin-top:14px">Versi ${VERSI}</p>`}
 };
 function render(){autoSet();if(S.page==='setoran'&&!ST.mulai&&S.siswa.length){ST.mulai=1;const q=urutSetor(ST.j);if(q.length){ST.i=q[0];prefillSt()}}$('#view').innerHTML=VIEWS[S.page]();if(S.page==='setelan')bindSetelan();if(S.page==='siswa')bindSiswa();if(S.page==='nilai')bindNilai();if(S.page==='setoran')bindSetoran();if(S.page==='rapor')bindRapor();if(S.page==='rekap')bindRekapAll();if(S.page==='dashboard')bindDash();pasangCari();gsIsi()}
 function bindSetelan(){
+  psTampil();
   document.querySelectorAll('[data-k]').forEach(i=>i.oninput=()=>{S.set[i.dataset.k]=i.value;autoSet();saved();const p=$('#tglInfo');if(p)p.textContent=S.set.tempat+' · Semester '+S.set.semester+' · '+S.set.tp});
   $('#logoIn').onchange=e=>{const f=e.target.files[0];if(!f)return;
     if(f.size>1.5e6)return toast('Logo terlalu besar (maks. 1,5 MB).');
@@ -1204,6 +1207,48 @@ function fldTahap(){const s=S.siswa[ST.i],cur=ST.tahap?((s.tahap||[])[+ST.tahap-
   return `<label>Tahap<select data-f="tahap">${opt(TH_L.map((l,i)=>[String(i+1),l]),ST.tahap,'– pilih tahap –')}</select></label>
   <label class="ck"><input type="checkbox" data-f="selesai"${ST.selesai?' checked':''}> Selesai (tahap ini tuntas)</label>
   ${ST.tahap?`<div class="nlf"><b>Nilai Tahap ${['I','II','III','IV','V'][+ST.tahap-1]}</b> <span class="mut">(opsional)</span><div class="seg" style="margin-top:6px">${nt}</div><p class="mut" style="margin-top:6px">${cur?`Nilai tersimpan: <b>${esc(cur)}</b>. `:'Belum ada nilai. '}Disimpan ke Input Nilai › Tahapan (Juz 30). Kosong = nilai tidak diubah.</p></div>`:''}`}
+/* ===== v1.31: PERLINDUNGAN PENYIMPANAN (navigator.storage.persist) =====
+   Tanpa ini browser boleh menghapus IndexedDB otomatis saat memori perangkat penuh. Tanpa perubahan skema DB.
+   PS.st: 'ya' | 'tidak' | 'apk' (aplikasi terpasang) | 'nohttps' | 'nodukung'. Kunci kv 'persistDicoba' = waktu permintaan otomatis terakhir. */
+const PS={st:'?',kuota:null};
+async function psCek(){
+  try{
+    if(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()){PS.st='apk';return PS.st}
+    if(window.isSecureContext===false){PS.st='nohttps';return PS.st}
+    if(!navigator.storage||!navigator.storage.persisted){PS.st='nodukung';return PS.st}
+    PS.st=(await navigator.storage.persisted())?'ya':'tidak';
+    if(navigator.storage.estimate){const e=await navigator.storage.estimate();PS.kuota={pakai:e.usage||0,total:e.quota||0}}
+  }catch(_){PS.st='nodukung'}
+  return PS.st}
+async function psMinta(){
+  try{
+    if(await psCek()==='tidak')await navigator.storage.persist();
+  }catch(_){}
+  return psCek()}
+async function psBoot(){
+  try{
+    if(await psCek()!=='tidak'||!S.siswa.length)return;
+    const t=await DB.get('persistDicoba'),h=Date.now();
+    if(t&&h-t<6048e5)return;
+    await DB.set('persistDicoba',h);
+    await psMinta();
+    if(S.page==='setelan')psTampil();
+  }catch(_){}}
+async function psTampil(){
+  const e=document.getElementById('psInfo');if(!e)return;
+  await psCek();
+  const e2=document.getElementById('psInfo'),b=document.getElementById('psBtn');if(!e2)return;
+  const mb=n=>n>=1073741824?(n/1073741824).toFixed(1)+' GB':(n/1048576).toFixed(n>=1e7?0:1)+' MB';
+  const T={
+    ya:'Penyimpanan terlindungi: browser tidak akan menghapus data aplikasi otomatis saat memori penuh. Data tetap hilang bila Anda menghapus data situs atau browser, jadi tetap simpan cadangan.',
+    tidak:'Penyimpanan belum dilindungi: browser boleh menghapus data aplikasi bila memori perangkat penuh. Ketuk Lindungi penyimpanan, dan tetap unduh cadangan secara berkala.',
+    apk:'Aplikasi terpasang: data disimpan di penyimpanan aplikasi dan tidak dihapus otomatis oleh sistem. Data hilang bila aplikasi dihapus atau datanya dibersihkan, jadi tetap simpan cadangan.',
+    nohttps:'Halaman ini dibuka tanpa HTTPS (mis. langsung dari berkas), sehingga perlindungan penyimpanan tidak tersedia. Buka lewat alamat HTTPS dan tetap simpan cadangan.',
+    nodukung:'Browser ini tidak menyediakan perlindungan penyimpanan. Tetap unduh cadangan secara berkala.'};
+  e2.textContent=(T[PS.st]||'')+(PS.kuota&&PS.kuota.total?` Terpakai ${mb(PS.kuota.pakai)} dari sekitar ${mb(PS.kuota.total)}.`:'');
+  if(b){b.hidden=PS.st!=='tidak';
+    b.onclick=async()=>{b.disabled=true;await psMinta();b.disabled=false;
+      toast(PS.st==='ya'?'Penyimpanan kini terlindungi.':'Browser belum memberi izin. Coba lagi nanti, atau pasang aplikasi ke layar utama.');psTampil()}}}
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
 const ALAB=['Tajwid','Makhroj','Murojaah','Kelancaran','Tajwid','Makhroj','Menulis','Membaca'];
 async function ekspor(){if(!S.siswa.length)return toast('Belum ada siswa untuk diekspor.');
@@ -1606,6 +1651,7 @@ function gSave(s,j,row,qt){const TT=qt?()=>{}:toast,r=gGet(s,j);if(r.tahap)retur
   migrasi();{const t=S.siswa.map(s=>s.id+s.no).join();urutAZ();if(S.siswa.map(s=>s.id+s.no).join()!==t)DB.saveSiswa(S.siswa)}autoSet();theme(S.set.tema);
   const h=location.hash.slice(1);go(PAGES.some(p=>p[0]===h)?h:'dashboard');
   Cloud.start();
+  psBoot();
 })();
 </script>
 <script type="text/plain" id="proyek-instruksi">
@@ -1724,6 +1770,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 12
 ## Ringkas
+- Catatan sesi 15: baris 'Versi aplikasi' di bawah tertinggal; versi sebenarnya = const VERSI di file (v1.31). Riwayat sesi 13–15 ada di bagian bawah.
 - Versi aplikasi: v1.19 (Tahap 1–16 selesai). File: aplikasi-btq-tahfidz-s12.html (master dengan blok proyek). Tahap berikutnya: tidak ada; tunggu cek manual pengguna, tawarkan 'rilis bersih'.
 - Sesi 11 = Tahap 13–15 (permintaan tambahan pengguna: target Juz 30 otomatis/dropdown, pencapaian rapor Juz 29–1, guru tanda tangan per kelompok tahfidz).
 - Sesi 7 = Tahap 7–9; sesi 9 = Tahap 11 (juz berpasangan 3-3); sesi 8 menangani permintaan tambahan "tambah isian tahap di setoran" = Tahap 10.
@@ -1862,6 +1909,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 15: v1.31 perlindungan penyimpanan: PS/psCek/psMinta/psBoot/psTampil (navigator.storage.persist; otomatis saat boot bila ada siswa dan belum dicoba 7 hari, kunci kv persistDicoba; status + tombol Lindungi penyimpanan di Pengaturan > Cadangan data; apk/nohttps/nodukung ditangani). Tanpa perubahan skema DB, tanpa migrasi, tanpa CSS baru; sidik jari dan golden tetap SAMA.
 - Sesi 14: v1.30 +5 jadi +3; alasan tidak setor (s.alasan) menggantikan Lewati; catatan siswa (s.catat); mundur tersimpan (localStorage btqBackSt); mode cepat; Berikutnya; +3 semua & Simpan semua; peringatan input; Ringkasan; Rekap Harian (REK.m='hari'); Keterangan rekap bulan memuat alasan.
 - Sesi 13b: tombol Mundurkan (belum siap) di Setoran per kelompok (GM.back, gBack; urutan: normal, dimundurkan, dilewati, sudah setor; sesi saja).
 - Sesi 13: v1.29 Setoran per kelompok: urut otomatis terlama belum setor (gUrut/urutSetor), baris tersusun ulang setelah simpan/undo (gSusun), lencana umur setoran, bilah progres, tombol urutan, sembunyikan yang sudah setor, Lewati hari ini (sesi saja, tidak disimpan); bagian terlindungi tidak diubah.
