@@ -1,5 +1,6 @@
-// Menyalin SheetJS lokal ke www/ supaya ekspor Excel jalan tanpa internet.
+// Menyiapkan folder www/: index.html + SheetJS lokal (ekspor Excel tanpa internet).
 const fs = require('fs');
 fs.mkdirSync('www', { recursive: true });
+fs.copyFileSync('index.html', 'www/index.html');
 fs.copyFileSync('node_modules/xlsx/dist/xlsx.full.min.js', 'www/xlsx.full.min.js');
-console.log('xlsx.full.min.js disalin ke www/');
+console.log('www/ siap');

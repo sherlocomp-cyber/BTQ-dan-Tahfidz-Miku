@@ -8,7 +8,7 @@ fs.mkdirSync(javaDir, { recursive: true });
 
 // 1. Plugin cetak + MainActivity
 fs.writeFileSync(path.join(javaDir, 'PrintHelperPlugin.java'),
-  fs.readFileSync('android-plugin/PrintHelperPlugin.java', 'utf8').replace('__PACKAGE__', pkg));
+  fs.readFileSync('PrintHelperPlugin.java', 'utf8').replace('__PACKAGE__', pkg));
 fs.writeFileSync(path.join(javaDir, 'MainActivity.java'),
 `package ${pkg};
 
@@ -31,7 +31,7 @@ if (!g.includes('btq-debug.keystore')) {
   g = g.replace(/android\s*\{/, `android {
     signingConfigs {
         debug {
-            storeFile file("../../keystore/btq-debug.keystore")
+            storeFile file("../../btq-debug.keystore")
             storePassword "btqtahfidz"
             keyAlias "btq"
             keyPassword "btqtahfidz"
@@ -45,12 +45,12 @@ fs.writeFileSync(gp, g);
 // 3. Ikon
 const res = path.join(app, 'src/main/res');
 for (const d of fs.readdirSync(res).filter(d => d.startsWith('mipmap-') && !d.includes('anydpi'))) {
-  fs.copyFileSync('resources/icon.png', path.join(res, d, 'ic_launcher.png'));
-  fs.copyFileSync('resources/icon.png', path.join(res, d, 'ic_launcher_round.png'));
+  fs.copyFileSync('icon.png', path.join(res, d, 'ic_launcher.png'));
+  fs.copyFileSync('icon.png', path.join(res, d, 'ic_launcher_round.png'));
   fs.rmSync(path.join(res, d, 'ic_launcher_foreground.png'), { force: true });
 }
 fs.mkdirSync(path.join(res, 'drawable-nodpi'), { recursive: true });
-fs.copyFileSync('resources/icon-maskable.png', path.join(res, 'drawable-nodpi/ic_launcher_fg.png'));
+fs.copyFileSync('icon-maskable.png', path.join(res, 'drawable-nodpi/ic_launcher_fg.png'));
 const adaptive = `<?xml version="1.0" encoding="utf-8"?>
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@color/ic_launcher_background"/>
