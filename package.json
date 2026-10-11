@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "description": "BTQ Tahfidz dibungkus jadi APK dengan Capacitor",
+  "scripts": {
+    "build:web": "node -e \"const f=require('fs');f.mkdirSync('www',{recursive:true});f.copyFileSync('index.html','www/index.html');f.copyFileSync('node_modules/xlsx/dist/xlsx.full.min.js','www/xlsx.full.min.js')\"",
+    "cap:sync": "npm run build:web && cap sync android"
+  },
   "dependencies": {
     "@capacitor/android": "^6.2.0",
     "@capacitor/cli": "^6.2.0",
