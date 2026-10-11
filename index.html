@@ -187,6 +187,32 @@ select:disabled{opacity:.5}
 .s63{font-size:7.28pt;text-align:left;vertical-align:middle;font-weight:700;font-style:italic}
 .s64{font-size:8.9pt;text-align:center;vertical-align:middle;text-decoration:underline}
 </style>
+<style id="v128">
+.gdt{display:flex;gap:14px;align-items:end;flex-wrap:wrap;margin-bottom:6px}.gdt label{display:grid;gap:4px;font-size:13px;font-weight:600}.gdt input{min-height:44px}.gdt p{margin:0 0 10px}
+.glist{display:grid;gap:10px;margin-top:6px}@media(min-width:1024px){.glist{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.gr{background:var(--card);border-radius:var(--r);padding:12px 14px;box-shadow:var(--sh);display:grid;gap:8px}.gr.ok{border-left:4px solid var(--ac)}
+.gh b{font-size:15px}.gh .mut{font-size:12.5px;margin-top:2px}.gok{font-size:12px;font-weight:700;color:var(--ac);margin-left:6px}
+.gc{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.gtool{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}.gtool .sm{min-height:40px;font-weight:700;font-size:13px}.gtool .sm.on{background:var(--ac2);color:#fff;border-color:var(--ac2)}
+.gbar{height:6px;border-radius:6px;background:var(--ln);overflow:hidden;margin:0 0 12px}.gbar i{display:block;height:100%;background:var(--ac);border-radius:6px;transition:width .3s}
+.gag{font-weight:700;color:var(--mu)}.gag.w{color:#f59e0b}
+.gfoot{display:flex;align-items:center;justify-content:space-between;gap:8px}.gfoot .gdl{flex:1}.gfoot .gskip{min-height:36px;font-size:12.5px;font-weight:600}
+.gr.gsk{opacity:.6}.gr.gsk .gc{display:none}
+.glist.hs .gr.ok{display:none}
+.gr{scroll-margin-top:80px}.gact{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.gact .gskip{min-height:36px;font-size:12.5px;font-weight:600}
+.gact .gal{min-height:36px;font-size:12.5px;border:1px solid var(--ln);background:var(--card2);color:inherit;border-radius:10px;padding:0 8px;flex:1 1 130px;min-width:0}
+.gnote{font-size:12.5px;font-weight:600;color:#f59e0b;margin-top:3px}
+.gnext{position:fixed;right:14px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:5;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.glist.cepat .gr{padding:18px;gap:14px}.glist.cepat .gh b{font-size:19px}.glist.cepat .gc select,.glist.cepat .gc input{min-height:54px;font-size:17px}
+.glist.cepat .gst .sm,.glist.cepat .gc .gsl{min-height:54px;min-width:54px}.glist.cepat .gc .gsv{min-height:54px;font-size:17px;flex:1 1 100%;margin-left:0}
+.gsum{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:50;display:grid;place-items:center;padding:14px}
+.gsm{background:var(--card);color:var(--tx);border-radius:var(--r);padding:16px;width:min(560px,100%);max-height:90vh;overflow:auto;display:grid;gap:10px}
+.gsm textarea{width:100%;font:13px/1.45 ui-monospace,Menlo,monospace;background:var(--card2);color:inherit;border:1px solid var(--ln);border-radius:10px;padding:10px;resize:vertical}
+.gc select,.gc input{min-height:44px;border:1px solid var(--ln);background:var(--card2);color:inherit;border-radius:10px;padding:0 10px;font:inherit}
+.gc select.gsr{flex:1 1 100%;min-width:0}.gc select[data-gf=status]{flex:1 1 110px;min-width:0}.gst{display:flex;align-items:center;gap:6px}.gst input{width:62px;text-align:center;padding:0 4px}
+.gst .sm,.gc .gsl{min-height:44px;min-width:44px}.gst .sm{font-size:18px;font-weight:700}.gc .gsl.on{background:var(--ac2);color:#fff;border-color:var(--ac2)}
+.gc .gsv{min-height:44px;padding:0 20px;margin-left:auto}.gdl{font-size:13px;font-weight:600;color:var(--ac2);min-height:18px}
+</style>
 <style>
 /* v1.6 */
 select[data-k]{width:100%;background:var(--card2);border:1px solid var(--ln);border-radius:12px;padding:11px 13px;color:var(--tx)}
@@ -370,7 +396,7 @@ select[data-k]{width:100%;background:var(--card2);border:1px solid var(--ln);bor
 </script>
 <script>
 'use strict';
-const VERSI='v1.27';
+const VERSI='v1.30';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -1307,9 +1333,9 @@ const Cloud=(()=>{
         else{let e;try{e=JSON.parse(r)}catch(_){continue}if(i>=0)s.setoran[i]=e;else s.setoran.push(e);ubah=true}}}
     if(ubah){S.siswa.forEach(s=>s.setoran&&s.setoran.sort((a,b)=>(a.t||0)-(b.t||0)));urutAZ();try{migrasi()}catch(_){}}
     base={...M};return ubah}
-  const teks=()=>({ok:'Tersimpan',mulai:'Menghubungkan…',putus:'Offline',offline:'Offline',ditolak:'Server menolak'}[st]||'Tersimpan');
+  const teks=()=>(st==='putus'||st==='offline')?(kotor?'Menunggu kirim':'Offline'):({ok:'Tersinkron',mulai:'Menghubungkan…',ditolak:'Server menolak'}[st]||'Tersinkron');
   function tampil(){if(typeof document==='undefined')return;const e=document.getElementById('saveInd');if(!e)return;const sib=(busy||kotor)&&st==='ok';
-    e.classList.toggle('busy',sib);e.lastChild.textContent=sib?'Menyimpan…':teks();const i=e.querySelector('i');if(i)i.style.background=st==='ok'||st==='mulai'?'':(st==='ditolak'?'#ef4444':'#f59e0b');
+    e.classList.toggle('busy',sib);e.lastChild.textContent=sib?'Mengirim…':teks();const i=e.querySelector('i');if(i)i.style.background=st==='ok'||st==='mulai'?'':(st==='ditolak'?'#ef4444':'#f59e0b');
     const c=document.getElementById('cloudInfo');if(c)c.textContent={ok:'Tersambung. Perubahan tersimpan di server dan terlihat oleh semua guru.',mulai:'Menghubungkan ke server…',putus:'Tidak tersambung. Data aman di perangkat dan akan dikirim otomatis saat tersambung.',offline:'Tidak tersambung. Data aman di perangkat dan akan dikirim otomatis saat tersambung.',ditolak:'Server menolak akses. Atur Rules Firebase (read/write) lalu muat ulang.'}[st]||''}
   const simpanLokal=()=>{try{rawSave(S.siswa).catch(()=>{});rawSet('pengaturan',S.set).catch(()=>{})}catch(_){}};
   const simpanBase=()=>{clearTimeout(tbs);tbs=setTimeout(()=>{try{rawSet('cloudBase',base).catch(()=>{})}catch(_){}},800)};
@@ -1375,6 +1401,202 @@ const Cloud=(()=>{
 /* Kartu status di Pengaturan */
 {const sa=VIEWS.setelan;VIEWS.setelan=function(){return sa()+`<div class="card" style="margin-top:14px"><h3>Penyimpanan bersama (server)</h3><p class="mut" id="cloudInfo">${esc(Cloud.teks())}</p><p class="mut" style="margin:8px 0 10px">Semua guru memakai data yang sama dan perubahan muncul otomatis. Bila data di perangkat ini terasa tidak sama dengan guru lain, muat ulang dari server (data server tidak dihapus).</p><button class="btn" id="cloudMuat">Muat ulang dari server</button></div>`}}
 {const bs1=bindSetelan;bindSetelan=function(){bs1();Cloud.tampil();const b=$('#cloudMuat');if(b)b.onclick=async()=>{if(!confirm('Muat ulang semua data dari server? Salinan di perangkat ini dicadangkan lebih dulu.'))return;await Cloud.muatUlang();toast('Memuat ulang dari server…')}}}
+/* ===== v1.28: SETORAN PER KELOMPOK (daftar satu layar) + teks status simpan ===== */
+{
+const GM={rows:{}};
+ST.mode=(()=>{try{return localStorage.getItem('btqModeSt')==='klp'?'klp':'satu'}catch(_){return 'satu'}})();
+const juzDari=(n,a)=>{for(let j=30;j>=1;j--){const p=JS[j-1];if(n>p[0]||(n===p[0]&&a>=p[1]))return j}return 1};
+const urutNo=(a,b)=>(+a.no||0)-(+b.no||0);
+const nxt=e=>e.surat<114?e.surat+1:e.surat;
+function gInit(s,j){const e=lastSet(s,j);
+  if(j==='tahfidz'||(e&&e.bm==='quran')){
+    if(e&&e.tahap)return {tahap:true};
+    let surat='',ayat='';if(e){if(e.selesai){surat=nxt(e);ayat=e.surat<114?'':e.ayat}else{surat=e.surat;ayat=e.ayat}}
+    return {bm:'quran',surat,ayat,selesai:false,status:'Bertambah'}}
+  const r={bm:'iqra',iqra:'',hal:'',baris:'',selesai:false,status:'Bertambah'};
+  if(e&&e.bm==='iqra'){if(e.tamat){r.iqra=Math.min(6,e.iqra+1)}else{r.iqra=e.iqra;r.hal=e.hal;r.baris=e.baris}}
+  return r}
+const gGet=(s,j)=>GM.rows[j+':'+s.id]||(GM.rows[j+':'+s.id]=gInit(s,j));
+const gQ=(j,r)=>j==='tahfidz'||r.bm==='quran';
+function gDelta(s,j,r){const L=lastSet(s,j);
+  if(gQ(j,r)){if(!r.surat)return 'Pilih surat';const mx=NS[r.surat-1],ay=r.selesai?mx:+r.ayat,nm=SN[r.surat-1];
+    if(!(ay>=1))return r.surat?`${nm}: isi ayat (1–${mx})`:'';
+    if(!L||L.tahap)return `Mulai ${nm}, sampai ayat ${ay}`;
+    if(L.surat===+r.surat){if(L.selesai)return 'Surat ini sudah selesai';const d=ay-L.ayat;
+      return d>0?`+${d} ayat (${L.ayat+1}–${ay})${ay===mx?' · surat selesai':''}`:d===0?'Belum bertambah':`Mundur ${-d} ayat`}
+    return `${L.selesai?SN[L.surat-1]+' selesai → ':'Pindah ke '}${nm} ayat 1–${ay}${ay===mx?' · selesai':''}`}
+  if(!r.iqra||!r.hal||!r.baris)return 'Lengkapi Iqra, halaman, baris';
+  return `Iqra ${r.iqra} hal. ${r.hal}, baris 1–${r.baris}${r.selesai?' · tamat':''}`}
+/* v1.29: urutan antrean per kelompok = terlama belum setor dulu (pakai urutSetor); yang dilewati hari ini setelah yang belum, yang sudah setor paling akhir */
+GM.back=GM.back||{};GM.bc=GM.bc||0;
+try{const o=JSON.parse(localStorage.getItem('btqBackSt')||'{}'),lim=new Date(Date.now()-2592e5).toISOString().slice(0,10);Object.keys(o).forEach(k=>{if(k.slice(-10)>=lim){GM.back[k]=o[k];GM.bc=Math.max(GM.bc,o[k])}})}catch(_){}
+const gBackSave=()=>{try{localStorage.setItem('btqBackSt',JSON.stringify(GM.back))}catch(_){}};
+const gSkipK=(s,j)=>j+':'+s.id+':'+ST.tgl,gAlasan=(s,j)=>((s.alasan||[]).find(x=>x.j===j&&x.tgl===ST.tgl)||{}).a||'',gSkip=(s,j)=>!!gAlasan(s,j),gBack=(s,j)=>GM.back[gSkipK(s,j)]||0;
+function gAgo(e){if(!e||!e.tgl||!ST.tgl)return '';const n=selHari(e.tgl,ST.tgl);if(!(n>=0))return '';
+  return ' <span class="gag'+(n>=7?' w':'')+'">· '+(n===0?'hari ini':n+' hari lalu')+'</span>'}
+function gUrut(j){if(ST.urut==='absen')return sisKlp(j,ST.kg[j]).slice().sort(urutNo);
+  const L=urutSetor(j).map(i=>S.siswa[i]),sk=s=>!sdHari(s,j)&&gSkip(s,j),bk=s=>!sdHari(s,j)&&!gSkip(s,j)&&gBack(s,j)>0;
+  return L.filter(s=>!sdHari(s,j)&&!sk(s)&&!bk(s)).concat(L.filter(bk).sort((a,b)=>gBack(a,j)-gBack(b,j)),L.filter(sk),L.filter(s=>sdHari(s,j)))}
+function gSetAlasan(s,j,v){s.alasan=(s.alasan||[]).filter(x=>!(x.tgl===ST.tgl&&x.j===j));if(v)s.alasan.push({tgl:ST.tgl,j,a:v});sv(s)}
+function gSusun(){const l=document.querySelector('.glist');if(!l||S.page!=='setoran'||ST.mode!=='klp')return;
+  if(ST.cepat){render();scrollTo(0,0);return}
+  const m={};l.querySelectorAll('.gr').forEach(e=>m[e.dataset.gr]=e);gUrut(ST.j).forEach(s=>{if(m[s.id])l.appendChild(m[s.id])})}
+const gPct=()=>{const L=sisKlp(ST.j,ST.kg[ST.j]);return L.length?Math.round(L.filter(s=>sdHari(s,ST.j)).length*100/L.length):0};
+function gRow(s,j){const r=gGet(s,j),e=lastSet(s,j),sd=sdHari(s,j),id=esc(s.id),mx=r.surat?NS[r.surat-1]:0;
+  const head=`<div class="gh"><b>${esc(s.no)}. ${esc(s.nama)}</b> ${sd?'<span class="gok">✓ sudah setor</span>':''}<div class="mut">${e?'Terakhir: '+esc(e.pos)+' • '+tglF(e.tgl):'Belum ada setoran'}${gAgo(e)}${gSkip(s,j)&&!sd?' <span class="gag">· Tidak setor: '+esc(gAlasan(s,j))+'</span>':gBack(s,j)&&!sd?' <span class="gag">· Dimundurkan (belum siap)</span>':''}</div>${(s.catat||{})[j]?'<div class="gnote">📝 '+esc(s.catat[j])+'</div>':''}</div>`;
+  const wrap=b=>`<div class="gr${sd?' ok':''}${!sd&&gSkip(s,j)?' gsk':''}" data-gr="${id}">${head}${b}</div>`;
+  if(r.tahap)return wrap('<p class="mut">Setoran terakhir berupa tahap. Gunakan “Satu per satu”.</p>');
+  const A=(a,t,l)=>`<button class="sm" data-gd="${a}" aria-label="${l}">${t}</button>`;
+  let c;
+  if(gQ(j,r)){
+    c=`${j==='btq'?`<select data-gf="bm" aria-label="Jenis">${opt([['iqra','Iqra'],['quran',"Al-Qur'an"]],r.bm,'')}</select>`:''}<select class="gsr" data-gf="surat" aria-label="Surat">${opt(SN.map((n,i)=>[i+1,(i+1)+'. '+n]),r.surat,'– pilih surat –')}</select>
+    <div class="gst">${A('am','−','Kurangi ayat')}<input type="number" inputmode="numeric" min="1"${mx?` max="${mx}"`:''} data-gf="ayat" aria-label="Sampai ayat" placeholder="ayat" value="${r.selesai&&mx?mx:(r.ayat||'')}">${A('ap','+','Tambah ayat')}${A('a3','+3','Tambah 3 ayat')}</div>
+    <button class="sm gsl${r.selesai?' on':''}" data-gd="sel">Surat selesai</button>`+
+    (j==='tahfidz'?`<select data-gf="status" aria-label="Status">${opt([['Bertambah','Bertambah'],['Mengulang','Mengulang'],['Murojaah','Murojaah']],r.status,'')}</select>`:'')}
+  else{
+    c=`<select data-gf="bm" aria-label="Jenis">${opt([['iqra','Iqra'],['quran',"Al-Qur'an"]],r.bm,'')}</select>
+    <select data-gf="iqra" aria-label="Iqra">${opt(Array.from({length:6},(_,k)=>[k+1,'Iqra '+(k+1)]),r.iqra,'– Iqra –')}</select>
+    <div class="gst">${A('hm','−','Kurangi halaman')}<input type="number" inputmode="numeric" min="1" max="40" data-gf="hal" aria-label="Halaman" placeholder="hal" value="${r.hal||''}">${A('hp','+','Tambah halaman')}</div>
+    <select data-gf="baris" aria-label="Baris sampai">${opt(Array.from({length:10},(_,k)=>[k+1,'Baris 1–'+(k+1)]),r.baris,'– baris –')}</select>
+    <button class="sm gsl${r.selesai?' on':''}" data-gd="sel">Tamat jilid</button>`}
+  return wrap(`<div class="gc">${c}<button class="btn gsv" data-gd="save">Simpan</button></div><div class="gdl">${esc(gDelta(s,j,r))}</div><div class="gact">${sd||gSkip(s,j)?'':`<button class="sm gskip" data-gd="back">${gBack(s,j)?'Batal mundur':'Mundurkan (belum siap)'}</button>`}${sd?'':`<select class="gal" data-gf="alasan" aria-label="Alasan tidak setor">${opt([['Sakit','Sakit'],['Izin','Izin'],['Tidak hadir','Tidak hadir'],['Belum siap','Belum siap (tidak setor)'],['Lainnya','Lainnya']],gAlasan(s,j),'Tidak setor…')}</select>`}<button class="sm gskip" data-gd="cat">${(s.catat||{})[j]?'Ubah catatan':'Catatan'}</button></div>`)}
+function gHitung(){const j=ST.j,L=sisKlp(j,ST.kg[j]),n=L.filter(s=>sdHari(s,j)).length;return `Sudah setor ${tglF(ST.tgl)}: ${n} dari ${L.length} siswa`}
+function viewKlp(){const j=ST.j,L=gUrut(j),sw=(k,t)=>`<button class="${j===k?'on':''}" data-j="${k}">${t}</button>`,cp=!!ST.cepat;
+  let V=L;if(cp){const p=L.find(s=>!sdHari(s,j)&&!gSkip(s,j)&&!gBack(s,j))||L.find(s=>!sdHari(s,j)&&!gSkip(s,j));V=p?[p]:[]}
+  const kosong=cp&&L.length?'<div class="card"><p class="mut">Semua siswa di kelompok ini sudah setor atau dilewati. Buka Ringkasan untuk melihat hasilnya.</p></div>':'<div class="card"><p class="mut">Tidak ada siswa di kelompok ini.</p></div>';
+  return `<div class="seg" style="margin-bottom:12px">${sw('tahfidz','Tahfidz')}${sw('btq','BTQ')}</div>${klpSeg('kg',j,ST.kg[j])}
+  <div class="gdt"><label>Tanggal<input type="date" data-f="tgl" value="${ST.tgl}"></label><p class="mut" id="gCnt">${gHitung()}</p></div>
+  <div class="gbar"><i id="gBar" style="width:${gPct()}%"></i></div>
+  <div class="gtool">${cp?'':`<button class="sm" data-gu="1">Urut: ${ST.urut==='absen'?'No. absen':'Terlama belum setor'} ⇅</button><button class="sm${ST.gHide?' on':''}" data-gh="1">${ST.gHide?'Tampilkan semua':'Sembunyikan yang sudah setor'}</button>`}</div>
+  ${cp?'':'<div class="gtool"><button class="sm" data-g3="1">+3 ayat semua</button><button class="sm" data-gss="1">Simpan semua terisi</button></div>'}
+  <div class="gtool"><button class="sm${cp?' on':''}" data-gc="1">${cp?'Keluar mode cepat':'Mode cepat'}</button><button class="sm" data-gsm="1">Ringkasan</button></div>
+  <div class="glist${ST.gHide&&!cp?' hs':''}${cp?' cepat':''}">${V.length?V.map(s=>gRow(s,j)).join(''):kosong}</div>${cp?'':'<button class="btn gnext" data-gn="1">↓ Berikutnya</button>'}`}
+/* v1.30: aksi massal, ringkasan, rekap harian */
+const gPend=j=>gUrut(j).filter(s=>!sdHari(s,j)&&!gSkip(s,j)&&!gBack(s,j));
+function gTambah3Semua(){const j=ST.j;let n=0;gPend(j).forEach(s=>{const r=gGet(s,j);if(r.tahap||!gQ(j,r)||!r.surat)return;const mx=NS[r.surat-1];r.ayat=Math.min(mx,(+r.ayat||0)+3);r.selesai=(r.ayat===mx);n++;
+  const el=document.querySelector(`.gr[data-gr="${s.id}"]`);if(el)gGanti(el,s,j)});
+  toast(n?`+3 ayat diisi untuk ${n} siswa. Cek lalu tekan Simpan semua terisi.`:'Tidak ada siswa yang bisa ditambah (pilih surat dulu).')}
+function gSimpanSemua(){const j=ST.j;if(!ST.tgl)return toast('Pilih tanggal dulu.');const P=gPend(j).filter(s=>!gGet(s,j).tahap);
+  if(!P.length)return toast('Tidak ada siswa yang bisa disimpan.');
+  if(!confirm('Simpan setoran '+P.length+' siswa sesuai isian saat ini untuk '+tglF(ST.tgl)+'?\n\nPastikan isian sudah sesuai bacaan siswa. Yang belum valid akan dilewati.'))return;
+  let ok=0;P.forEach(s=>{const row=document.querySelector(`.gr[data-gr="${s.id}"]`);if(row&&gSave(s,j,row,true))ok++});
+  toast(`Tersimpan ${ok} dari ${P.length} siswa.`+(ok<P.length?' Sisanya belum valid, cek isiannya.':''));gSusun()}
+function gLompat(){const P=[...document.querySelectorAll('.glist .gr:not(.ok):not(.gsk)')];if(!P.length)return toast('Tidak ada siswa yang menunggu.');
+  const n=P.find(e=>e.getBoundingClientRect().top>120)||P[0];n.scrollIntoView({behavior:'smooth',block:'start'})}
+function rkBaris(j,k,tgl){return sisKlp(j,k).slice().sort(urutNo).map(s=>{
+  const es=(s.setoran||[]).filter(e=>e.j===j&&e.tgl===tgl).sort((a,b)=>(a.t||0)-(b.t||0)),e=es[es.length-1]||null,al=(s.alasan||[]).find(x=>x.j===j&&x.tgl===tgl)||null;
+  const st=e?(['Mengulang','Murojaah'].includes(e.status)?e.status:'Bertambah'):al?'Tidak setor':'Belum setor';
+  return {s,e,al,st,no:s.no,nama:s.nama,pos:e?rtPos(e):al?al.a:'–',cat:(s.catat||{})[j]||''}})}
+function rkJudul(j,k,tgl){const g=k>0?klpNamaOf(j,k):k===-1?'Belum dikelompokkan':'';return `Setoran ${j==='btq'?'BTQ':'Tahfidz'} - Kelas ${kodeKelas()}${g?' - '+g:''} - ${tglF(tgl)}`}
+function rkTeks(j,k,tgl){const R=rkBaris(j,k,tgl),sec=(ju,L,f)=>L.length?`${ju} (${L.length})\n`+L.map(f).join('\n')+'\n\n':'',by=x=>R.filter(r=>r.st===x);
+  let o=`*${rkJudul(j,k,tgl)}*\nSudah setor: ${R.filter(r=>r.e).length} dari ${R.length} siswa\n\n`;
+  const ln=r=>`${r.no}. ${r.nama} - ${r.pos}`;
+  o+=sec('Bertambah',by('Bertambah'),ln)+sec('Mengulang',by('Mengulang'),ln)+sec('Murojaah',by('Murojaah'),ln)
+   +sec('Tidak setor',by('Tidak setor'),r=>`- ${r.nama} (${r.al.a})`)+sec('Belum setor',by('Belum setor'),r=>`- ${r.nama}`)
+   +sec('Catatan',R.filter(r=>r.cat),r=>`- ${r.nama}: ${r.cat}`);
+  return o.trim()}
+const rkNative=()=>{try{return !!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform())}catch(_){return false}};
+const rkBisaBagi=()=>rkNative()||!!navigator.share;
+function rkBagi(x){try{if(rkNative())return Capacitor.registerPlugin('Share').share({text:x,dialogTitle:'Bagikan ringkasan'}).catch(()=>{});return navigator.share({text:x}).catch(()=>{})}catch(_){}}
+async function rkSalin(t){try{await navigator.clipboard.writeText(t)}catch(_){const x=document.createElement('textarea');x.value=t;x.style.cssText='position:fixed;opacity:0';document.body.append(x);x.select();try{document.execCommand('copy')}catch(__){}x.remove()}toast('Teks disalin.')}
+function gRingkasan(){const j=ST.j,t=rkTeks(j,ST.kg[j],ST.tgl),old=document.getElementById('gSum');if(old)old.remove();
+  const d=document.createElement('div');d.id='gSum';d.className='gsum';
+  d.innerHTML=`<div class="gsm"><h3>Ringkasan setoran</h3><textarea readonly rows="14">${esc(t)}</textarea><div class="row"><button class="btn" data-sa="salin">Salin</button>${rkBisaBagi()?'<button class="btn ghost" data-sa="bagi">Bagikan</button>':''}<button class="btn ghost" data-sa="tutup">Tutup</button></div></div>`;
+  d.onclick=e=>{const b=e.target.closest('button');if(!b&&e.target!==d)return;const a=b?b.dataset.sa:'tutup';if(a==='salin')rkSalin(t);else if(a==='bagi')rkBagi(t);else d.remove()};
+  document.body.append(d)}
+const RH={tgl:''};
+function viewRekapH(){if(!S.siswa.length)return `<h1>Rekap Harian</h1><div class="card"><p class="mut">Belum ada siswa. Tambahkan atau impor dulu di halaman Siswa.</p></div>`;
+  const j=RT.j;if(!RH.tgl)RH.tgl=hari();if(RT.k===-1&&!klpHitung(j).x)RT.k=0;
+  const R=rkBaris(j,RT.k,RH.tgl),c=x=>R.filter(r=>r.st===x).length,sw=(k,t)=>`<button class="${j===k?'on':''}" data-rtj="${k}">${t}</button>`;
+  return `<h1>Rekap Harian</h1><div class="card"><div class="seg" style="margin-bottom:12px">${sw('tahfidz','Tahfidz')}${sw('btq','BTQ')}</div>${klpSeg('rtk',j,RT.k)}
+  <label>Tanggal<input type="date" id="rhT" value="${RH.tgl}"></label>
+  <div class="row" style="margin-top:12px"><button class="btn" id="rhS">Salin teks</button>${rkBisaBagi()?'<button class="btn ghost" id="rhB">Bagikan</button>':''}<button class="btn ghost" id="rhX">Unduh Excel</button></div></div>
+  <div class="card" style="margin-top:14px"><h3>${esc(rkJudul(j,RT.k,RH.tgl))}</h3><p class="mut" style="margin-bottom:6px">${R.length} siswa · ${c('Bertambah')} bertambah · ${c('Mengulang')} mengulang · ${c('Murojaah')} murojaah · ${c('Tidak setor')} tidak setor · ${c('Belum setor')} belum setor</p>
+  ${R.length?`<div class="rt-w"><table class="rt-t"><thead><tr>${['No','Nama Siswa','Status','Posisi / Alasan','Catatan'].map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${R.map(r=>`<tr><td class="c">${esc(r.no)}</td><td class="nm">${esc(r.nama)}</td><td>${esc(r.st)}</td><td>${esc(r.pos)}</td><td>${esc(r.cat)}</td></tr>`).join('')}</tbody></table></div>`:'<p class="mut">Tidak ada siswa di pilihan kelompok ini.</p>'}</div>`}
+async function rhExcel(){try{await loadX()}catch(_){return toast('Pustaka Excel gagal dimuat. Sambungkan internet sekali, lalu coba lagi.')}
+  const j=RT.j,R=rkBaris(j,RT.k,RH.tgl),U=XLSX.utils,ws=U.aoa_to_sheet([[rkJudul(j,RT.k,RH.tgl)],[],['No','Nama Siswa','Status','Posisi / Alasan','Catatan'],...R.map(r=>[r.no,r.nama,r.st,r.pos,r.cat])]);
+  ws['!cols']=[{wch:5},{wch:30},{wch:14},{wch:34},{wch:30}];const wb=U.book_new();U.book_append_sheet(wb,ws,'Harian');XLSX.writeFile(wb,`setoran-${j}-${kodeKelas()}-${RH.tgl}.xlsx`);toast('Rekap harian diekspor.')}
+function bindRekapH(){if(!S.siswa.length)return;const re=()=>{const y=scrollY;render();scrollTo(0,y)};
+  document.querySelectorAll('[data-rtj]').forEach(b=>b.onclick=()=>{RT.j=b.dataset.rtj;RT.k=0;re()});
+  document.querySelectorAll('[data-rtk]').forEach(b=>b.onclick=()=>{RT.k=+b.dataset.rtk;re()});
+  const T=$('#rhT');if(T)T.onchange=e=>{RH.tgl=e.target.value||hari();re()};
+  const a=$('#rhS');if(a)a.onclick=()=>rkSalin(rkTeks(RT.j,RT.k,RH.tgl));
+  const b=$('#rhB');if(b)b.onclick=()=>rkBagi(rkTeks(RT.j,RT.k,RH.tgl));
+  const x=$('#rhX');if(x)x.onclick=rhExcel}
+/* Rekap bulan: Keterangan ditambah ringkasan alasan tidak setor */
+{const r0=rtHitung;rtHitung=function(j,ym,sis){const R=r0(j,ym,sis);R.forEach(r=>{const c={};(r.s.alasan||[]).forEach(x=>{if(x.j===j&&String(x.tgl).slice(0,7)===ym)c[x.a]=(c[x.a]||0)+1});
+  const k=Object.keys(c);if(k.length)r.ket=[r.ket,'Tidak setor: '+k.map(a=>a+' '+c[a]+'×').join(', ')].filter(Boolean).join(' · ')});return R}}
+{const vm=viewRekapMode;viewRekapMode=function(){if(REK.m!=='hari')return vm().replace('<button class="'+(REK.m==='lama'?'on':'')+'" data-rm="lama">Antarbulan</button>',x=>x+'<button data-rm="hari">Harian</button>');
+  return viewRekapH().replace('</h1>',()=>'</h1><div class="seg" style="margin-bottom:12px"><button data-rm="tabel">Rekap bulan</button><button data-rm="lama">Antarbulan</button><button class="on" data-rm="hari">Harian</button></div>')};VIEWS.rekap=viewRekapMode}
+{const br=bindRekapAll;bindRekapAll=function(){if(REK.m==='hari'){const re=()=>{const y=scrollY;render();scrollTo(0,y)};document.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{REK.m=b.dataset.rm;re()});bindRekapH()}else br()}}
+const gCari=el=>{const row=el.closest('.gr');return {row,s:row&&S.siswa.find(z=>z.id===row.dataset.gr)}};
+function gUpd(row,s,j){const r=gGet(s,j),q=gQ(j,r),d=row.querySelector('.gdl');if(d)d.textContent=gDelta(s,j,r);
+  const ai=row.querySelector('[data-gf=ayat]');if(ai)ai.value=r.selesai&&r.surat?NS[r.surat-1]:(r.ayat||'');
+  const hi=row.querySelector('[data-gf=hal]');if(hi)hi.value=r.hal||'';
+  const sb=row.querySelector('[data-gd=sel]');if(sb)sb.classList.toggle('on',!!r.selesai)}
+const gGanti=(row,s,j)=>{row.outerHTML=gRow(s,j)};
+const gCnt=()=>{const c=$('#gCnt');if(c)c.textContent=gHitung();const b=$('#gBar');if(b)b.style.width=gPct()+'%'};
+function gAksi(b){const {row,s}=gCari(b);if(!s)return;const j=ST.j,r=gGet(s,j),a=b.dataset.gd;if(a==='save')return gSave(s,j,row);
+  if(a==='back'){const k=gSkipK(s,j);if(GM.back[k])delete GM.back[k];else{GM.back[k]=++GM.bc;toast(s.nama.split(' ')[0]+' dimundurkan ke antrean belakang.')}gBackSave();gGanti(row,s,j);gSusun();return}
+  if(a==='cat'){const cur=(s.catat||{})[j]||'',v=prompt('Catatan '+(j==='btq'?'BTQ':'Tahfidz')+' untuk '+s.nama+' (kosongkan untuk menghapus):',cur);if(v===null)return;
+    s.catat=s.catat||{};if(v.trim())s.catat[j]=v.trim();else delete s.catat[j];sv(s);gGanti(row,s,j);return}
+  if(gQ(j,r)){if(!r.surat)return toast('Pilih surat dulu.');const mx=NS[r.surat-1];
+    if(a==='am')r.ayat=Math.max(1,(+r.ayat||1)-1);else if(a==='ap')r.ayat=Math.min(mx,(+r.ayat||0)+1);else if(a==='a3')r.ayat=Math.min(mx,(+r.ayat||0)+3);
+    else if(a==='sel'){r.selesai=!r.selesai;if(r.selesai)r.ayat=mx}
+    if(a!=='sel')r.selesai=(+r.ayat===mx)}
+  else{if(a==='hm')r.hal=Math.max(1,(+r.hal||2)-1);else if(a==='hp')r.hal=Math.min(40,(+r.hal||0)+1);else if(a==='sel')r.selesai=!r.selesai}
+  gUpd(row,s,j)}
+function gUbah(t){const {row,s}=gCari(t);if(!s)return;const j=ST.j,r=gGet(s,j),f=t.dataset.gf,v=t.value;
+  if(f==='alasan'){gSetAlasan(s,j,v);if(v){delete GM.back[gSkipK(s,j)];gBackSave()}gGanti(row,s,j);gSusun();gCnt();return}
+  if(f==='surat'){r.surat=v?+v:'';r.ayat='';r.selesai=false;return gGanti(row,s,j)}
+  if(f==='bm'){delete GM.rows[j+':'+s.id];const n=gGet(s,j);n.bm=v;if(v==='quran'){Object.assign(n,{surat:'',ayat:'',selesai:false})}else{Object.assign(n,{iqra:'',hal:'',baris:'',selesai:false})}return gGanti(row,s,j)}
+  if(f==='ayat'){const mx=r.surat?NS[r.surat-1]:0;let n=parseInt(v,10);if(!(n>0))n='';else if(mx)n=Math.min(n,mx);r.ayat=n;r.selesai=!!(n&&n===mx);return gUpd(row,s,j)}
+  if(f==='hal'){let n=parseInt(v,10);r.hal=n>0?Math.min(40,n):'';return gUpd(row,s,j)}
+  if(f==='status'){r.status=v;return}
+  if(f==='iqra'||f==='baris'){r[f]=v?+v:'';gUpd(row,s,j)}}
+function gSave(s,j,row,qt){const TT=qt?()=>{}:toast,r=gGet(s,j);if(r.tahap)return;const q=gQ(j,r);let e;
+  const ai=row.querySelector('[data-gf=ayat]');if(ai&&ai.value!=='')r.ayat=parseInt(ai.value,10)||'';
+  const hi=row.querySelector('[data-gf=hal]');if(hi&&hi.value!=='')r.hal=parseInt(hi.value,10)||'';
+  if(!ST.tgl)return TT('Pilih tanggal dulu.');
+  if(q){if(!r.surat)return TT('Pilih surat dulu.');const mx=NS[r.surat-1],ay=r.selesai?mx:+r.ayat;
+    if(!(ay>=1)||ay>mx)return TT('Isi ayat 1–'+mx+', atau tekan Surat selesai.');
+    const st=j==='tahfidz'?r.status:'Bertambah',L=lastSet(s,j);
+    if(st==='Bertambah'&&L&&!L.tahap&&L.surat===+r.surat&&(L.selesai||ay<=L.ayat))return TT(j==='tahfidz'?'Posisi belum maju dari setoran terakhir. Pilih status Mengulang bila memang mengulang.':'Posisi belum maju dari setoran terakhir.');
+    e={juz:juzDari(+r.surat,ay),surat:+r.surat,ayat:ay,selesai:ay===mx}}
+  else{if(!r.iqra||!r.hal||!r.baris)return TT('Lengkapi Iqra, halaman, dan baris.');e={iqra:+r.iqra,hal:+r.hal,baris:+r.baris,tamat:!!r.selesai}}
+  {const W=[],L=lastSet(s,j),st=j==='tahfidz'?r.status:'Bertambah';
+    if(sdHari(s,j))W.push('Siswa ini sudah punya setoran pada tanggal tersebut.');
+    if(ST.tgl>hari())W.push('Tanggal setoran di masa depan ('+tglF(ST.tgl)+').');
+    if(st==='Bertambah'&&L&&!L.tahap){if(q){const ad=(L.surat===e.surat&&!L.selesai)?e.ayat-L.ayat:e.ayat;if(ad>20)W.push('Bertambah '+ad+' ayat sekaligus (lebih dari 20).')}
+      else if(L.bm==='iqra'&&e.iqra===L.iqra&&e.hal-L.hal>5)W.push('Loncat '+(e.hal-L.hal)+' halaman sekaligus.')}
+    if(W.length){if(qt)return;if(!confirm(W.join('\n')+'\n\nTetap simpan?'))return}}
+  Object.assign(e,{id:newId(),t:Date.now(),j,bm:j==='btq'?r.bm:'',tgl:ST.tgl,ket:'',status:j==='tahfidz'?r.status:'Bertambah',harus:false,nilai:''});
+  e.maju=e.status==='Bertambah';e.pos=posTeks(e);if(s.alasan)s.alasan=s.alasan.filter(x=>!(x.tgl===ST.tgl&&x.j===j));(s.setoran||(s.setoran=[])).push(e);applyPc(s,j);sv(s);
+  delete GM.rows[j+':'+s.id];gGanti(row,s,j);gCnt();gSusun();
+  if(qt)return true;
+  toast(`${s.nama.split(' ')[0]}: ${e.pos}`,()=>{const k=(s.setoran||[]).findIndex(x=>x.id===e.id);if(k<0)return;s.setoran.splice(k,1);applyPc(s,j);sv(s);delete GM.rows[j+':'+s.id];
+    const el=document.querySelector(`.gr[data-gr="${s.id}"]`);if(el&&S.page==='setoran'&&ST.mode==='klp'&&ST.j===j)gGanti(el,s,j);gCnt();gSusun()});return true}
+{const vs=VIEWS.setoran;VIEWS.setoran=function(){
+  const tog=`<div class="seg" style="margin-bottom:12px"><button class="${ST.mode!=='klp'?'on':''}" data-md="satu">Satu per satu</button><button class="${ST.mode==='klp'?'on':''}" data-md="klp">Per kelompok</button></div>`;
+  if(!S.siswa.length)return vs();
+  if(ST.mode==='klp')return '<h1>Setoran Harian</h1>'+tog+viewKlp();
+  const h=vs();return h.includes('<h1>Setoran Harian</h1>')?h.replace('<h1>Setoran Harian</h1>','<h1>Setoran Harian</h1>'+tog):tog+h}}
+{const b0=bindSetoran;bindSetoran=function(){b0();const V=$('#view'),oc=V.onclick,och=V.onchange;
+  V.onclick=e=>{if(S.page!=='setoran')return;const b=e.target.closest('button');
+    if(b&&b.dataset.md){ST.mode=b.dataset.md;try{localStorage.setItem('btqModeSt',ST.mode)}catch(_){}const y=scrollY;render();scrollTo(0,y);return}
+    if(ST.mode==='klp'&&b&&b.dataset.gu){ST.urut=ST.urut==='auto'?'absen':'auto';const y=scrollY;render();scrollTo(0,y);return}
+    if(ST.mode==='klp'&&b&&b.dataset.gh){ST.gHide=!ST.gHide;const y=scrollY;render();scrollTo(0,y);return}
+    if(ST.mode==='klp'&&b&&b.dataset.gc){ST.cepat=!ST.cepat;render();scrollTo(0,0);return}
+    if(ST.mode==='klp'&&b&&b.dataset.gn)return gLompat();
+    if(ST.mode==='klp'&&b&&b.dataset.g3)return gTambah3Semua();
+    if(ST.mode==='klp'&&b&&b.dataset.gss)return gSimpanSemua();
+    if(ST.mode==='klp'&&b&&b.dataset.gsm)return gRingkasan();
+    if(ST.mode==='klp'&&b&&b.dataset.gd)return gAksi(b);
+    if(oc)oc(e)};
+  V.onchange=e=>{if(S.page!=='setoran')return;const t=e.target;if(ST.mode==='klp'&&t.dataset&&t.dataset.gf)return gUbah(t);if(och)och(e)};
+  if(ST.mode==='klp'){V.ontouchstart=null;V.ontouchend=null}}}
+}
+
 /* ===== MULAI ===== */
 (async()=>{
   buildNav();
@@ -1640,6 +1862,9 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 14: v1.30 +5 jadi +3; alasan tidak setor (s.alasan) menggantikan Lewati; catatan siswa (s.catat); mundur tersimpan (localStorage btqBackSt); mode cepat; Berikutnya; +3 semua & Simpan semua; peringatan input; Ringkasan; Rekap Harian (REK.m='hari'); Keterangan rekap bulan memuat alasan.
+- Sesi 13b: tombol Mundurkan (belum siap) di Setoran per kelompok (GM.back, gBack; urutan: normal, dimundurkan, dilewati, sudah setor; sesi saja).
+- Sesi 13: v1.29 Setoran per kelompok: urut otomatis terlama belum setor (gUrut/urutSetor), baris tersusun ulang setelah simpan/undo (gSusun), lencana umur setoran, bilah progres, tombol urutan, sembunyikan yang sudah setor, Lewati hari ini (sesi saja, tidak disimpan); bagian terlindungi tidak diubah.
 </script>
 
 </body>
