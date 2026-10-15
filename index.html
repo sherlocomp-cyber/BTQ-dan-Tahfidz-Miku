@@ -417,6 +417,8 @@ html[data-theme=angkasa] .nbt,html[data-theme=gelap] .nbt{color:#f5a524}
 .kca{gap:6px;flex-wrap:wrap}.kca .sm{min-height:36px}
 .kcw{font-size:13px;color:#a86500;margin:0 0 8px}.kcd{margin-top:10px}.kcd summary{cursor:pointer;font-weight:700;font-size:14px}.kcd label{margin-top:8px}
 .kcw2{border-left:4px solid #f5a524;margin-bottom:12px}
+/* v1.36 */
+.kcd select{flex:1;min-width:0}
 </style>
 </head>
 <body>
@@ -477,7 +479,7 @@ html[data-theme=angkasa] .nbt,html[data-theme=gelap] .nbt{color:#f5a524}
 </script>
 <script>
 'use strict';
-const VERSI='v1.35';
+const VERSI='v1.36';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -622,18 +624,18 @@ function persist(){urutAZ();DB.saveSiswa(S.siswa);saved()}
 S.ks=[];
 const KLS_ALL=[1,2,3,4,5,6].flatMap(n=>['A','B'].map(h=>n+h)),KLS_CK=['kelas','guru','guruT','kode','klpNama','target','targetMode'],KLS_LAMA='4A';
 const KLS_R=['','I','II','III','IV','V','VI'],KLS_A=['','Satu','Dua','Tiga','Empat','Lima','Enam'];
-const klsOk=k=>KLS_ALL.includes(k),klsT=k=>+String(k)[0]||0,klsLabel=k=>`${KLS_R[klsT(k)]} (${KLS_A[klsT(k)]}) ${String(k).slice(1)}`,klsKlon=v=>v===undefined?v:JSON.parse(JSON.stringify(v));
+const klsOk=k=>KLS_ALL.includes(k),klsSis=k=>klsOk(k)||k==='LULUS',klsT=k=>+String(k)[0]||0,klsLabel=k=>`${KLS_R[klsT(k)]} (${KLS_A[klsT(k)]}) ${String(k).slice(1)}`,klsKlon=v=>v===undefined?v:JSON.parse(JSON.stringify(v));
 const klsBawaan=k=>({kelas:klsLabel(k),guru:'',guruT:['',''],kode:k,klpNama:{t:['Kelompok 1','Kelompok 2'],b:['Kelompok 1','Kelompok 2']},target:'',targetMode:'auto'});
 function kelasSimpan(){const m=S.set,a=m.kelasAktif;if(!klsOk(a))return;m.kls||(m.kls={});const o=m.kls[a]||(m.kls[a]={});KLS_CK.forEach(k=>{if(m[k]!==undefined)o[k]=klsKlon(m[k])})}
 function kelasMuat(){const m=S.set,o=(m.kls||{})[m.kelasAktif];if(!o)return;KLS_CK.forEach(k=>{if(o[k]!==undefined)m[k]=klsKlon(o[k])})}
-function ksBuat(){S.siswa.forEach(s=>{if(!klsOk(s.kelas))s.kelas=KLS_LAMA});S.ks=S.siswa.filter(s=>s.kelas===S.set.kelasAktif);return S.ks}
-function klsTerap(r){const keep={};KLS_CK.concat('kelasAktif').forEach(k=>keep[k]=S.set[k]);Object.assign(S.set,JSON.parse(r));Object.assign(S.set,keep);kelasMuat()}
-function klsPerlu(){return !klsOk(S.set.kelasAktif)||S.siswa.some(s=>!klsOk(s.kelas))}
+function ksBuat(){S.siswa.forEach(s=>{if(!klsSis(s.kelas))s.kelas=KLS_LAMA});S.ks=S.siswa.filter(s=>s.kelas===S.set.kelasAktif);return S.ks}
+function klsTerap(r){const keep={};KLS_CK.concat('kelasAktif').forEach(k=>keep[k]=S.set[k]);const o=JSON.parse(r);if(o.kls){S.set.kls||(S.set.kls={});for(const k in o.kls)if(!S.set.kls[k])S.set.kls[k]=o.kls[k];delete o.kls}Object.assign(S.set,o);Object.assign(S.set,keep);kelasMuat()}
+function klsPerlu(){return !klsOk(S.set.kelasAktif)||S.siswa.some(s=>!klsSis(s.kelas))}
 async function kelasInit(){
   if(klsPerlu()&&S.siswa.length)try{if(!(await DB.get('cadanganSebelumMultikelas')))await DB.set('cadanganSebelumMultikelas',{tgl:new Date().toISOString(),pengaturan:klsKlon(S.set),siswa:klsKlon(S.siswa)})}catch(_){}
   const ubah=klsPerlu();
   if(!klsOk(S.set.kelasAktif)){S.set.kelasAktif=KLS_LAMA;if(!S.set.kode)S.set.kode=KLS_LAMA}
-  S.siswa.forEach(s=>{if(!klsOk(s.kelas))s.kelas=KLS_LAMA});
+  S.siswa.forEach(s=>{if(!klsSis(s.kelas))s.kelas=KLS_LAMA});
   S.set.kls||(S.set.kls={});if(!S.set.kls[S.set.kelasAktif])kelasSimpan();else kelasMuat();
   ksBuat();if(ubah){try{await DB.saveSiswa(S.siswa);await DB.set('pengaturan',S.set)}catch(_){}}}
 function kelasPilih(k){if(!klsOk(k)||k===S.set.kelasAktif)return;kelasSimpan();S.set.kelasAktif=k;S.set.kls||(S.set.kls={});if(!S.set.kls[k])S.set.kls[k]=klsBawaan(k);kelasMuat();
@@ -653,12 +655,13 @@ function form(id){const s=S.ks.find(x=>x.id===id)||{nama:'',nis:'',nisn:''};cons
   <label>Nama<input type="text" name="nama" value="${esc(s.nama)}" autocomplete="off"></label>
   <label>NIS (6 angka, boleh kosong)<input type="text" name="nis" inputmode="numeric" value="${esc(s.nis)}"></label>
   <label>NISN (boleh kosong)<input type="text" name="nisn" inputmode="numeric" value="${esc(s.nisn)}"></label>
+  <label>Kelas<select name="kelas">${KLS_ALL.map(k=>`<option value="${k}"${k===(s.kelas||S.set.kelasAktif)?' selected':''}>Kelas ${k}</option>`).join('')}</select></label>
   <p class="err"></p><div class="row"><button class="btn" value="ok">Simpan</button><button class="btn ghost" value="x" formnovalidate>Batal</button></div></form>`;
   const f=d.querySelector('form');
   f.onsubmit=e=>{if(e.submitter.value!=='ok')return;
-    const v={nama:nm(f.nama.value),nis:f.nis.value.trim(),nisn:f.nisn.value.trim()},er=cek(v,id);
+    const v={nama:nm(f.nama.value),nis:f.nis.value.trim(),nisn:f.nisn.value.trim()},er=cek(v,id),kb=f.kelas.value;
     if(er){e.preventDefault();d.querySelector('.err').textContent=er;return}
-    if(id)Object.assign(s,v);else S.siswa.push(Object.assign(blank(),v));persist();render()};
+    if(id)Object.assign(s,v);else S.siswa.push(Object.assign(blank(),v));const x=id?s:S.siswa[S.siswa.length-1];if(klsOk(kb)&&x.kelas!==kb){x.kelas=kb;toast(`${v.nama} dipindah ke Kelas ${kb}.`)}persist();render()};
   d.onclose=()=>d.remove();document.body.append(d);d.showModal()}
 function hapus(id){const i=S.siswa.findIndex(x=>x.id===id);if(i<0)return;
   if(!confirm(`Hapus ${S.siswa[i].nama}? Semua nilainya ikut terhapus.`))return;
@@ -746,11 +749,23 @@ function klsKartu(k){const a=k===S.set.kelasAktif,o=klsData(k),g=klsGuruT(k),n=k
   <details class="kcd"><summary>Guru tahfidz${g[0]||g[1]?' · '+esc([g[0],g[1]].filter(Boolean).join(' / ')):''}</summary>
   <label>Guru tahfidz – ${esc(kp[0]||'Kelompok 1')}<input type="text" data-kg="${k}" data-gi="0" value="${esc(g[0])}" placeholder="Nama guru (tanda tangan rapor)"></label>
   <label>Guru tahfidz – ${esc(kp[1]||'Kelompok 2')}<input type="text" data-kg="${k}" data-gi="1" value="${esc(g[1])}" placeholder="Nama guru (tanda tangan rapor)"></label>
-  <label>Wali kelas / guru umum (dipakai bila siswa belum punya kelompok)<input type="text" data-kg="${k}" data-gi="w" value="${esc(w)}"></label></details></div>`}
+  <label>Wali kelas / guru umum (dipakai bila siswa belum punya kelompok)<input type="text" data-kg="${k}" data-gi="w" value="${esc(w)}"></label>
+  <div class="row" style="margin-top:8px"><select data-ks="${k}"><option value="">Salin guru &amp; kelompok dari…</option>${KLS_ALL.filter(x=>x!==k).map(x=>`<option value="${x}">Kelas ${x}</option>`).join('')}</select><button class="sm" data-ka="salin" data-k="${k}">Salin</button></div></details></div>`}
 VIEWS.kelas=()=>{kelasSimpan();const tot=S.siswa.length;
-  return `<h1>Kelas</h1><p class="mut" style="margin:0 0 12px">${tot} siswa di semua kelas. Pilih kelas, lalu impor atau tambah siswa. Tanda tangan rapor mengikuti guru kelompok tahfidz tiap siswa. Siswa 4A yang lama tetap tersimpan di Kelas 4A.</p><div class="kg">${KLS_ALL.map(klsKartu).join('')}</div>`};
+  return `<h1>Kelas</h1><p class="mut" style="margin:0 0 12px">${tot} siswa di semua kelas. Pilih kelas, lalu impor atau tambah siswa. Tanda tangan rapor mengikuti guru kelompok tahfidz tiap siswa. Siswa 4A yang lama tetap tersimpan di Kelas 4A.</p><div class="kg">${KLS_ALL.map(klsKartu).join('')}</div>
+  <div class="card" style="margin-top:14px"><h3>Kenaikan kelas akhir tahun</h3><p class="mut">Memindahkan semua siswa naik satu tingkat (4A→5A, 3B→4B, dst.). Siswa kelas 6 ditandai lulus dan tidak muncul di daftar kelas (data tetap tersimpan). Cadangan otomatis dibuat dulu. Lakukan sekali saja saat tahun ajaran baru, sebaiknya setelah rapor dicetak.${S.siswa.some(s=>s.kelas==='LULUS')?` Saat ini ${S.siswa.filter(s=>s.kelas==='LULUS').length} siswa berstatus lulus.`:''}</p><button class="btn ghost" data-ka="naik">Naikkan semua kelas…</button></div>`};
+async function kelasNaik(){const n=S.siswa.filter(s=>klsOk(s.kelas)).length;if(!n)return toast('Belum ada siswa di kelas mana pun.');
+  if(!confirm(`Naikkan ${n} siswa satu tingkat? Siswa kelas 6 menjadi lulus. Cadangan dibuat otomatis.`))return;
+  if(prompt('Ketik NAIK untuk melanjutkan.')!=='NAIK')return toast('Dibatalkan.');
+  try{await DB.set('cadanganSebelumNaikKelas',{tgl:new Date().toISOString(),siswa:klsKlon(S.siswa)})}catch(_){return toast('Cadangan gagal dibuat; kenaikan dibatalkan.')}
+  S.siswa.forEach(s=>{if(klsOk(s.kelas))s.kelas=klsT(s.kelas)>=6?'LULUS':(klsT(s.kelas)+1)+s.kelas.slice(1)});
+  persist();render();toast('Kenaikan kelas selesai.')}
 function bindKelas(){const V=$('#view');
-  V.onclick=e=>{const b=e.target.closest('[data-ka]');if(!b)return;const k=b.dataset.k,a=b.dataset.ka;kelasPilih(k);go('siswa');
+  V.onclick=e=>{const b=e.target.closest('[data-ka]');if(!b)return;const k=b.dataset.k,a=b.dataset.ka;
+    if(a==='salin'){const src=V.querySelector(`[data-ks="${k}"]`).value;if(!src)return toast('Pilih kelas sumber dulu.');if(!confirm(`Salin guru dan nama kelompok dari Kelas ${src} ke Kelas ${k}? Isian Kelas ${k} akan diganti.`))return;
+      const o=klsData(src),d=S.set.kls[k]||(S.set.kls[k]=klsBawaan(k));['guru','guruT','klpNama'].forEach(x=>{if(o[x]!==undefined)d[x]=klsKlon(o[x])});if(k===S.set.kelasAktif)kelasMuat();saved();render();return toast('Tersalin.')}
+    if(a==='naik')return kelasNaik();
+    kelasPilih(k);go('siswa');
     if(a==='xls'){const f=$('#impIn');if(f)f.click()}
     else if(a==='tempel'){const t=$('#bulk');if(t){const d=t.closest('details');if(d)d.open=true;t.focus()}}};
   V.oninput=e=>{const t=e.target;if(!t.dataset.kg)return;const k=t.dataset.kg,o=S.set.kls[k]||(S.set.kls[k]=klsBawaan(k)),i=t.dataset.gi;
@@ -1543,16 +1558,17 @@ const Cloud=(()=>{
   const kunci=id=>String(id).replace(/[.$#\[\]\/\s]/g,'_'),tidur=ms=>new Promise(r=>setTimeout(r,ms));
   const rawPut=DB.put,rawSave=DB.saveSiswa,rawSet=DB.set;
   let M={},base={},ready=false,busy=false,kotor=false,st='mulai',es=null,tp,tr,trk,tu,tb,tbs,backoff=0,gen=0,tolakSudah=false;
-  const setOut=()=>{kelasSimpan();const o={...S.set};delete o.tema;delete o.kelasAktif;KLS_CK.forEach(k=>delete o[k]);if(o.auto!==false)AUTO_OUT.forEach(k=>delete o[k]);return o};
+  const setOut=()=>{kelasSimpan();const o={...S.set};delete o.tema;delete o.kelasAktif;delete o.kls;KLS_CK.forEach(k=>delete o[k]);if(o.auto!==false)AUTO_OUT.forEach(k=>delete o[k]);return o};
   function lokal(){const L={};S.siswa.forEach(s=>{if(!s.id)s.id=newId();const k=kunci(s.id),{setoran,...core}=s;L[`siswa/${k}/core`]=J(core);
-    (setoran||[]).forEach(e=>{if(!e.id)e.id=newId();L[`siswa/${k}/setoran/${kunci(e.id)}`]=J(e)})});L.set=J(setOut());return L}
+    (setoran||[]).forEach(e=>{if(!e.id)e.id=newId();L[`siswa/${k}/setoran/${kunci(e.id)}`]=J(e)})});L.set=J(setOut());for(const k in (S.set.kls||{}))if(klsOk(k))L['kelas/'+k]=J(S.set.kls[k]);return L}
   function kosong(pre){if(pre==='')for(const k in M)delete M[k];else for(const k in M)if(k===pre||k.startsWith(pre+'/'))delete M[k]}
-  function isi(pre,d){if(typeof d==='string'){if(/^(siswa\/|set$)/.test(pre))M[pre]=d}else if(d&&typeof d==='object')for(const k in d)isi(pre?pre+'/'+k:k,d[k])}
+  function isi(pre,d){if(typeof d==='string'){if(/^(siswa\/|kelas\/|set$)/.test(pre))M[pre]=d}else if(d&&typeof d==='object')for(const k in d)isi(pre?pre+'/'+k:k,d[k])}
   function terapkan(path,data,mode){const P=String(path||'/').replace(/^\/+|\/+$/g,'');
     if(mode==='put'){kosong(P);isi(P,data)}else if(data&&typeof data==='object')for(const k in data){const q=P?P+'/'+k:k;kosong(q);isi(q,data[k])}}
   /* gabung 3 arah: r(server) vs b(dasar) vs l(lokal). Server menang bila lokal belum berubah; bentrok langsung = lokal menang (lalu didorong). */
   function rekon(){const L=lokal(),ps=[...new Set([...Object.keys(L),...Object.keys(base),...Object.keys(M)])].sort((a,b)=>(+/\/core$/.test(b))-(+/\/core$/.test(a)));let ubah=false;
     for(const p of ps){const b=base[p],l=L[p],r=M[p];if(r===b||l===r)continue;if(l!==b)continue;
+      {const mk=/^kelas\/([^/]+)$/.exec(p);if(mk){if(r!==undefined&&klsOk(mk[1]))try{S.set.kls||(S.set.kls={});S.set.kls[mk[1]]=JSON.parse(r);if(mk[1]===S.set.kelasAktif)kelasMuat();ubah=true}catch(_){}continue}}
       if(p==='set'){if(r!==undefined)try{klsTerap(r);ubah=true}catch(_){}continue}
       const m=/^siswa\/([^/]+)\/(?:core|setoran\/(.+))$/.exec(p);if(!m)continue;const k=m[1];let s=S.siswa.find(x=>kunci(x.id)===k);
       if(m[2]===undefined){
@@ -1598,6 +1614,9 @@ const Cloud=(()=>{
   function siram(){if(!ready||!kotor)return;try{rekon();const P=selisih(),b=JSON.stringify(P);if(Object.keys(P).length&&b.length<60000)fetch(BASE+'.json?print=silent',{method:'PATCH',keepalive:true,headers:{'Content-Type':'application/json'},body:b})}catch(_){}}
   async function ambil(){const r=await fetch(BASE+'.json');if(r.status===401||r.status===403){st='ditolak';tampil();pesanTolak();throw new Error('ditolak')}if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}
   async function cadangkan(){if(S.siswa.length)try{await DB.set('cadanganSebelumCloud',{tgl:new Date().toISOString(),pengaturan:S.set,siswa:S.siswa})}catch(_){}}
+  /* perangkat baru yang bergabung: ambil pengaturan kelas dari server (jangan ditimpa bawaan lokal); semai juga dari blob 'set' lama yang masih memuat kls */
+  function terapKelas(){S.set.kls||(S.set.kls={});try{const o=M.set?JSON.parse(M.set).kls:null;if(o)for(const k in o)if(klsOk(k)&&!M['kelas/'+k])S.set.kls[k]=o[k]}catch(_){}
+    for(const p in M){const m=/^kelas\/([^/]+)$/.exec(p);if(m&&klsOk(m[1]))try{S.set.kls[m[1]]=JSON.parse(M[p])}catch(_){}}kelasMuat()}
   async function start(){const g=++gen;ready=false;st='mulai';tampil();
     try{let d=await ambil();if(g!==gen)return;M={};isi('',d);
       let b=null;try{b=await DB.get('cloudBase')}catch(_){}
@@ -1611,6 +1630,7 @@ const Cloud=(()=>{
         base={}}
       else base={};
       if(g!==gen)return;
+      if(gabung)terapKelas();
       let u=false;try{u=rekon()}catch(_){}
       if(gabung){try{ST.mulai=0;S.rp=0;S.in.i=0;S.in.j=0}catch(_){}}
       if(u){simpanLokal();if(gabung)try{render()}catch(_){}else segarUI()}
@@ -2095,6 +2115,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 19: v1.36 Tahap 4–5: pindah kelas (form siswa), salin guru/kelompok antarkelas, kenaikan kelas akhir tahun (kelasNaik; kelas 'LULUS' = alumni, klsSis), sinkron Firebase per kelas (kunci kelas/<kode>; 'set' tanpa kls; klsTerap menyemai kls lama dari server).
 - Sesi 18: v1.34–v1.35 multi-kelas 1A–6B: model kelas (S.siswa semua kelas, S.ks kelas aktif, S.set.kls per kelas, migrasi ke 4A), halaman Kelas (kartu 12 kelas, buka/impor Excel/tempel nama, guru tahfidz per kelompok per kelas, peringatan guru kosong di Rapor). Rencana & status tahap: docs/RENCANA-MULTIKELAS.md.
 - Sesi 17: v1.33 Input Nilai: tanda 'belum dinilai' (surat selesai di Setoran tanpa nilai; filter + penghitung), Mode cepat (S.in.cp), Urungkan setelah Isi massal/Salin (nlSnap/nlUndo), Ringkasan kolom (ringkasKolom), header sticky, pembaruan satu baris (nilaiSegar/nilaiMeta). Semua di blok Input Nilai (sebelum const RP) + CSS v1.33 di style terakhir; DB tidak berubah; S.in.cp/fb tidak disimpan.
 - Sesi 16: v1.32 tema Angkasa (kertas-potong berlapis + planet 3D): style id=v132 (setelah style pertama; semua aturan diawali html[data-theme=angkasa], tanpa :is()); tombol tema ke-4 (SVG planet); theme() memvalidasi TEMA_OK dan mengatur meta theme-color; DEFAULT.tema='angkasa' untuk pemasangan baru (pengguna lama tetap dengan pilihannya). Tanpa perubahan skema DB; sidik jari dan golden tetap SAMA.

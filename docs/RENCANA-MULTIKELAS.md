@@ -32,8 +32,8 @@ Baca juga: blok `proyek-handoff` di dalam `index.html` (aturan proyek, fingerpri
 - [x] **Tahap 1 (v1.34)** model kelas, migrasi 4A, `S.ks`, pemilih kelas di header.
 - [x] **Tahap 2 (v1.35)** halaman **Kelas** (12 kartu: Buka siswa, Impor Excel, Tempel nama per kelas); impor/tambah siswa selalu masuk kelas aktif (`blank()` memberi `kelas`).
 - [x] **Tahap 3 (v1.35)** guru tahfidz per kelompok + wali kelas per kelas langsung di kartu Kelas (`S.set.kls[k]`), peringatan bila guru kosong (kartu & halaman Rapor). Tanda tangan rapor = `guruRapor(s)`. **Cetak/PDF: perlu dicek manual oleh pengguna.**
-- [ ] **Tahap 4 (usulan)** pindah/naik kelas siswa; salin pengaturan antarkelas; kenaikan tingkat akhir tahun.
-- [ ] **Tahap 5 (usulan)** sinkron pengaturan per kelas sebagai kunci Firebase terpisah (kini satu blob `set` → dua guru mengubah pengaturan bersamaan bisa saling menimpa); kode ruang/PIN per madrasah.
+- [x] **Tahap 4 (v1.36)** pindah kelas (pilih Kelas di form siswa), salin guru/kelompok antarkelas (kartu Kelas), kenaikan kelas akhir tahun (`kelasNaik`; cadangan kv `cadanganSebelumNaikKelas`; kelas 6 → `LULUS`, disembunyikan tapi data tetap). **Belum**: kolom Kelas di ekspor leger, impor Excel banyak kelas sekaligus, mengembalikan alumni.
+- [x] **Tahap 5 (v1.36)** sinkron Firebase per kelas: kunci `kelas/<kode>`; blob `set` tidak lagi memuat `kls`; perangkat baru mengambil pengaturan kelas dari server (`terapKelas`); blob `set` lama dengan `kls` disemai (`klsTerap`). **Belum**: kode ruang/PIN, hanya mengunduh kelas tertentu.
 - [ ] **Tahap 6 (usulan)** rekap lintas kelas untuk koordinator tahfidz / kepala madrasah; pemisahan data siswa dari `index.html` (repo publik memuat nama/NIS siswa 4A!).
 
 ## Usulan detail tahap berikutnya (untuk akun lain)
