@@ -419,6 +419,10 @@ html[data-theme=angkasa] .nbt,html[data-theme=gelap] .nbt{color:#f5a524}
 .kcw2{border-left:4px solid #f5a524;margin-bottom:12px}
 /* v1.36 */
 .kcd select{flex:1;min-width:0}
+/* v1.37 */
+html.zm header,html.zm #navSide,html.zm main,html.zm .tabbar,html.zm dialog,html.zm .toast{zoom:var(--zm)}
+html.fhp body{max-width:520px;margin:0 auto}
+html.fhp .tabbar{left:50%;right:auto;width:100%;max-width:520px;transform:translateX(-50%)}
 </style>
 </head>
 <body>
@@ -479,7 +483,7 @@ html[data-theme=angkasa] .nbt,html[data-theme=gelap] .nbt{color:#f5a524}
 </script>
 <script>
 'use strict';
-const VERSI='v1.36';
+const VERSI='v1.37';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -525,7 +529,7 @@ const IC={kelas:'<path d="M3 21V9l9-6 9 6v12M9 21v-6h6v6"/>',rekap:'<path d="M4 
  setoran:'<path d="M5 4h10a3 3 0 013 3v13H8a3 3 0 01-3-3zM8 8h6M8 12h6"/>',
  rapor:'<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/>',
  setelan:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
-const DESK=()=>matchMedia('(min-width:1024px)').matches;let SELS='';
+let TAMPIL={mode:'auto',zoom:100};const DESK=()=>TAMPIL.mode==='desktop'||(TAMPIL.mode!=='hp'&&matchMedia('(min-width:1024px)').matches);let SELS='';
 const NAV_INTI=['siswa','setoran','nilai','rapor','rekap'];
 const PAGES=[['dashboard','Dashboard'],['kelas','Kelas'],['siswa','Siswa'],['setoran','Setoran'],['nilai','Input Nilai'],['rapor','Rapor'],['rekap','Rekap'],['setelan','Pengaturan']];
 function buildNav(){
@@ -773,6 +777,22 @@ function bindKelas(){const V=$('#view');
     if(k===S.set.kelasAktif)kelasMuat();saved()}}
 {const _r=VIEWS.rapor;VIEWS.rapor=()=>{const mis=S.ks.filter(s=>!String(guruRapor(s)||'').trim()).length;
   return (mis?`<div class="card kcw2"><b>${mis} siswa belum punya nama guru untuk tanda tangan rapor.</b> Isi guru tahfidz kelas ${esc(S.set.kelasAktif)} di halaman Kelas.</div>`:'')+_r()}}
+/* ===== v1.37: TAMPILAN: mode Otomatis/HP/Desktop + perbesar/perkecil (per perangkat, disimpan di localStorage) ===== */
+const TP_MQ=[];
+function tampilMq(){if(!TP_MQ.length)for(const sh of document.styleSheets){let rs;try{rs=sh.cssRules}catch(_){continue}
+  for(const r of rs)if(r.type===CSSRule.MEDIA_RULE&&!/print|prefers|orientation|hover|pointer/.test(r.media.mediaText))TP_MQ.push([r,r.media.mediaText])}return TP_MQ}
+function tampilTerap(){const T=TAMPIL,h=document.documentElement,W=T.mode==='desktop'?1280:T.mode==='hp'?400:0;
+  tampilMq().forEach(([r,o])=>{if(!W){r.media.mediaText=o;return}const mn=/min-width:\s*(\d+)/.exec(o),mx=/max-width:\s*(\d+)/.exec(o);
+    r.media.mediaText=(!mn||W>=+mn[1])&&(!mx||W<=+mx[1])?'all':'not all'});
+  h.classList.toggle('fhp',T.mode==='hp'&&innerWidth>=700);h.style.setProperty('--zm',T.zoom/100);h.classList.toggle('zm',T.zoom!==100);
+  const v=document.querySelector('meta[name=viewport]');if(v)v.content=T.mode==='desktop'&&innerWidth<900&&matchMedia('(pointer:coarse)').matches?'width=1100,initial-scale=1':'width=device-width,initial-scale=1,viewport-fit=cover'}
+function tampilSet(o){Object.assign(TAMPIL,o);TAMPIL.zoom=Math.min(150,Math.max(70,Math.round(TAMPIL.zoom)));
+  try{localStorage.setItem('btqTampil',JSON.stringify(TAMPIL))}catch(_){}tampilTerap();render()}
+function tampilMuat(){try{const o=JSON.parse(localStorage.getItem('btqTampil')||'{}');if(['auto','hp','desktop'].includes(o.mode))TAMPIL.mode=o.mode;if(+o.zoom>=70&&+o.zoom<=150)TAMPIL.zoom=Math.round(+o.zoom)}catch(_){}tampilTerap()}
+{const s2=VIEWS.setelan;VIEWS.setelan=function(){const T=TAMPIL,m=(k,t)=>`<button class="${T.mode===k?'on':''}" data-tm="${k}">${t}</button>`;
+  return s2()+`<div class="card" style="margin-top:16px"><h3>Tampilan</h3><p class="mut">Berlaku hanya di perangkat ini.</p><p class="mut" style="margin:10px 0 6px">Mode tampilan</p><div class="seg">${m('auto','Otomatis')}${m('hp','HP')}${m('desktop','Desktop')}</div><p class="mut" style="margin:14px 0 6px">Ukuran tampilan: <b>${T.zoom}%</b></p><div class="row"><button class="sm" data-tz="-10">A− Perkecil</button><button class="sm" data-tz="10">A+ Perbesar</button><button class="sm" data-tz="0">Atur ulang</button></div></div>`}}
+{const b2=bindSetelan;bindSetelan=function(){b2();document.querySelectorAll('[data-tm]').forEach(b=>b.onclick=()=>tampilSet({mode:b.dataset.tm}));
+  document.querySelectorAll('[data-tz]').forEach(b=>b.onclick=()=>tampilSet({zoom:+b.dataset.tz?TAMPIL.zoom+ +b.dataset.tz:100}))}}
 /* ===== INPUT NILAI: per siswa (geser) & per kolom ===== */
 const SURAT=["An-Naba","An-Naazi'aat","'Abasa","At-Takwir","Al-Infithaar","Al-Muthaffifin","Al-Insyiqaaq","Al-Buruuj","At-Thaariq","Al-A'laa","Al-Ghaasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Dhuhaa","Al-Insyirah","At-Tiin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qori'ah","At-Takatsur","Al-'Asr","Al-Humazah","Al-Fiil","Al-Quraisy","Al-Ma'un","Al-Kautsar","Al-Kaafirun","An-Nasr","Al-Lahab","Al-Ikhlas","Al-Falaq","An-Naas"];
 const SO=[['A','A'],['A-','A-'],['B','B'],['C','C'],['-','–']],AO=[['MUMTAZ','Mumtaz'],['JAYYID JIDDAN','Jayyid Jiddan'],['JAYYID','Jayyid'],['MAQBUL','Maqbul']],PO=[['Tercapai','Tercapai'],['Melampaui','Melampaui target'],['Tidak','Tidak tercapai']];
@@ -1850,7 +1870,7 @@ function gSave(s,j,row,qt){const TT=qt?()=>{}:toast,r=gGet(s,j);if(r.tahap)retur
 
 /* ===== MULAI ===== */
 (async()=>{
-  buildNav();
+  tampilMuat();buildNav();
   document.querySelectorAll('#themes button').forEach(b=>b.onclick=()=>{theme(b.dataset.t);saved()});
   try{await DB.open();const p=await DB.get('pengaturan');if(p)S.set={...DEFAULT,...p};S.cad=(await DB.get('cadanganTerakhir'))||'';S.siswa=await DB.all()}
   catch(_){toast('Penyimpanan perangkat tidak tersedia; data tidak akan tersimpan.')}
@@ -2115,6 +2135,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 20: v1.37 Tampilan: mode Otomatis/HP/Desktop (TAMPIL, DESK(); menulis ulang media query non-cetak saat jalan, meta viewport) + zoom 70–150% (CSS zoom pada header/menu/main/tabbar/dialog, bukan #printArea); kunci localStorage btqTampil; kartu 'Tampilan' di Pengaturan.
 - Sesi 19: v1.36 Tahap 4–5: pindah kelas (form siswa), salin guru/kelompok antarkelas, kenaikan kelas akhir tahun (kelasNaik; kelas 'LULUS' = alumni, klsSis), sinkron Firebase per kelas (kunci kelas/<kode>; 'set' tanpa kls; klsTerap menyemai kls lama dari server).
 - Sesi 18: v1.34–v1.35 multi-kelas 1A–6B: model kelas (S.siswa semua kelas, S.ks kelas aktif, S.set.kls per kelas, migrasi ke 4A), halaman Kelas (kartu 12 kelas, buka/impor Excel/tempel nama, guru tahfidz per kelompok per kelas, peringatan guru kosong di Rapor). Rencana & status tahap: docs/RENCANA-MULTIKELAS.md.
 - Sesi 17: v1.33 Input Nilai: tanda 'belum dinilai' (surat selesai di Setoran tanpa nilai; filter + penghitung), Mode cepat (S.in.cp), Urungkan setelah Isi massal/Salin (nlSnap/nlUndo), Ringkasan kolom (ringkasKolom), header sticky, pembaruan satu baris (nilaiSegar/nilaiMeta). Semua di blok Input Nilai (sebelum const RP) + CSS v1.33 di style terakhir; DB tidak berubah; S.in.cp/fb tidak disimpan.
