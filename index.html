@@ -394,6 +394,20 @@ select[data-k]{width:100%;background:var(--card2);border:1px solid var(--ln);bor
  .stqi:hover{background:var(--card2)}.stqi.on{background:var(--ac);color:#04222a}.stqi.on b{color:inherit}.stqi.ok{opacity:.65}.stqi i{font-style:normal}
  .stq-h{font-size:12px;color:var(--mu);padding:8px 10px}
 }
+/* v1.33 */
+.nav.stk,label.stk{position:sticky;top:70px;z-index:3;background:var(--card);padding:8px 0}
+html[data-theme=angkasa] .nav.stk,html[data-theme=angkasa] label.stk{background:#26272d}
+.nbt{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:99px;font-size:11px;font-weight:700;background:#f5a52433;color:#a86500;vertical-align:middle}
+html[data-theme=angkasa] .nbt,html[data-theme=gelap] .nbt{color:#f5a524}
+.chip .nbc{color:#e5484d;margin-left:3px}
+.cpw .cph{display:flex;flex-direction:column;gap:2px;margin-bottom:10px}.cpw .cph b{font-size:20px}
+.cpw .cpi{font-size:18px;font-weight:700;margin:6px 0 12px}
+.cpw .seg button{min-height:60px;font-size:18px}
+.cpw .cpn{margin-top:12px;gap:8px}.cpw .cpn .btn{flex:1}
+.nsum>summary{cursor:pointer;font-weight:700}
+.nbar{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--ln);margin:10px 0 6px}
+.nleg{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:13px}.rsl i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
+.nsb{display:flex;flex-wrap:wrap;gap:6px}.nsb .sm{min-height:36px}
 </style>
 </head>
 <body>
@@ -453,7 +467,7 @@ select[data-k]{width:100%;background:var(--card2);border:1px solid var(--ln);bor
 </script>
 <script>
 'use strict';
-const VERSI='v1.32';
+const VERSI='v1.33';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -556,7 +570,7 @@ const VIEWS={
   <p><b>Tanda tangan &amp; pencapaian rapor</b> – nama guru di tanda tangan mengikuti kelompok tahfidz siswa (belum berkelompok = guru umum). Rapor Juz 29–1: pencapaian tahfidz selalu "Melampaui target"; pencapaian BTQ mengikuti setoran BTQ terakhir.</p>
   <p><b>2. Siswa</b> – tambah satu per satu, tempel banyak nama, atau Impor leger Excel lewat menu ⋯ di kanan atas (butuh internet sekali). Daftar siswa selalu otomatis berurutan A–Z, dan nomor absen mengikuti urutan itu (juga saat ada siswa baru). Ketuk baris siswa untuk membuka detail; Ubah dan Hapus ada di sana. Dashboard dan Pengaturan ada di ikon header. Di layar lebar (≥1024 px) menu pindah ke sidebar kiri, daftar siswa menjadi tabel dengan panel detail di kanan, dan Setoran punya antrean di kiri (↑/↓ ganti siswa, Enter simpan).</p>
   <p><b>Setoran harian</b> – siswa tampil berurutan otomatis (belum pernah setor dulu, lalu yang terlama belum setor; yang sudah setor hari itu paling akhir; tombol Urutan untuk kembali ke nomor absen). Pilih Tahfidz/BTQ, isi juz lalu surat dan ayat muncul otomatis. Simpan, dan posisi terakhir langsung masuk kolom Pencapaian di rapor.</p>
-   <p><b>3. Input Nilai</b> – mode Per siswa (geser kiri/kanan) atau Per kolom; ketuk nilai lagi untuk mengosongkan. Otomatis tersimpan.</p>
+   <p><b>3. Input Nilai</b> – mode Per siswa (geser kiri/kanan) atau Per kolom; ketuk nilai lagi untuk mengosongkan. Otomatis tersimpan. Surat yang sudah selesai di Setoran tetapi belum ada nilainya diberi tanda “belum dinilai” (bisa difilter). “Mode cepat” menampilkan satu item per layar dan langsung maju ke berikutnya. Isi massal/Salin bisa diurungkan lewat tombol Urungkan. Mode Per kolom menampilkan ringkasan kelas.</p>
   <p><b>4. Rapor</b> – pilih Juz (30 = format asli; juz lain berpasangan 3-3: 29-28-27, 26-1-2, 3-4-5, 6-7-8, … sampai 24-25, satu halaman per paket), pilih siswa, cek pratinjau, lalu Cetak atau Simpan sebagai PDF (satu siswa, terpilih, atau satu kelas).</p>
   <p><b>Rekap › Antarbulan</b> – rekap bulanan Tahfidz/BTQ per siswa (posisi awal bulan dan terbaru, plus posisi terbaru saat ini); bawaan tahun pelajaran Juli–Juni, bisa diubah. Unduh Excel (butuh internet sekali) atau Cetak / PDF (pilih Simpan sebagai PDF).</p>
   <p><b>Pencarian</b> – kotak Cari nama ada di Siswa, Setoran, Input Nilai, dan Rapor (ketik nama lalu pilih untuk langsung loncat, atau daftar tersaring). Sebelum cetak rapor, aplikasi memberi peringatan bila ada siswa yang nilainya belum lengkap (boleh tetap cetak). Dashboard menampilkan siswa yang belum setor 7 hari atau lebih dan pengingat cadangan bila sudah lebih dari 14 hari.</p>
@@ -705,40 +719,94 @@ const pcent=(L,its)=>{const t=L.length*its.length;return t?Math.round(100*L.redu
 function ctl(s,j){const it=ITEMS[j],a=`data-s="${s.id}" data-j="${j}"`,cur=val(s,it);
   const seg=(it.pc?PO:it.o).map(([v,l])=>`<button class="${cur===v?'on':''}" ${a} data-v="${esc(v)}">${l}</button>`).join('');
   return `<div><div class="seg">${seg}</div>${it.pc?`<input type="text" class="pos" ${a} placeholder="Posisi, mis. Iqra 5 hal 20 atau At-Tiin" value="${esc(ob(s,it).pos)}">`:''}</div>`}
-const row=(l,s,j)=>`<div class="it"><span>${esc(l)}</span>${ctl(s,j)}</div>`;
+/* v1.33: penanda belum dinilai, mode cepat, urungkan, ringkasan kolom, pembaruan baris saja */
+const nbSurat=(s,it)=>it.ob==='surat'&&(s.setoran||[]).some(e=>e.j==='tahfidz'&&!e.tahap&&e.selesai&&+e.surat===(it.jz?+it.k:77+ +it.k));
+const nbTahap=(s,it)=>it.ob==='tahap'&&!it.jz&&(s.setoran||[]).some(e=>e.tahap&&e.selesai&&+e.tahap===+it.k+1);
+const belumNilai=(s,it)=>!!it&&!it.pc&&!val(s,it)&&(nbSurat(s,it)||nbTahap(s,it));
+const nbBisa=t=>t==='tahfidz'||(t==='tahap'&&jzIn()===30);
+const nbHitung=(L,its)=>L.reduce((a,s)=>a+its.filter(it=>belumNilai(s,it)).length,0);
+const nbTag='<b class="nbt">belum dinilai</b>';
+const fbOn=()=>!!S.in.fb&&nbBisa(S.in.tab);
+const chipIn=(k,t)=>{const its=itemsJuz(k),n=nbBisa(k)?nbHitung(S.siswa,its):0;
+  return `${t.replace('Juz 30','Juz '+juzLbl(jzIn()))} <small>${pcent(S.siswa,its)}%</small>${n?`<small class="nbc">⚠${n}</small>`:''}`};
+const row=(l,s,j)=>`<div class="it"><span>${esc(l)}${belumNilai(s,ITEMS[j])?nbTag:''}</span>${ctl(s,j)}</div>`;
+const nlWrn={A:'#12b5c4','A-':'#4c7dff',B:'#f5a524',C:'#e5484d','-':'#8b93a7',Tercapai:'#12b5c4',Melampaui:'#4c7dff',Tidak:'#e5484d'};
+function infoNl(){const I=S.in,ks=S.siswa,N=ks.length,n=nbBisa(I.tab)?nbHitung(I.mode==='siswa'?[ks[I.i]]:ks,I.mode==='siswa'?ITEMS:[ITEMS[I.j]]):0,x=n?` · ${n} belum dinilai`:'';
+  return I.mode==='siswa'?`${I.i+1} dari ${N} · terisi ${pcent([ks[I.i]],ITEMS)}%${x}`:`Terisi ${pcent(ks,[ITEMS[I.j]])}% · ketuk nilai lagi untuk mengosongkan.${x}`}
+const fbLabel=()=>`Hanya belum dinilai (${nbHitung(S.siswa,ITEMS)})`;
+function ringkasKolom(){const I=S.in,it=ITEMS[I.j],ks=S.siswa,pc=!!it.pc,ord=pc?['Melampaui','Tercapai','Tidak']:['A','A-','B','C','-'];
+  const vs=ks.map(s=>val(s,it)),cnt={},kos=vs.filter(v=>!v).length;ord.forEach(k=>cnt[k]=0);
+  vs.forEach(v=>{if(!v)return;const k=pc?v:(BK[v]||v);cnt[k]=(cnt[k]||0)+1});
+  const bar=ord.filter(k=>cnt[k]).map(k=>`<span style="flex:${cnt[k]};background:${nlWrn[k]||'#8b93a7'}" title="${esc(k)}: ${cnt[k]}"></span>`).join('')+(kos?`<span style="flex:${kos};background:var(--ln)" title="Kosong: ${kos}"></span>`:'');
+  const leg=ord.filter(k=>cnt[k]).map(k=>`<span class="rsl"><i style="background:${nlWrn[k]||'#8b93a7'}"></i>${esc(k)} ${cnt[k]}</span>`).join('')+(kos?`<span class="rsl"><i style="background:var(--ln)"></i>Kosong ${kos}</span>`:'');
+  let rt='',low='',wi='';
+  if(!pc){const nums=vs.map(v=>NILAI[v]).filter(n=>n!=null),m=rata(nums);if(m!=null)rt=`<p class="mut" style="margin:6px 0">Rata-rata kelas ${Math.round(m)} · ${predik(m)}</p>`;
+    const L=ks.map((s,i)=>[s,NILAI[vs[i]]]).filter(a=>a[1]!=null&&a[1]<=75).sort((a,b)=>a[1]-b[1]).slice(0,8);
+    if(L.length)low=`<p class="mut" style="margin:8px 0 4px">Nilai terendah:</p><div class="nsb">${L.map(([s,n])=>`<button class="sm" data-jump="${s.id}">${esc(s.nama)} (${BK[val(s,it)]||val(s,it)})</button>`).join('')}</div>`}
+  else{const L=ks.filter((s,i)=>vs[i]==='Tidak');if(L.length)low=`<p class="mut" style="margin:8px 0 4px">Tidak tercapai:</p><div class="nsb">${L.map(s=>`<button class="sm" data-jump="${s.id}">${esc(s.nama)}</button>`).join('')}</div>`}
+  if(!ITEMS.some(x=>x.pc)){const W=ITEMS.map((x,j)=>[j,ks.filter(s=>{const n=NILAI[val(s,x)];return n!=null&&n<=65}).length]).filter(a=>a[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    if(W.length)wi=`<p class="mut" style="margin:8px 0 4px">Item paling banyak nilai C/Maqbul:</p><div class="nsb">${W.map(([j,n])=>`<button class="sm" data-colgo="${j}">${esc(ITEMS[j].l)} (${n})</button>`).join('')}</div>`}
+  return `<div class="nbar">${bar}</div><div class="nleg">${leg}</div>${rt}${low}${wi}`}
+const cpIdx=()=>{const I=S.in,N=S.siswa.length,M=ITEMS.length;return I.mode==='siswa'?I.i*M+I.j:I.j*N+I.i};
+function cpGo(k){const I=S.in,N=S.siswa.length,M=ITEMS.length,t=N*M;k=((k%t)+t)%t;if(I.mode==='siswa'){I.i=Math.floor(k/M);I.j=k%M}else{I.j=Math.floor(k/N);I.i=k%N}}
+function cpOk(k){const I=S.in,N=S.siswa.length,M=ITEMS.length;let i,j;if(I.mode==='siswa'){i=Math.floor(k/M);j=k%M}else{j=Math.floor(k/N);i=k%N}
+  const s=S.siswa[i],it=ITEMS[j];return fbOn()?belumNilai(s,it):!val(s,it)}
+function cpCari(from,dir){const t=S.siswa.length*ITEMS.length;for(let n=1;n<=t;n++){const k=(((from+dir*n)%t)+t)%t;if(cpOk(k))return k}return -1}
+function viewCepat(){const I=S.in,N=S.siswa.length,M=ITEMS.length,s=S.siswa[I.i],it=ITEMS[I.j];
+  return `<div class="card cpw"><div class="cph"><span class="mut">${cpIdx()+1} / ${N*M}${fbOn()?' · hanya belum dinilai':''}</span><b>${esc(s.nama)}</b></div><div class="cpi">${esc(it.l)}${belumNilai(s,it)?nbTag:''}</div>${ctl(s,I.j)}<div class="row cpn"><button class="btn ghost" data-qn="-1">‹ Sebelumnya</button><button class="btn ghost" data-qn="1">Berikutnya ›</button></div><button class="btn" data-qe="1" style="width:100%;margin-top:8px">${fbOn()?'Lompat ke yang belum dinilai':'Lompat ke yang masih kosong'}</button></div>`}
+function nlSnap(L,its){const r=[];L.forEach(s=>its.forEach(it=>r.push([s,it,it.pc?{status:ob(s,it).status,pos:ob(s,it).pos,raw:ob(s,it).raw}:val(s,it)])));return r}
+function nlUndo(sn){sn.forEach(([s,it,p])=>{if(it.pc)Object.assign(ob(s,it),p);else put(s,it,p)});svAll();if(S.page==='nilai')render()}
+function nilaiMeta(){const I=S.in;TABS.forEach(([k,t])=>{const c=document.querySelector(`.chip[data-tab="${k}"]`);if(c)c.innerHTML=chipIn(k,t)});
+  const a=$('#nlInfo');if(a)a.textContent=infoNl();const f=document.querySelector('[data-fb]');if(f)f.textContent=fbLabel();
+  const m=$('#nlSum');if(m&&I.mode==='kolom')m.innerHTML=ringkasKolom();
+  const c=$('#colsel');if(c)[...c.options].forEach((o,j)=>{const it=ITEMS[j],n=nbBisa(I.tab)?nbHitung(S.siswa,[it]):0;o.textContent=it.l+(n?` ⚠${n}`:'')})}
+function nilaiSegar(b,s){const I=S.in,e=b.closest('.it'),j=+b.dataset.j;if(!e)return render();
+  e.outerHTML=row(I.mode==='siswa'?ITEMS[j].l:`${s.no}. ${s.nama}`,s,j);nilaiMeta()}
 function viewNilai(){const N=S.siswa.length;
   if(!N)return `<h1>Input Nilai</h1><div class="card"><p class="mut">Belum ada siswa. Tambahkan atau impor dulu di halaman Siswa.</p></div>`;
   const I=S.in,ks=S.siswa;I.i=Math.min(I.i,N-1);if(jzIn()!==30&&I.tab==='pc')I.tab='tahfidz';ITEMS=itemsJuz(I.tab);I.j=Math.min(I.j,ITEMS.length-1);
-  const chips=TABS.filter(x=>x[0]!=='pc'||jzIn()===30).map(([k,t,f])=>`<button class="chip${k===I.tab?' on':''}" data-tab="${k}">${t.replace('Juz 30','Juz '+juzLbl(jzIn()))} <small>${pcent(ks,itemsJuz(k))}%</small></button>`).join('');
+  const chips=TABS.filter(x=>x[0]!=='pc'||jzIn()===30).map(([k,t])=>`<button class="chip${k===I.tab?' on':''}" data-tab="${k}">${chipIn(k,t)}</button>`).join('');
   const sw=m=>`<button class="${I.mode===m?'on':''}" data-mode="${m}">${m==='siswa'?'Per siswa':'Per kolom'}</button>`;
   const o=ITEMS[I.mode==='siswa'?0:I.j],fill=`<div class="seg">${(o.pc?PO:o.o).map(([v,l])=>`<button data-fill="${esc(v)}">${l}</button>`).join('')}</div>`;
+  const fb=fbOn(),tools=`<div class="gtool"><button class="sm${I.cp?' on':''}" data-qm="1">⚡ Mode cepat${I.cp?' (aktif)':''}</button>${nbBisa(I.tab)?`<button class="sm${I.fb?' on':''}" data-fb="1">${fbLabel()}</button>`:''}</div>`;
   let body;
-  if(I.mode==='siswa'){const s=ks[I.i];
-    body=`<div class="card"><div class="nav"><button class="sm" data-nav="-1" aria-label="Sebelumnya">‹</button><div class="mid"><b>${esc(s.nama)}</b><span class="mut">${I.i+1} dari ${N} · terisi ${pcent([s],ITEMS)}%</span></div><button class="sm" data-nav="1" aria-label="Berikutnya">›</button></div>${ITEMS.map((it,j)=>row(it.l,s,j)).join('')}</div>
+  if(I.cp)body=viewCepat();
+  else if(I.mode==='siswa'){const s=ks[I.i],R=ITEMS.map((it,j)=>[it,j]).filter(([it])=>!fb||belumNilai(s,it));
+    body=`<div class="card"><div class="nav stk"><button class="sm" data-nav="-1" aria-label="Sebelumnya">‹</button><div class="mid"><b>${esc(s.nama)}</b><span class="mut" id="nlInfo">${infoNl()}</span></div><button class="sm" data-nav="1" aria-label="Berikutnya">›</button></div>${R.length?R.map(([it,j])=>row(it.l,s,j)).join(''):'<p class="mut">Semua item siswa ini sudah dinilai.</p>'}</div>
     <div class="card" style="margin-top:14px"><details><summary>Isi massal & salin</summary><p class="mut" style="margin:8px 0">Isi semua item tab ini untuk ${esc(s.nama)}:</p>${fill}<p class="mut" style="margin:12px 0 6px">Salin dari siswa lain:</p><div class="row"><select id="cp"><option value="">Pilih siswa…</option>${ks.filter(x=>x!==s).map(x=>`<option value="${x.id}">${esc(x.nama)}</option>`).join('')}</select><button class="btn ghost" data-cp="1">Salin</button></div></details></div>`}
-  else body=`<div class="card"><label>Kolom<select id="colsel">${ITEMS.map((it,j)=>`<option value="${j}"${j===I.j?' selected':''}>${esc(it.l)}</option>`).join('')}</select></label><p class="mut" style="margin-top:6px">Terisi ${pcent(ks,[ITEMS[I.j]])}% · ketuk nilai lagi untuk mengosongkan.</p>${ks.map(s=>row(`${s.no}. ${s.nama}`,s,I.j)).join('')}</div>
-    <div class="card" style="margin-top:14px"><details><summary>Isi massal & salin</summary><p class="mut" style="margin:8px 0">Isi semua siswa untuk "${esc(ITEMS[I.j].l)}":</p>${fill}${ITEMS[I.j].pc?'':`<p class="mut" style="margin:12px 0 6px">Salin dari kolom lain:</p><div class="row"><select id="cp"><option value="">Pilih kolom…</option>${ITEMS.map((it,j)=>j===I.j?'':`<option value="${j}">${esc(it.l)}</option>`).join('')}</select><button class="btn ghost" data-cp="1">Salin</button></div>`}</details></div>`;
-  return `<h1>Input Nilai</h1><div class="seg" style="margin-bottom:12px">${sw('siswa')}${sw('kolom')}</div><label style="margin-bottom:10px">Juz<select id="juzsel">${rjOpsi().map(n=>`<option value="${n}"${n===jzIn()?' selected':''}>Juz ${juzLbl(n)}${n===30?' (rapor lama)':''}</option>`).join('')}</select></label><div class="chips">${chips}</div>${jzIn()!==30?'<p class="mut" style="margin:0 0 10px">Pencapaian paket juz ini otomatis: tahfidz = Melampaui target; BTQ mengikuti setoran BTQ terakhir.</p>':''}${body}`}
+  else{const it=ITEMS[I.j],R=ks.filter(s=>!fb||belumNilai(s,it)),n0=nbBisa(I.tab)?nbHitung(ks,[it]):0;
+    body=`<div class="card"><label class="stk">Kolom<select id="colsel">${ITEMS.map((x,j)=>{const n=nbBisa(I.tab)?nbHitung(ks,[x]):0;return `<option value="${j}"${j===I.j?' selected':''}>${esc(x.l)}${n?` ⚠${n}`:''}</option>`}).join('')}</select></label><p class="mut" style="margin-top:6px" id="nlInfo">${infoNl()}</p>${R.length?R.map(s=>row(`${s.no}. ${s.nama}`,s,I.j)).join(''):'<p class="mut">Semua siswa sudah dinilai untuk kolom ini.</p>'}</div>
+    <details class="nsum card" open style="margin-top:14px"><summary>Ringkasan kolom</summary><div id="nlSum">${ringkasKolom()}</div></details>
+    <div class="card" style="margin-top:14px"><details><summary>Isi massal & salin</summary><p class="mut" style="margin:8px 0">Isi semua siswa untuk "${esc(it.l)}":</p>${fill}${it.pc?'':`<p class="mut" style="margin:12px 0 6px">Salin dari kolom lain:</p><div class="row"><select id="cp"><option value="">Pilih kolom…</option>${ITEMS.map((x,j)=>j===I.j?'':`<option value="${j}">${esc(x.l)}</option>`).join('')}</select><button class="btn ghost" data-cp="1">Salin</button></div>`}</details></div>`}
+  return `<h1>Input Nilai</h1><div class="seg" style="margin-bottom:12px">${sw('siswa')}${sw('kolom')}</div><label style="margin-bottom:10px">Juz<select id="juzsel">${rjOpsi().map(n=>`<option value="${n}"${n===jzIn()?' selected':''}>Juz ${juzLbl(n)}${n===30?' (rapor lama)':''}</option>`).join('')}</select></label><div class="chips">${chips}</div>${tools}${jzIn()!==30?'<p class="mut" style="margin:0 0 10px">Pencapaian paket juz ini otomatis: tahfidz = Melampaui target; BTQ mengikuti setoran BTQ terakhir.</p>':''}${body}`}
 function bindNilai(){const V=$('#view');let x0=0;
   V.onclick=e=>{if(S.page!=='nilai')return;const b=e.target.closest('button');if(!b)return;const I=S.in,d=b.dataset,N=S.siswa.length,sy=scrollY,re=()=>{render();scrollTo(0,sy)};
     if(d.tab){I.tab=d.tab;I.j=0;return re()}
     if(d.mode){I.mode=d.mode;return re()}
+    if(d.qm){I.cp=!I.cp;return re()}
+    if(d.fb){I.fb=!I.fb;return re()}
+    if(d.qn){cpGo(cpIdx()+ +d.qn);return re()}
+    if(d.qe){const k=cpCari(cpIdx(),1);if(k<0)return toast(fbOn()?'Semua sudah dinilai.':'Semua terisi.');cpGo(k);return re()}
+    if(d.jump){const i=S.siswa.findIndex(z=>z.id===d.jump);if(i<0)return;I.mode='siswa';I.i=i;I.cp=false;return re()}
+    if(d.colgo!==undefined){I.mode='kolom';I.j=+d.colgo;I.cp=false;return re()}
     if(d.nav){I.i=(I.i+ +d.nav+N)%N;return re()}
-    if(d.s&&d.v!==undefined){const s=S.siswa.find(z=>z.id===d.s),it=ITEMS[+d.j];put(s,it,val(s,it)===d.v?'':d.v);sv(s);return re()}
+    if(d.s&&d.v!==undefined){const s=S.siswa.find(z=>z.id===d.s),it=ITEMS[+d.j];put(s,it,val(s,it)===d.v?'':d.v);sv(s);
+      if(I.cp){if(val(s,it)&&!it.pc){const k=cpCari(cpIdx(),1);if(k<0)toast(fbOn()?'Semua sudah dinilai.':'Semua terisi.');else cpGo(k)}return re()}
+      return nilaiSegar(b,s)}
     if(d.fill!==undefined){const L=I.mode==='siswa'?[S.siswa[I.i]]:S.siswa,its=I.mode==='siswa'?ITEMS:[ITEMS[I.j]];
       if(L.some(s=>its.some(it=>val(s,it)))&&!confirm('Sebagian sudah terisi. Timpa semuanya?'))return;
-      L.forEach(s=>its.forEach(it=>put(s,it,d.fill)));svAll();return re()}
-    if(d.cp){const v=$('#cp').value;if(v==='')return toast('Pilih sumber salinan dulu.');
-      if(I.mode==='siswa'){const src=S.siswa.find(z=>z.id===v),t=S.siswa[I.i];if(!confirm(`Salin semua nilai tab ini dari ${src.nama}?`))return;
+      const sn=nlSnap(L,its);L.forEach(s=>its.forEach(it=>put(s,it,d.fill)));svAll();re();return toast('Terisi.',()=>nlUndo(sn))}
+    if(d.cp){const v=$('#cp').value;if(v==='')return toast('Pilih sumber salinan dulu.');let sn;
+      if(I.mode==='siswa'){const src=S.siswa.find(z=>z.id===v),t=S.siswa[I.i];if(!confirm(`Salin semua nilai tab ini dari ${src.nama}?`))return;sn=nlSnap([t],ITEMS);
         ITEMS.forEach(it=>{if(it.pc)Object.assign(ob(t,it),{status:ob(src,it).status,pos:ob(src,it).pos,raw:ob(src,it).raw});else put(t,it,val(src,it))})}
-      else{const a=ITEMS[+v],t=ITEMS[I.j];if(!confirm(`Salin "${a.l}" ke "${t.l}" untuk semua siswa?`))return;S.siswa.forEach(s=>put(s,t,val(s,a)))}
-      svAll();toast('Tersalin.');re()}};
+      else{const a=ITEMS[+v],t=ITEMS[I.j];if(!confirm(`Salin "${a.l}" ke "${t.l}" untuk semua siswa?`))return;sn=nlSnap(S.siswa,[t]);S.siswa.forEach(s=>put(s,t,val(s,a)))}
+      svAll();re();return toast('Tersalin.',()=>nlUndo(sn))}};
   V.oninput=e=>{const t=e.target;if(S.page!=='nilai'||!t.classList.contains('pos'))return;
     const s=S.siswa.find(z=>z.id===t.dataset.s),p=ob(s,ITEMS[+t.dataset.j]);p.pos=t.value.trim();p.raw=pcText(p);sv(s)};
   V.onchange=e=>{if(S.page==='nilai'&&e.target.id==='colsel'){S.in.j=+e.target.value;render()}
     if(S.page==='nilai'&&e.target.id==='juzsel'){S.in.juz=+e.target.value;S.in.j=0;render()}};
   V.ontouchstart=e=>{x0=e.touches[0].clientX};
-  V.ontouchend=e=>{if(S.page!=='nilai'||S.in.mode!=='siswa'||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
+  V.ontouchend=e=>{if(S.page!=='nilai'||S.in.mode!=='siswa'||S.in.cp||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
     const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>70){const N=S.siswa.length;S.in.i=(S.in.i+(dx<0?1:-1)+N)%N;render()}}}
 /* ===== SETORAN HARIAN (tahfidz & BTQ) -> otomatis ke Pencapaian rapor ===== */
 const NS=[7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
@@ -1074,7 +1142,7 @@ function pasangCari(){if(!S.siswa.length)return;const V=$('#view'),p=S.page,h1=V
   if(p==='setoran'&&h1)cariLompat(i=>{if(!urutSetor(ST.j).includes(i))ST.kg[ST.j]=0;ST.i=i;prefillSt();render()},d=>h1.after(d));
   if(p==='nilai'){const c=V.querySelector('.chips');if(!c)return;
     if(S.in.mode==='siswa')cariLompat(i=>{S.in.i=i;render()},d=>c.after(d));
-    else cariFilter('nilai','Cari nama siswa…','#view .it',e=>(e.querySelector('span')||{}).textContent||'',d=>c.after(d))}
+    else if(!S.in.cp)cariFilter('nilai','Cari nama siswa…','#view .it',e=>(e.querySelector('span')||{}).textContent||'',d=>c.after(d))}
   if(p==='rapor'){if(h1)cariLompat(i=>{S.rp=i;render()},d=>h1.after(d));const l=$('#cklist');if(l)cariFilter('rapor','Cari di daftar centang…','#cklist .ckr',e=>e.textContent,d=>l.before(d))}}
 const selHari=(a,b)=>{const u=x=>{const [y,m,d]=x.split('-').map(Number);return Date.UTC(y,m-1,d)};return Math.round((u(b)-u(a))/864e5)};
 function belumSetor(j,min,hr){hr=hr||hari();const u=ST.urut,t=ST.tgl;ST.urut='auto';ST.tgl=hr;
@@ -1362,7 +1430,7 @@ function viewDash(){const N=S.siswa.length,kls=esc(S.set.kelas);
   ${kartuSetor()}
   <div class="card" style="margin-top:16px"><h3>Perlu perhatian (${perlu.length})</h3>${perlu.length?perlu.slice(0,8).map(a=>`<div class="att"><div><b>${a.s.no}. ${esc(a.s.nama)}</b><span class="mut">${a.r.join(' · ')}</span></div><button class="sm" data-fix="${a.s.id}">Isi</button></div>`).join('')+(perlu.length>8?`<p class="mut" style="margin-top:8px">dan ${perlu.length-8} siswa lainnya.</p>`:''):'<p class="mut">Semua siswa lengkap dan tanpa catatan. 👍</p>'}</div>
   <div class="card" style="margin-top:16px"><details><summary>Peringkat 5 teratas (opsional)</summary><div style="margin-top:8px">${top.length?top.map((a,i)=>`<div class="rk"><b>${i+1}</b><span>${esc(a.s.nama)}</span><span>${a.m.toFixed(1)}</span></div>`).join(''):'<p class="mut">Belum ada nilai.</p>'}</div></details></div>`}
-function bindDash(){document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));const bk=$('#bkNow');if(bk)bk.onclick=backup;document.querySelectorAll('[data-fix]').forEach(b=>b.onclick=()=>{const i=S.siswa.findIndex(s=>s.id===b.dataset.fix);S.in.mode='siswa';S.in.i=Math.max(0,i);S.in.tab='tahfidz';go('nilai')})}
+function bindDash(){document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));const bk=$('#bkNow');if(bk)bk.onclick=backup;document.querySelectorAll('[data-fix]').forEach(b=>b.onclick=()=>{const i=S.siswa.findIndex(s=>s.id===b.dataset.fix);S.in.mode='siswa';S.in.i=Math.max(0,i);S.in.cp=false;S.in.fb=false;S.in.tab='tahfidz';go('nilai')})}
 /* ===== BACKUP / RESTORE ===== */
 function backup(){
   const d={app:'btq-tahfidz',versi:VERSI,tanggal:new Date().toISOString(),pengaturan:S.set,siswa:S.siswa};
@@ -1969,6 +2037,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 17: v1.33 Input Nilai: tanda 'belum dinilai' (surat selesai di Setoran tanpa nilai; filter + penghitung), Mode cepat (S.in.cp), Urungkan setelah Isi massal/Salin (nlSnap/nlUndo), Ringkasan kolom (ringkasKolom), header sticky, pembaruan satu baris (nilaiSegar/nilaiMeta). Semua di blok Input Nilai (sebelum const RP) + CSS v1.33 di style terakhir; DB tidak berubah; S.in.cp/fb tidak disimpan.
 - Sesi 16: v1.32 tema Angkasa (kertas-potong berlapis + planet 3D): style id=v132 (setelah style pertama; semua aturan diawali html[data-theme=angkasa], tanpa :is()); tombol tema ke-4 (SVG planet); theme() memvalidasi TEMA_OK dan mengatur meta theme-color; DEFAULT.tema='angkasa' untuk pemasangan baru (pengguna lama tetap dengan pilihannya). Tanpa perubahan skema DB; sidik jari dan golden tetap SAMA.
 - Sesi 15: v1.31 perlindungan penyimpanan: PS/psCek/psMinta/psBoot/psTampil (navigator.storage.persist; otomatis saat boot bila ada siswa dan belum dicoba 7 hari, kunci kv persistDicoba; status + tombol Lindungi penyimpanan di Pengaturan > Cadangan data; apk/nohttps/nodukung ditangani). Tanpa perubahan skema DB, tanpa migrasi, tanpa CSS baru; sidik jari dan golden tetap SAMA.
 - Sesi 14: v1.30 +5 jadi +3; alasan tidak setor (s.alasan) menggantikan Lewati; catatan siswa (s.catat); mundur tersimpan (localStorage btqBackSt); mode cepat; Berikutnya; +3 semua & Simpan semua; peringatan input; Ringkasan; Rekap Harian (REK.m='hari'); Keterangan rekap bulan memuat alasan.
