@@ -410,6 +410,13 @@ html[data-theme=angkasa] .nbt,html[data-theme=gelap] .nbt{color:#f5a524}
 .nsb{display:flex;flex-wrap:wrap;gap:6px}.nsb .sm{min-height:36px}
 /* v1.34 multi-kelas */
 .ksw select{min-height:36px;font-weight:700;border-radius:10px;padding:0 8px;max-width:118px}
+/* v1.35 */
+.kg{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.kc.on{outline:2px solid var(--ac2)}.kch{display:flex;align-items:center;gap:8px;margin-bottom:8px}.kch .mut{margin-left:auto}
+.kcb{font-size:11px;font-weight:700;padding:1px 8px;border-radius:99px;background:var(--ac2);color:#fff}
+.kca{gap:6px;flex-wrap:wrap}.kca .sm{min-height:36px}
+.kcw{font-size:13px;color:#a86500;margin:0 0 8px}.kcd{margin-top:10px}.kcd summary{cursor:pointer;font-weight:700;font-size:14px}.kcd label{margin-top:8px}
+.kcw2{border-left:4px solid #f5a524;margin-bottom:12px}
 </style>
 </head>
 <body>
@@ -470,7 +477,7 @@ html[data-theme=angkasa] .nbt,html[data-theme=gelap] .nbt{color:#f5a524}
 </script>
 <script>
 'use strict';
-const VERSI='v1.34';
+const VERSI='v1.35';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -510,7 +517,7 @@ function autoSet(d=new Date()){const m=S.set;
 const S={set:{...DEFAULT},siswa:[],page:'dashboard',rp:0,sel:new Set(),in:{mode:'siswa',tab:'tahfidz',i:0,j:0}};
 /* ===== UI ===== */
 const $=s=>document.querySelector(s);
-const IC={rekap:'<path d="M4 20V11M10 20V4M16 20v-7M22 20H2"/>',dashboard:'<path d="M3 3h8v8H3zM13 3h8v5h-8zM13 10h8v11h-8zM3 13h8v8H3z"/>',
+const IC={kelas:'<path d="M3 21V9l9-6 9 6v12M9 21v-6h6v6"/>',rekap:'<path d="M4 20V11M10 20V4M16 20v-7M22 20H2"/>',dashboard:'<path d="M3 3h8v8H3zM13 3h8v5h-8zM13 10h8v11h-8zM3 13h8v8H3z"/>',
  siswa:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-4 3-6 6.5-6s6 2 6.5 6M16 4.5a3.5 3.5 0 010 7M18 14c2 .6 3.3 2.5 3.5 6"/>',
  nilai:'<path d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4"/>',
  setoran:'<path d="M5 4h10a3 3 0 013 3v13H8a3 3 0 01-3-3zM8 8h6M8 12h6"/>',
@@ -518,7 +525,7 @@ const IC={rekap:'<path d="M4 20V11M10 20V4M16 20v-7M22 20H2"/>',dashboard:'<path
  setelan:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
 const DESK=()=>matchMedia('(min-width:1024px)').matches;let SELS='';
 const NAV_INTI=['siswa','setoran','nilai','rapor','rekap'];
-const PAGES=[['dashboard','Dashboard'],['siswa','Siswa'],['setoran','Setoran'],['nilai','Input Nilai'],['rapor','Rapor'],['rekap','Rekap'],['setelan','Pengaturan']];
+const PAGES=[['dashboard','Dashboard'],['kelas','Kelas'],['siswa','Siswa'],['setoran','Setoran'],['nilai','Input Nilai'],['rapor','Rapor'],['rekap','Rekap'],['setelan','Pengaturan']];
 function buildNav(){
   $('#navTop').innerHTML=PAGES.filter(p=>NAV_INTI.includes(p[0])).map(([k,t])=>`<button data-p="${k}">${t}</button>`).join('');
   $('#navHdr').innerHTML=PAGES.filter(p=>!NAV_INTI.includes(p[0])).map(([k,t])=>`<button class="hb" data-p="${k}" title="${t}" aria-label="${t}"><svg viewBox="0 0 24 24">${IC[k]||IC.setelan}</svg></button>`).join('');
@@ -587,7 +594,7 @@ const VIEWS={
   <p><b>6. Tampilan</b> – pilih tema di pojok atas: ☀️ terang, 🌤️ biru, 🌙 gelap, atau 🪐 Angkasa (latar kertas berlapis dan planet). Tema hanya mengubah tampilan di layar; cetak rapor tidak terpengaruh.</p></div></details></div>
   <p class="mut" style="margin-top:14px">Versi ${VERSI}</p>`}
 };
-function render(){ksBuat();kelasUI();autoSet();if(S.page==='setoran'&&!ST.mulai&&S.ks.length){ST.mulai=1;const q=urutSetor(ST.j);if(q.length){ST.i=q[0];prefillSt()}}$('#view').innerHTML=VIEWS[S.page]();if(S.page==='setelan')bindSetelan();if(S.page==='siswa')bindSiswa();if(S.page==='nilai')bindNilai();if(S.page==='setoran')bindSetoran();if(S.page==='rapor')bindRapor();if(S.page==='rekap')bindRekapAll();if(S.page==='dashboard')bindDash();pasangCari();gsIsi()}
+function render(){ksBuat();kelasUI();autoSet();if(S.page==='setoran'&&!ST.mulai&&S.ks.length){ST.mulai=1;const q=urutSetor(ST.j);if(q.length){ST.i=q[0];prefillSt()}}$('#view').innerHTML=VIEWS[S.page]();if(S.page==='setelan')bindSetelan();if(S.page==='siswa')bindSiswa();if(S.page==='kelas')bindKelas();if(S.page==='nilai')bindNilai();if(S.page==='setoran')bindSetoran();if(S.page==='rapor')bindRapor();if(S.page==='rekap')bindRekapAll();if(S.page==='dashboard')bindDash();pasangCari();gsIsi()}
 function bindSetelan(){
   psTampil();
   document.querySelectorAll('[data-k]').forEach(i=>i.oninput=()=>{S.set[i.dataset.k]=i.value;autoSet();saved();const p=$('#tglInfo');if(p)p.textContent=S.set.tempat+' · Semester '+S.set.semester+' · '+S.set.tp});
@@ -727,6 +734,30 @@ async function impor(e){const f=e.target.files[0];e.target.value='';if(!f)return
     S.siswa=S.siswa.filter(s=>s.kelas!==S.set.kelasAktif).concat(list);[['kelas','D1'],['guru','D2'],['semester','D3'],['tempat','D4'],['target','D5']].forEach(([k,a])=>{if(T(a))S.set[k]=T(a)});if(T('D4')){delete S.set.kota;delete S.set.tgl}migrasi();
     persist();render();toast(`${list.length} siswa diimpor${warn?`; ${warn} NIS/NISN perlu dicek`:''}.`)
   }catch(_){toast('File tidak dapat dibaca. Pastikan ini file leger .xlsx.')}}
+/* ===== v1.35: halaman KELAS (12 kartu 1A–6B), impor/tambah siswa per kelas, guru per kelompok per kelas ===== */
+const klsData=k=>k===S.set.kelasAktif?(kelasSimpan(),S.set.kls[k]):((S.set.kls||{})[k]||klsBawaan(k));
+const klsGuruT=k=>{const g=(klsData(k).guruT||[]).map(x=>String(x||'').trim());return [g[0]||'',g[1]||'']};
+const klsJml=k=>S.siswa.filter(s=>s.kelas===k).length;
+function klsKartu(k){const a=k===S.set.kelasAktif,o=klsData(k),g=klsGuruT(k),n=klsJml(k),w=String(o.guru||'').trim(),kp=(o.klpNama||{}).t||['Kelompok 1','Kelompok 2'];
+  const mis=n&&!g[0]&&!g[1]&&!w;
+  return `<div class="card kc${a?' on':''}" data-kc="${k}"><div class="kch"><b>Kelas ${k}</b>${a?'<span class="kcb">aktif</span>':''}<span class="mut">${n} siswa</span></div>
+  ${mis?'<p class="kcw">Guru tahfidz belum diisi: tanda tangan rapor akan kosong.</p>':''}
+  <div class="row kca"><button class="sm" data-ka="buka" data-k="${k}">Buka siswa</button><button class="sm" data-ka="xls" data-k="${k}">Impor Excel</button><button class="sm" data-ka="tempel" data-k="${k}">Tempel nama</button></div>
+  <details class="kcd"><summary>Guru tahfidz${g[0]||g[1]?' · '+esc([g[0],g[1]].filter(Boolean).join(' / ')):''}</summary>
+  <label>Guru tahfidz – ${esc(kp[0]||'Kelompok 1')}<input type="text" data-kg="${k}" data-gi="0" value="${esc(g[0])}" placeholder="Nama guru (tanda tangan rapor)"></label>
+  <label>Guru tahfidz – ${esc(kp[1]||'Kelompok 2')}<input type="text" data-kg="${k}" data-gi="1" value="${esc(g[1])}" placeholder="Nama guru (tanda tangan rapor)"></label>
+  <label>Wali kelas / guru umum (dipakai bila siswa belum punya kelompok)<input type="text" data-kg="${k}" data-gi="w" value="${esc(w)}"></label></details></div>`}
+VIEWS.kelas=()=>{kelasSimpan();const tot=S.siswa.length;
+  return `<h1>Kelas</h1><p class="mut" style="margin:0 0 12px">${tot} siswa di semua kelas. Pilih kelas, lalu impor atau tambah siswa. Tanda tangan rapor mengikuti guru kelompok tahfidz tiap siswa. Siswa 4A yang lama tetap tersimpan di Kelas 4A.</p><div class="kg">${KLS_ALL.map(klsKartu).join('')}</div>`};
+function bindKelas(){const V=$('#view');
+  V.onclick=e=>{const b=e.target.closest('[data-ka]');if(!b)return;const k=b.dataset.k,a=b.dataset.ka;kelasPilih(k);go('siswa');
+    if(a==='xls'){const f=$('#impIn');if(f)f.click()}
+    else if(a==='tempel'){const t=$('#bulk');if(t){const d=t.closest('details');if(d)d.open=true;t.focus()}}};
+  V.oninput=e=>{const t=e.target;if(!t.dataset.kg)return;const k=t.dataset.kg,o=S.set.kls[k]||(S.set.kls[k]=klsBawaan(k)),i=t.dataset.gi;
+    if(i==='w')o.guru=t.value;else{const g=[...(o.guruT||['',''])];g[+i]=t.value;o.guruT=g}
+    if(k===S.set.kelasAktif)kelasMuat();saved()}}
+{const _r=VIEWS.rapor;VIEWS.rapor=()=>{const mis=S.ks.filter(s=>!String(guruRapor(s)||'').trim()).length;
+  return (mis?`<div class="card kcw2"><b>${mis} siswa belum punya nama guru untuk tanda tangan rapor.</b> Isi guru tahfidz kelas ${esc(S.set.kelasAktif)} di halaman Kelas.</div>`:'')+_r()}}
 /* ===== INPUT NILAI: per siswa (geser) & per kolom ===== */
 const SURAT=["An-Naba","An-Naazi'aat","'Abasa","At-Takwir","Al-Infithaar","Al-Muthaffifin","Al-Insyiqaaq","Al-Buruuj","At-Thaariq","Al-A'laa","Al-Ghaasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Dhuhaa","Al-Insyirah","At-Tiin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qori'ah","At-Takatsur","Al-'Asr","Al-Humazah","Al-Fiil","Al-Quraisy","Al-Ma'un","Al-Kautsar","Al-Kaafirun","An-Nasr","Al-Lahab","Al-Ikhlas","Al-Falaq","An-Naas"];
 const SO=[['A','A'],['A-','A-'],['B','B'],['C','C'],['-','–']],AO=[['MUMTAZ','Mumtaz'],['JAYYID JIDDAN','Jayyid Jiddan'],['JAYYID','Jayyid'],['MAQBUL','Maqbul']],PO=[['Tercapai','Tercapai'],['Melampaui','Melampaui target'],['Tidak','Tidak tercapai']];
@@ -2064,6 +2095,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 18: v1.34–v1.35 multi-kelas 1A–6B: model kelas (S.siswa semua kelas, S.ks kelas aktif, S.set.kls per kelas, migrasi ke 4A), halaman Kelas (kartu 12 kelas, buka/impor Excel/tempel nama, guru tahfidz per kelompok per kelas, peringatan guru kosong di Rapor). Rencana & status tahap: docs/RENCANA-MULTIKELAS.md.
 - Sesi 17: v1.33 Input Nilai: tanda 'belum dinilai' (surat selesai di Setoran tanpa nilai; filter + penghitung), Mode cepat (S.in.cp), Urungkan setelah Isi massal/Salin (nlSnap/nlUndo), Ringkasan kolom (ringkasKolom), header sticky, pembaruan satu baris (nilaiSegar/nilaiMeta). Semua di blok Input Nilai (sebelum const RP) + CSS v1.33 di style terakhir; DB tidak berubah; S.in.cp/fb tidak disimpan.
 - Sesi 16: v1.32 tema Angkasa (kertas-potong berlapis + planet 3D): style id=v132 (setelah style pertama; semua aturan diawali html[data-theme=angkasa], tanpa :is()); tombol tema ke-4 (SVG planet); theme() memvalidasi TEMA_OK dan mengatur meta theme-color; DEFAULT.tema='angkasa' untuk pemasangan baru (pengguna lama tetap dengan pilihannya). Tanpa perubahan skema DB; sidik jari dan golden tetap SAMA.
 - Sesi 15: v1.31 perlindungan penyimpanan: PS/psCek/psMinta/psBoot/psTampil (navigator.storage.persist; otomatis saat boot bila ada siswa dan belum dicoba 7 hari, kunci kv persistDicoba; status + tombol Lindungi penyimpanan di Pengaturan > Cadangan data; apk/nohttps/nodukung ditangani). Tanpa perubahan skema DB, tanpa migrasi, tanpa CSS baru; sidik jari dan golden tetap SAMA.

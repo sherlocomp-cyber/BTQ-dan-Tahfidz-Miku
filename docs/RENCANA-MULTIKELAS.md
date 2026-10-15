@@ -30,11 +30,17 @@ Baca juga: blok `proyek-handoff` di dalam `index.html` (aturan proyek, fingerpri
 
 ## Status tahap
 - [x] **Tahap 1 (v1.34)** model kelas, migrasi 4A, `S.ks`, pemilih kelas di header.
-- [ ] **Tahap 2 (v1.34)** halaman **Kelas** (12 kartu), impor daftar nama (tempel / Excel-CSV) ke kelas aktif, tambah siswa ke kelas aktif.
-- [ ] **Tahap 3 (v1.34)** pengaturan guru & nama kelompok per kelas, peringatan bila guru tahfidz belum diisi, cek tanda tangan rapor.
+- [x] **Tahap 2 (v1.35)** halaman **Kelas** (12 kartu: Buka siswa, Impor Excel, Tempel nama per kelas); impor/tambah siswa selalu masuk kelas aktif (`blank()` memberi `kelas`).
+- [x] **Tahap 3 (v1.35)** guru tahfidz per kelompok + wali kelas per kelas langsung di kartu Kelas (`S.set.kls[k]`), peringatan bila guru kosong (kartu & halaman Rapor). Tanda tangan rapor = `guruRapor(s)`. **Cetak/PDF: perlu dicek manual oleh pengguna.**
 - [ ] **Tahap 4 (usulan)** pindah/naik kelas siswa; salin pengaturan antarkelas; kenaikan tingkat akhir tahun.
 - [ ] **Tahap 5 (usulan)** sinkron pengaturan per kelas sebagai kunci Firebase terpisah (kini satu blob `set` → dua guru mengubah pengaturan bersamaan bisa saling menimpa); kode ruang/PIN per madrasah.
 - [ ] **Tahap 6 (usulan)** rekap lintas kelas untuk koordinator tahfidz / kepala madrasah; pemisahan data siswa dari `index.html` (repo publik memuat nama/NIS siswa 4A!).
+
+## Usulan detail tahap berikutnya (untuk akun lain)
+- **Tahap 4**: (a) tombol "Pindah kelas" di detail/form siswa (ubah `s.kelas`, jalankan `urutAZ()`); (b) "Salin pengaturan dari kelas lain" (`klsKlon` pada `KLS_CK`); (c) kenaikan tingkat akhir tahun (4A→5A dst., dengan konfirmasi + cadangan otomatis, arsipkan 6A/6B); (d) kolom Kelas di ekspor leger; (e) impor daftar siswa Excel/CSV banyak kelas sekaligus (kolom Kelas).
+- **Tahap 5**: pisah kunci Firebase untuk `set.kls[kelas]` (kini satu blob `set`); filter/ruang per kelas agar guru kelas lain tidak mengunduh semua; PIN/kode ruang.
+- **Tahap 6**: Rekap lintas kelas untuk koordinator/kepala; pindahkan data siswa 4A keluar dari `index.html` (repo publik!) ke file terpisah/privat; jadikan repo privat bila perlu (Pages butuh paket berbayar untuk privat).
+- Menguji: lihat skrip uji Playwright pola di sesi 17–18 (set `S.siswa` dengan `blank()`, `kelasInit()`, `go('kelas')`, cek `S.siswa[].kelas`, `guruRapor`).
 
 ## Cara melanjutkan
 1. `git pull`, baca bagian ini, kerjakan tahap pertama yang belum dicentang.
