@@ -433,6 +433,15 @@ html.fhp .tabbar{left:50%;right:auto;width:100%;max-width:520px;transform:transl
 .pkt.on{outline:2px solid var(--ac2)}.pkt.kosong{opacity:.6}.pkt .pkg{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .abt{flex-wrap:nowrap}.abt button{min-width:0;padding:0 2px}.abt button small{display:block;font-size:11px;font-weight:600;opacity:.75}
 .kr.abr{grid-template-columns:1fr auto}.kr.abr .kn{grid-column:auto}
+/* v1.39 rapikan UI/UX HP: header ringkas, kelas kosong dilipat, target sentuh >=40px */
+.kcd label{display:grid;grid-template-columns:minmax(0,1fr);gap:4px}.kcd input[type=text]{width:100%;min-width:0}
+@media(max-width:480px){
+.ksw{flex:none}.ksw select{width:auto;max-width:none;min-width:0;padding:0 6px}
+.themes button:not(.on){display:none}.themes{padding:4px;gap:0}.themes button.on{width:34px;height:34px}
+}
+.card.kc{display:block;padding:18px;border-radius:var(--r);font-size:inherit;font-weight:inherit;white-space:normal}
+@media(max-width:440px){.save span{display:none}}
+@media(max-width:820px){.sm,.chip{min-height:40px}.hd .btn,.mbtn{min-height:40px}summary{padding:8px 0}}
 </style>
 </head>
 <body>
@@ -493,7 +502,7 @@ html.fhp .tabbar{left:50%;right:auto;width:100%;max-width:520px;transform:transl
 </script>
 <script>
 'use strict';
-const VERSI='v1.38';
+const VERSI='v1.39';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -611,6 +620,7 @@ const VIEWS={
   <p><b>6. Tampilan</b> – pilih tema di pojok atas: ☀️ terang, 🌤️ biru, 🌙 gelap, atau 🪐 Angkasa (latar kertas berlapis dan planet). Tema hanya mengubah tampilan di layar; cetak rapor tidak terpengaruh.</p></div></details></div>
   <p><b>Pilih kelas & default</b> – bila ada lebih dari satu kelas berisi siswa dan belum ada default, layar Pilih kelas tampil saat aplikasi dibuka. Centang “Buka kelas ini otomatis” agar lain kali langsung masuk ke kelas itu. Default tersimpan per perangkat dan bisa diubah di Pengaturan.</p>
   <p><b>Kenaikan kelas & pembagian A/B</b> – di halaman Kelas, setelah Naikkan semua kelas, atur siapa masuk A atau B per tingkat: ketuk A/B pada siswa, Tukar seluruh A ↔ B, atau Bagi rata (acak). Tukar dan Bagi rata bisa diurungkan.</p>
+  <p><b>Tampilan HP</b> – nama kelas aktif tampil di header; ketuk tombol tema untuk berganti tema. Halaman Kelas menampilkan kelas berisi siswa lebih dulu, kelas kosong dilipat.</p>
   <p class="mut" style="margin-top:14px">Versi ${VERSI}</p>`}
 };
 function render(){ksBuat();kelasUI();autoSet();if(S.page==='setoran'&&!ST.mulai&&S.ks.length){ST.mulai=1;const q=urutSetor(ST.j);if(q.length){ST.i=q[0];prefillSt()}}$('#view').innerHTML=VIEWS[S.page]();if(S.page==='setelan')bindSetelan();if(S.page==='siswa')bindSiswa();if(S.page==='kelas')bindKelas();if(S.page==='nilai')bindNilai();if(S.page==='setoran')bindSetoran();if(S.page==='rapor')bindRapor();if(S.page==='rekap')bindRekapAll();if(S.page==='dashboard')bindDash();pasangCari();gsIsi()}
@@ -658,7 +668,7 @@ async function kelasInit(){
 function kelasPilih(k){if(!klsOk(k)||k===S.set.kelasAktif)return;kelasSimpan();S.set.kelasAktif=k;S.set.kls||(S.set.kls={});if(!S.set.kls[k])S.set.kls[k]=klsBawaan(k);kelasMuat();
   S.rp=0;S.in.i=0;S.in.j=0;S.in.cp=false;S.in.fb=false;if(typeof ST!=='undefined'){ST.i=0;ST.mulai=0}S.sel=new Set();ksBuat();autoSet();saved()}
 function kelasUI(){const e=$('#kelasSel');if(!e)return;const a=S.set.kelasAktif,n={};S.siswa.forEach(s=>n[s.kelas]=(n[s.kelas]||0)+1);
-  e.innerHTML=KLS_ALL.map(k=>`<option value="${k}"${k===a?' selected':''}>Kelas ${k}${n[k]?` (${n[k]})`:''}</option>`).join('')}
+  e.innerHTML=KLS_ALL.map(k=>`<option value="${k}"${k===a?' selected':''}>${k}${n[k]?` (${n[k]})`:''}</option>`).join('')}
 {const _s=DB.set;DB.set=(k,v)=>{if(k==='pengaturan'&&v===S.set)kelasSimpan();return _s(k,v)}}
 function urutAZ(){ksBuat();const ac=[S.ks[S.rp],S.ks[S.in.i],typeof ST!=='undefined'?S.ks[ST.i]:0];
   S.siswa.sort((a,b)=>cmpNama(a.nama,b.nama)||(a.no||0)-(b.no||0));const c={};S.siswa.forEach(x=>{c[x.kelas]=(c[x.kelas]||0)+1;x.no=c[x.kelas]});
@@ -769,7 +779,7 @@ function klsKartu(k){const a=k===S.set.kelasAktif,o=klsData(k),g=klsGuruT(k),n=k
   <label>Wali kelas / guru umum (dipakai bila siswa belum punya kelompok)<input type="text" data-kg="${k}" data-gi="w" value="${esc(w)}"></label>
   <div class="row" style="margin-top:8px"><select data-ks="${k}"><option value="">Salin guru &amp; kelompok dari…</option>${KLS_ALL.filter(x=>x!==k).map(x=>`<option value="${x}">Kelas ${x}</option>`).join('')}</select><button class="sm" data-ka="salin" data-k="${k}">Salin</button></div></details></div>`}
 VIEWS.kelas=()=>{kelasSimpan();const tot=S.siswa.length;
-  return `<h1>Kelas</h1><p class="mut" style="margin:0 0 12px">${tot} siswa di semua kelas. Pilih kelas, lalu impor atau tambah siswa. Tanda tangan rapor mengikuti guru kelompok tahfidz tiap siswa. Siswa 4A yang lama tetap tersimpan di Kelas 4A.</p><div class="kg">${KLS_ALL.map(klsKartu).join('')}</div>
+  return `<h1>Kelas</h1><p class="mut" style="margin:0 0 12px">${tot} siswa di semua kelas. Pilih kelas, lalu impor atau tambah siswa. Tanda tangan rapor mengikuti guru kelompok tahfidz tiap siswa. Siswa 4A yang lama tetap tersimpan di Kelas 4A.</p>${(()=>{const ada=KLS_ALL.filter(k=>klsJml(k)||k===S.set.kelasAktif),kos=KLS_ALL.filter(k=>!ada.includes(k));return `<div class="kg">${ada.map(klsKartu).join('')}</div>${kos.length?`<div class="card fold" style="margin-top:12px"><details><summary>Kelas belum berisi siswa (${kos.length})</summary><div class="kg" style="margin-top:12px">${kos.map(klsKartu).join('')}</div></details></div>`:''}`})()}
   <div class="card" style="margin-top:14px"><h3>Kenaikan kelas akhir tahun</h3><p class="mut">Memindahkan semua siswa naik satu tingkat (4A→5A, 3B→4B, dst.). Siswa kelas 6 ditandai lulus dan tidak muncul di daftar kelas (data tetap tersimpan). Cadangan otomatis dibuat dulu. Lakukan sekali saja saat tahun ajaran baru, sebaiknya setelah rapor dicetak.${S.siswa.some(s=>s.kelas==='LULUS')?` Saat ini ${S.siswa.filter(s=>s.kelas==='LULUS').length} siswa berstatus lulus.`:''}</p><button class="btn ghost" data-ka="naik">Naikkan semua kelas…</button></div>${abKartu()}`};
 async function kelasNaik(){const n=S.siswa.filter(s=>klsOk(s.kelas)).length;if(!n)return toast('Belum ada siswa di kelas mana pun.');
   if(!confirm(`Naikkan ${n} siswa satu tingkat? Siswa kelas 6 menjadi lulus. Cadangan dibuat otomatis.`))return;
@@ -1918,6 +1928,7 @@ function gSave(s,j,row,qt){const TT=qt?()=>{}:toast,r=gGet(s,j);if(r.tahap)retur
 (async()=>{
   tampilMuat();buildNav();
   document.querySelectorAll('#themes button').forEach(b=>b.onclick=()=>{theme(b.dataset.t);saved()});
+  $('#themes').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!b.classList.contains('on')||!matchMedia('(max-width:480px)').matches)return;e.stopImmediatePropagation();const o=[...document.querySelectorAll('#themes button')],n=o[(o.indexOf(b)+1)%o.length];theme(n.dataset.t);saved()},true);
   try{await DB.open();const p=await DB.get('pengaturan');if(p)S.set={...DEFAULT,...p};S.cad=(await DB.get('cadanganTerakhir'))||'';S.siswa=await DB.all()}
   catch(_){toast('Penyimpanan perangkat tidak tersedia; data tidak akan tersimpan.')}
   migrasi();await kelasInit();{const t=S.siswa.map(s=>s.id+s.no).join();urutAZ();if(S.siswa.map(s=>s.id+s.no).join()!==t)DB.saveSiswa(S.siswa)}autoSet();theme(S.set.tema);{const d=kdGet();if(d&&d!==S.set.kelasAktif)kelasPilih(d)}
