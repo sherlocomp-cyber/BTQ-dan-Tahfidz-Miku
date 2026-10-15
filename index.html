@@ -408,12 +408,15 @@ html[data-theme=angkasa] .nbt,html[data-theme=gelap] .nbt{color:#f5a524}
 .nbar{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--ln);margin:10px 0 6px}
 .nleg{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:13px}.rsl i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px}
 .nsb{display:flex;flex-wrap:wrap;gap:6px}.nsb .sm{min-height:36px}
+/* v1.34 multi-kelas */
+.ksw select{min-height:36px;font-weight:700;border-radius:10px;padding:0 8px;max-width:118px}
 </style>
 </head>
 <body>
 <header>
   <div class="brand"><div class="logo" style="background:#fff;border:1px solid var(--ln);overflow:hidden"><img src="data:image/png;base64,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" alt="" style="width:100%;height:100%;object-fit:contain"></div><span>BTQ – Tahfidz</span></div>
   <nav class="pills" id="navTop"></nav>
+  <div class="ksw"><select id="kelasSel" aria-label="Kelas aktif"></select></div>
   <div class="gs"><input type="search" id="gsIn" list="gsDl" placeholder="Cari siswa…" aria-label="Cari siswa" autocomplete="off"><datalist id="gsDl"></datalist></div>
   <div class="sp"></div>
   <div class="save" id="saveInd"><i></i><span>Tersimpan</span></div>
@@ -467,7 +470,7 @@ html[data-theme=angkasa] .nbt,html[data-theme=gelap] .nbt{color:#f5a524}
 </script>
 <script>
 'use strict';
-const VERSI='v1.33';
+const VERSI='v1.34';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -524,6 +527,7 @@ function buildNav(){
    $('#navSide').innerHTML=PAGES.filter(p=>NAV_INTI.includes(p[0])).map(bt).join('')+'<div class="sd-sp"></div>'+PAGES.filter(p=>!NAV_INTI.includes(p[0])).map(bt).join('');
    $('#gsIn').onchange=gsLompat}
   document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>go(b.dataset.p));
+  {const k=$('#kelasSel');if(k)k.onchange=()=>{kelasPilih(k.value);render()}}
 }
 function go(p){S.page=p;location.hash=p;document.body.dataset.pg=p;
   document.querySelectorAll('[data-p]').forEach(b=>b.classList.toggle('on',b.dataset.p===p));render()}
@@ -542,8 +546,8 @@ let tm;function saved(){const e=$('#saveInd');e.classList.add('busy');e.lastChil
 const soon=(t,n)=>`<h1>${t}</h1><div class="card"><h3>Segera hadir</h3><p class="mut">Halaman ini dikerjakan di ${n}. Kerangka, tema, dan penyimpanan sudah siap.</p></div>`;
 const VIEWS={
  dashboard:()=>viewDash(),
- siswa(){const n=S.siswa.length;return `<div class="md"><div class="md-l"><div class="hd"><h1>Siswa <span class="mut">(${n})</span></h1><button class="btn" id="add">+ Tambah siswa</button><div class="mw"><button class="sm mbtn" id="mnuB" aria-label="Menu impor dan ekspor" aria-haspopup="true" aria-expanded="false">⋯</button><div class="mnu" id="mnu" hidden><button id="imp">Impor dari Excel</button><button id="exp">Ekspor leger (Excel)</button><button id="impRk">Impor dari Rekap Nilai (.json)</button></div></div></div><input type="file" id="impIn" accept=".xlsx,.xls" hidden><input type="file" id="impRkIn" accept=".json,application/json" hidden>
-  <div class="card">${n?'<div class="swh"><span>No</span><span>Nama</span><span>NIS</span><span>NISN</span><span>Tahfidz</span><span>BTQ</span><span></span></div>'+S.siswa.map(s=>`<div class="sw${s.id===SELS&&DESK()?' sel':''}" data-r="${s.id}" role="button" tabindex="0"><b>${s.no}</b><div class="nm"><b>${esc(s.nama)}</b><span class="mut mob">NIS ${esc(s.nis)||'–'} · NISN ${esc(s.nisn)||'–'}</span>${klpBadge(s)}</div><span class="dk">${esc(s.nis)||'–'}</span><span class="dk">${esc(s.nisn)||'–'}</span><span class="dk">${kChip(s,'tahfidz')}</span><span class="dk">${kChip(s,'btq')}</span><span class="chev" aria-hidden="true">›</span></div>`).join(''):'<p class="mut">Belum ada siswa. Tambah satu per satu, tempel daftar nama, atau impor leger Excel lewat menu ⋯.</p>'}</div>
+ siswa(){const n=S.ks.length;return `<div class="md"><div class="md-l"><div class="hd"><h1>Siswa <span class="mut">(${n})</span></h1><button class="btn" id="add">+ Tambah siswa</button><div class="mw"><button class="sm mbtn" id="mnuB" aria-label="Menu impor dan ekspor" aria-haspopup="true" aria-expanded="false">⋯</button><div class="mnu" id="mnu" hidden><button id="imp">Impor dari Excel</button><button id="exp">Ekspor leger (Excel)</button><button id="impRk">Impor dari Rekap Nilai (.json)</button></div></div></div><input type="file" id="impIn" accept=".xlsx,.xls" hidden><input type="file" id="impRkIn" accept=".json,application/json" hidden>
+  <div class="card">${n?'<div class="swh"><span>No</span><span>Nama</span><span>NIS</span><span>NISN</span><span>Tahfidz</span><span>BTQ</span><span></span></div>'+S.ks.map(s=>`<div class="sw${s.id===SELS&&DESK()?' sel':''}" data-r="${s.id}" role="button" tabindex="0"><b>${s.no}</b><div class="nm"><b>${esc(s.nama)}</b><span class="mut mob">NIS ${esc(s.nis)||'–'} · NISN ${esc(s.nisn)||'–'}</span>${klpBadge(s)}</div><span class="dk">${esc(s.nis)||'–'}</span><span class="dk">${esc(s.nisn)||'–'}</span><span class="dk">${kChip(s,'tahfidz')}</span><span class="dk">${kChip(s,'btq')}</span><span class="chev" aria-hidden="true">›</span></div>`).join(''):'<p class="mut">Belum ada siswa. Tambah satu per satu, tempel daftar nama, atau impor leger Excel lewat menu ⋯.</p>'}</div>
   <div class="card fold"><details><summary>Tempel banyak nama</summary><p class="mut" style="margin:8px 0">Satu siswa per baris. Boleh salin kolom NIS, NISN, dan Nama dari Excel; kolom dikenali otomatis.</p><textarea id="bulk" placeholder="ABDUL AZIZ JAELANI&#10;ACHMAD AKMAL SAPUTRA"></textarea><div class="row"><button class="btn" id="bulkGo">Tambahkan</button></div></details></div>
   ${n?`<div class="card fold"><details><summary>Validasi nama, NIS &amp; NISN</summary><p class="mut" style="margin:8px 0 10px">Mencocokkan nama siswa dengan daftar resmi (Rapor Digital Madrasah), menyesuaikan ejaan, lalu mengisi NIS dan NISN. Setoran dan nilai tidak berubah.</p><button class="btn" id="cocokNis">Cocokkan &amp; isi NIS/NISN</button></details></div>`:''}
   </div><aside class="md-r"><div id="sisPanel"></div>${klpCard()}</aside></div>`},
@@ -583,7 +587,7 @@ const VIEWS={
   <p><b>6. Tampilan</b> – pilih tema di pojok atas: ☀️ terang, 🌤️ biru, 🌙 gelap, atau 🪐 Angkasa (latar kertas berlapis dan planet). Tema hanya mengubah tampilan di layar; cetak rapor tidak terpengaruh.</p></div></details></div>
   <p class="mut" style="margin-top:14px">Versi ${VERSI}</p>`}
 };
-function render(){autoSet();if(S.page==='setoran'&&!ST.mulai&&S.siswa.length){ST.mulai=1;const q=urutSetor(ST.j);if(q.length){ST.i=q[0];prefillSt()}}$('#view').innerHTML=VIEWS[S.page]();if(S.page==='setelan')bindSetelan();if(S.page==='siswa')bindSiswa();if(S.page==='nilai')bindNilai();if(S.page==='setoran')bindSetoran();if(S.page==='rapor')bindRapor();if(S.page==='rekap')bindRekapAll();if(S.page==='dashboard')bindDash();pasangCari();gsIsi()}
+function render(){ksBuat();kelasUI();autoSet();if(S.page==='setoran'&&!ST.mulai&&S.ks.length){ST.mulai=1;const q=urutSetor(ST.j);if(q.length){ST.i=q[0];prefillSt()}}$('#view').innerHTML=VIEWS[S.page]();if(S.page==='setelan')bindSetelan();if(S.page==='siswa')bindSiswa();if(S.page==='nilai')bindNilai();if(S.page==='setoran')bindSetoran();if(S.page==='rapor')bindRapor();if(S.page==='rekap')bindRekapAll();if(S.page==='dashboard')bindDash();pasangCari();gsIsi()}
 function bindSetelan(){
   psTampil();
   document.querySelectorAll('[data-k]').forEach(i=>i.oninput=()=>{S.set[i.dataset.k]=i.value;autoSet();saved();const p=$('#tglInfo');if(p)p.textContent=S.set.tempat+' · Semester '+S.set.semester+' · '+S.set.tp});
@@ -594,7 +598,7 @@ function bindSetelan(){
   $('#tgtMode').onchange=e=>{S.set.targetMode=e.target.value;autoSet();saved();render()};
   document.querySelectorAll('[data-gt]').forEach(i=>i.oninput=()=>{const a=[...(S.set.guruT||['',''])];a[+i.dataset.gt]=i.value;S.set.guruT=a;saved()});
   $('#bk').onclick=backup;
-  {const bw=$('#impBw');if(bw)bw.onclick=()=>{if(!confirm('Muat data bawaan Rekap kelas 4A?\n\nSiswa dan setoran dari data bawaan akan DITAMBAHKAN ke data yang ada sekarang. Disarankan unduh cadangan dulu.'))return;impRekap(REKAP_BAWAAN,'data bawaan Rekap Nilai')}}
+  {const bw=$('#impBw');if(bw)bw.onclick=()=>{if(S.set.kelasAktif!=='4A')return toast('Data bawaan hanya untuk kelas 4A. Pilih Kelas 4A dulu.');if(!confirm('Muat data bawaan Rekap kelas 4A?\n\nSiswa dan setoran dari data bawaan akan DITAMBAHKAN ke data yang ada sekarang. Disarankan unduh cadangan dulu.'))return;impRekap(REKAP_BAWAAN,'data bawaan Rekap Nilai')}}
   $('#rs').onclick=()=>$('#rsIn').click();$('#rsIn').onchange=restore;
   $('#rst').onclick=async()=>{if(!confirm('Hapus data di perangkat ini? Data di server TIDAK dihapus dan akan dimuat ulang. Unduh cadangan dulu bila perlu.'))return;
     Cloud.jeda();await DB.clear();S.set={...DEFAULT};S.siswa=[];theme('terang');toast('Data perangkat dihapus; memuat ulang dari server.');render();Cloud.start()};
@@ -603,18 +607,41 @@ function bindSetelan(){
 const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const ALIAS_NAMA={'ALFIN FAQIH':'ALVIN FAQIH HUSEINI','ATTHAYA SYABIL PRATAMA':'ATHAYA SYABIL PRATAMA'};
 const nm=t=>{const k=String(t||'').trim().replace(/\s+/g,' ').toUpperCase();return ALIAS_NAMA[k]||k};
-const blank=()=>({id:newId(),no:0,nis:'',nisn:'',nama:'',surat:{},hadist:{},doa:{},aspek:{},pcBTQ:{status:'',pos:'',raw:''},pcTah:{status:'',pos:'',raw:''},tahap:['','','','',''],setoran:[],kel:{t:0,b:0}});
+const blank=()=>({id:newId(),kelas:S.set.kelasAktif||'4A',no:0,nis:'',nisn:'',nama:'',surat:{},hadist:{},doa:{},aspek:{},pcBTQ:{status:'',pos:'',raw:''},pcTah:{status:'',pos:'',raw:''},tahap:['','','','',''],setoran:[],kel:{t:0,b:0}});
 /* Siswa selalu berurutan A–Z; nomor absen mengikuti urutan itu. */
 const cmpNama=(a,b)=>a.localeCompare(b,'id',{sensitivity:'base'});
-function urutAZ(){const ac=[S.siswa[S.rp],S.siswa[S.in.i],typeof ST!=='undefined'?S.siswa[ST.i]:0];
-  S.siswa.sort((a,b)=>cmpNama(a.nama,b.nama)||(a.no||0)-(b.no||0));S.siswa.forEach((x,i)=>x.no=i+1);
-  const f=o=>{const k=S.siswa.indexOf(o);return k<0?0:k};if(ac[0])S.rp=f(ac[0]);if(ac[1])S.in.i=f(ac[1]);if(ac[2])ST.i=f(ac[2])}
 function persist(){urutAZ();DB.saveSiswa(S.siswa);saved()}
+/* ===== v1.34: MULTI-KELAS (1A–6B). S.siswa = semua siswa; S.ks = siswa kelas aktif; pengaturan per kelas di S.set.kls ===== */
+S.ks=[];
+const KLS_ALL=[1,2,3,4,5,6].flatMap(n=>['A','B'].map(h=>n+h)),KLS_CK=['kelas','guru','guruT','kode','klpNama','target','targetMode'],KLS_LAMA='4A';
+const KLS_R=['','I','II','III','IV','V','VI'],KLS_A=['','Satu','Dua','Tiga','Empat','Lima','Enam'];
+const klsOk=k=>KLS_ALL.includes(k),klsT=k=>+String(k)[0]||0,klsLabel=k=>`${KLS_R[klsT(k)]} (${KLS_A[klsT(k)]}) ${String(k).slice(1)}`,klsKlon=v=>v===undefined?v:JSON.parse(JSON.stringify(v));
+const klsBawaan=k=>({kelas:klsLabel(k),guru:'',guruT:['',''],kode:k,klpNama:{t:['Kelompok 1','Kelompok 2'],b:['Kelompok 1','Kelompok 2']},target:'',targetMode:'auto'});
+function kelasSimpan(){const m=S.set,a=m.kelasAktif;if(!klsOk(a))return;m.kls||(m.kls={});const o=m.kls[a]||(m.kls[a]={});KLS_CK.forEach(k=>{if(m[k]!==undefined)o[k]=klsKlon(m[k])})}
+function kelasMuat(){const m=S.set,o=(m.kls||{})[m.kelasAktif];if(!o)return;KLS_CK.forEach(k=>{if(o[k]!==undefined)m[k]=klsKlon(o[k])})}
+function ksBuat(){S.siswa.forEach(s=>{if(!klsOk(s.kelas))s.kelas=KLS_LAMA});S.ks=S.siswa.filter(s=>s.kelas===S.set.kelasAktif);return S.ks}
+function klsTerap(r){const keep={};KLS_CK.concat('kelasAktif').forEach(k=>keep[k]=S.set[k]);Object.assign(S.set,JSON.parse(r));Object.assign(S.set,keep);kelasMuat()}
+function klsPerlu(){return !klsOk(S.set.kelasAktif)||S.siswa.some(s=>!klsOk(s.kelas))}
+async function kelasInit(){
+  if(klsPerlu()&&S.siswa.length)try{if(!(await DB.get('cadanganSebelumMultikelas')))await DB.set('cadanganSebelumMultikelas',{tgl:new Date().toISOString(),pengaturan:klsKlon(S.set),siswa:klsKlon(S.siswa)})}catch(_){}
+  const ubah=klsPerlu();
+  if(!klsOk(S.set.kelasAktif)){S.set.kelasAktif=KLS_LAMA;if(!S.set.kode)S.set.kode=KLS_LAMA}
+  S.siswa.forEach(s=>{if(!klsOk(s.kelas))s.kelas=KLS_LAMA});
+  S.set.kls||(S.set.kls={});if(!S.set.kls[S.set.kelasAktif])kelasSimpan();else kelasMuat();
+  ksBuat();if(ubah){try{await DB.saveSiswa(S.siswa);await DB.set('pengaturan',S.set)}catch(_){}}}
+function kelasPilih(k){if(!klsOk(k)||k===S.set.kelasAktif)return;kelasSimpan();S.set.kelasAktif=k;S.set.kls||(S.set.kls={});if(!S.set.kls[k])S.set.kls[k]=klsBawaan(k);kelasMuat();
+  S.rp=0;S.in.i=0;S.in.j=0;S.in.cp=false;S.in.fb=false;if(typeof ST!=='undefined'){ST.i=0;ST.mulai=0}S.sel=new Set();ksBuat();autoSet();saved()}
+function kelasUI(){const e=$('#kelasSel');if(!e)return;const a=S.set.kelasAktif,n={};S.siswa.forEach(s=>n[s.kelas]=(n[s.kelas]||0)+1);
+  e.innerHTML=KLS_ALL.map(k=>`<option value="${k}"${k===a?' selected':''}>Kelas ${k}${n[k]?` (${n[k]})`:''}</option>`).join('')}
+{const _s=DB.set;DB.set=(k,v)=>{if(k==='pengaturan'&&v===S.set)kelasSimpan();return _s(k,v)}}
+function urutAZ(){ksBuat();const ac=[S.ks[S.rp],S.ks[S.in.i],typeof ST!=='undefined'?S.ks[ST.i]:0];
+  S.siswa.sort((a,b)=>cmpNama(a.nama,b.nama)||(a.no||0)-(b.no||0));const c={};S.siswa.forEach(x=>{c[x.kelas]=(c[x.kelas]||0)+1;x.no=c[x.kelas]});
+  ksBuat();const f=o=>{const k=S.ks.indexOf(o);return k<0?0:k};if(ac[0])S.rp=f(ac[0]);if(ac[1])S.in.i=f(ac[1]);if(ac[2])ST.i=f(ac[2])}
 function cek(d,id){if(!d.nama)return'Nama wajib diisi.';
   if(d.nis&&!/^\d{6}$/.test(d.nis))return'NIS harus 6 angka.';
   if(d.nisn&&!/^\d{9,10}$/.test(d.nisn))return'NISN harus 9–10 angka.';
-  if(S.siswa.some(s=>s.id!==id&&s.nama===d.nama))return'Nama sudah ada di daftar.';return''}
-function form(id){const s=S.siswa.find(x=>x.id===id)||{nama:'',nis:'',nisn:''};const d=document.createElement('dialog');
+  if(S.ks.some(s=>s.id!==id&&s.nama===d.nama))return'Nama sudah ada di daftar.';return''}
+function form(id){const s=S.ks.find(x=>x.id===id)||{nama:'',nis:'',nisn:''};const d=document.createElement('dialog');
   d.innerHTML=`<form method="dialog" class="dlg"><h3>${id?'Ubah':'Tambah'} siswa</h3>
   <label>Nama<input type="text" name="nama" value="${esc(s.nama)}" autocomplete="off"></label>
   <label>NIS (6 angka, boleh kosong)<input type="text" name="nis" inputmode="numeric" value="${esc(s.nis)}"></label>
@@ -647,7 +674,7 @@ function bindSiswa(){bindRekap();bindKlp();$('#add').onclick=()=>form();
 document.addEventListener('click',e=>{const m=document.getElementById('mnu');if(m&&!m.hidden&&!e.target.closest('.mw')){m.hidden=true;const b=document.getElementById('mnuB');if(b)b.setAttribute('aria-expanded','false')}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const m=document.getElementById('mnu');if(m&&!m.hidden)m.hidden=true}});
 const kChip=(s,j)=>{const g=klpAda(s,j);return g?`<span class="kc g${g}">${esc(klpNamaOf(j,g))}</span>`:'<span class="mut">–</span>'};
-function panelSis(){const P=$('#sisPanel');if(!P)return;const s=S.siswa.find(x=>x.id===SELS);
+function panelSis(){const P=$('#sisPanel');if(!P)return;const s=S.ks.find(x=>x.id===SELS);
   document.querySelectorAll('.sw[data-r]').forEach(r=>r.classList.toggle('sel',!!s&&DESK()&&r.dataset.r===SELS));
   if(!DESK()){P.innerHTML='';return}
   if(!s){SELS='';P.innerHTML='<div class="card"><p class="mut">Pilih siswa di daftar untuk melihat detail. Tombol ↑/↓ memindahkan pilihan.</p></div>';return}
@@ -657,21 +684,21 @@ function panelSis(){const P=$('#sisPanel');if(!P)return;const s=S.siswa.find(x=>
   <div class="row"><button class="btn" data-pa="u">Ubah</button><button class="btn ghost" data-pa="x">Tutup</button></div>
   <div style="border-top:1px solid var(--ln);padding-top:12px;margin-top:12px"><button class="btn red" data-pa="h">Hapus siswa</button></div></div>`;
   P.onclick=e=>{const a=e.target.closest('button');if(!a)return;const k=a.dataset.pa;if(k==='u')form(SELS);else if(k==='h')hapus(SELS);else{SELS='';panelSis()}}}
-function gsIsi(){const d=$('#gsDl');if(d)d.innerHTML=S.siswa.map(s=>`<option value="${esc(s.nama)}">`).join('')}
-function gsLompat(){const i=$('#gsIn'),q=i.value.trim();if(!q)return;const L=S.siswa.map((s,k)=>[s,k]),f=L.find(([s])=>s.nama.toLowerCase()===q.toLowerCase())||L.find(([s])=>cariCocok(s.nama,q));
+function gsIsi(){const d=$('#gsDl');if(d)d.innerHTML=S.ks.map(s=>`<option value="${esc(s.nama)}">`).join('')}
+function gsLompat(){const i=$('#gsIn'),q=i.value.trim();if(!q)return;const L=S.ks.map((s,k)=>[s,k]),f=L.find(([s])=>s.nama.toLowerCase()===q.toLowerCase())||L.find(([s])=>cariCocok(s.nama,q));
   if(!f)return toast('Siswa tidak ditemukan.');i.value='';const [s,k]=f;
   if(S.page==='setoran'){if(!urutSetor(ST.j).includes(k))ST.kg[ST.j]=0;ST.i=k;ST.ket='';prefillSt();render()}
   else if(S.page==='nilai'&&S.in.mode==='siswa'){S.in.i=k;render()}
   else if(S.page==='rapor'){S.rp=k;render()}
   else{if(S.page!=='siswa')go('siswa');SELS=s.id;render();const r=document.querySelector(`.sw[data-r="${s.id}"]`);if(r)r.scrollIntoView({block:'center'})}}
-function stQueue(){return '<div class="stq-h">↑/↓ ganti siswa · Enter simpan</div>'+urutSetor(ST.j).map(k=>{const x=S.siswa[k],ok=sdHari(x,ST.j);return `<button class="stqi${k===ST.i?' on':''}${ok?' ok':''}" data-sq="${k}"><b>${x.no}</b><span>${esc(x.nama)}</span><i>${ok?'✓':''}</i></button>`}).join('')}
+function stQueue(){return '<div class="stq-h">↑/↓ ganti siswa · Enter simpan</div>'+urutSetor(ST.j).map(k=>{const x=S.ks[k],ok=sdHari(x,ST.j);return `<button class="stqi${k===ST.i?' on':''}${ok?' ok':''}" data-sq="${k}"><b>${x.no}</b><span>${esc(x.nama)}</span><i>${ok?'✓':''}</i></button>`}).join('')}
 document.addEventListener('keydown',e=>{if(S.page!=='setoran'||!DESK()||document.querySelector('dialog[open]'))return;const T=e.target.tagName;
   if(e.key==='ArrowDown'||e.key==='ArrowUp'){if(T!=='BODY'&&T!=='BUTTON')return;const q=urutSetor(ST.j);if(q.length<2)return;e.preventDefault();
     ST.i=q[(q.indexOf(ST.i)+(e.key==='ArrowDown'?1:-1)+q.length)%q.length];ST.ket='';prefillSt();const y=scrollY;render();scrollTo(0,y)}
   else if(e.key==='Enter'&&!e.shiftKey&&(T==='BODY'||(T==='INPUT'&&e.target.type!=='checkbox'))){e.preventDefault();simpanSt()}});
 matchMedia('(min-width:1024px)').addEventListener('change',()=>{if(S.page==='siswa'||S.page==='setoran')render()});
 /* Detail siswa: ketuk baris; Ubah dan Hapus ada di sini */
-function detail(id){const s=S.siswa.find(x=>x.id===id);if(!s)return;if(DESK()){SELS=id;return panelSis()}const d=document.createElement('dialog');
+function detail(id){const s=S.ks.find(x=>x.id===id);if(!s)return;if(DESK()){SELS=id;return panelSis()}const d=document.createElement('dialog');
   d.innerHTML=`<div class="dlg"><h3>${esc(s.nama)}</h3>
   <p class="mut">No. absen ${s.no}<br>NIS ${esc(s.nis)||'–'} · NISN ${esc(s.nisn)||'–'}</p>${klpBadge(s)}
   <div class="row" style="margin-top:4px"><button class="btn" data-a="u">Ubah</button><button class="btn ghost" data-a="x">Tutup</button></div>
@@ -697,7 +724,7 @@ async function impor(e){const f=e.target.files[0];e.target.value='';if(!f)return
       s.pcBTQ=pcParse(T('CH'+r));s.pcTah=pcParse(T('CI'+r));s.tahap=[0,1,2,3,4].map(i=>T(C('CJ',i)+r).toUpperCase());list.push(s)}
     if(!list.length)return toast('Tidak ada siswa ditemukan di sheet leger (kolom NAMA, mulai baris 9).');
     if(!confirm(`Impor ${list.length} siswa dari "${f.name}"?\nData siswa dan identitas kelas saat ini akan diganti.`))return;
-    S.siswa=list;[['kelas','D1'],['guru','D2'],['semester','D3'],['tempat','D4'],['target','D5']].forEach(([k,a])=>{if(T(a))S.set[k]=T(a)});if(T('D4')){delete S.set.kota;delete S.set.tgl}migrasi();
+    S.siswa=S.siswa.filter(s=>s.kelas!==S.set.kelasAktif).concat(list);[['kelas','D1'],['guru','D2'],['semester','D3'],['tempat','D4'],['target','D5']].forEach(([k,a])=>{if(T(a))S.set[k]=T(a)});if(T('D4')){delete S.set.kota;delete S.set.tgl}migrasi();
     persist();render();toast(`${list.length} siswa diimpor${warn?`; ${warn} NIS/NISN perlu dicek`:''}.`)
   }catch(_){toast('File tidak dapat dibaca. Pastikan ini file leger .xlsx.')}}
 /* ===== INPUT NILAI: per siswa (geser) & per kolom ===== */
@@ -727,14 +754,14 @@ const nbBisa=t=>t==='tahfidz'||(t==='tahap'&&jzIn()===30);
 const nbHitung=(L,its)=>L.reduce((a,s)=>a+its.filter(it=>belumNilai(s,it)).length,0);
 const nbTag='<b class="nbt">belum dinilai</b>';
 const fbOn=()=>!!S.in.fb&&nbBisa(S.in.tab);
-const chipIn=(k,t)=>{const its=itemsJuz(k),n=nbBisa(k)?nbHitung(S.siswa,its):0;
-  return `${t.replace('Juz 30','Juz '+juzLbl(jzIn()))} <small>${pcent(S.siswa,its)}%</small>${n?`<small class="nbc">⚠${n}</small>`:''}`};
+const chipIn=(k,t)=>{const its=itemsJuz(k),n=nbBisa(k)?nbHitung(S.ks,its):0;
+  return `${t.replace('Juz 30','Juz '+juzLbl(jzIn()))} <small>${pcent(S.ks,its)}%</small>${n?`<small class="nbc">⚠${n}</small>`:''}`};
 const row=(l,s,j)=>`<div class="it"><span>${esc(l)}${belumNilai(s,ITEMS[j])?nbTag:''}</span>${ctl(s,j)}</div>`;
 const nlWrn={A:'#12b5c4','A-':'#4c7dff',B:'#f5a524',C:'#e5484d','-':'#8b93a7',Tercapai:'#12b5c4',Melampaui:'#4c7dff',Tidak:'#e5484d'};
-function infoNl(){const I=S.in,ks=S.siswa,N=ks.length,n=nbBisa(I.tab)?nbHitung(I.mode==='siswa'?[ks[I.i]]:ks,I.mode==='siswa'?ITEMS:[ITEMS[I.j]]):0,x=n?` · ${n} belum dinilai`:'';
+function infoNl(){const I=S.in,ks=S.ks,N=ks.length,n=nbBisa(I.tab)?nbHitung(I.mode==='siswa'?[ks[I.i]]:ks,I.mode==='siswa'?ITEMS:[ITEMS[I.j]]):0,x=n?` · ${n} belum dinilai`:'';
   return I.mode==='siswa'?`${I.i+1} dari ${N} · terisi ${pcent([ks[I.i]],ITEMS)}%${x}`:`Terisi ${pcent(ks,[ITEMS[I.j]])}% · ketuk nilai lagi untuk mengosongkan.${x}`}
-const fbLabel=()=>`Hanya belum dinilai (${nbHitung(S.siswa,ITEMS)})`;
-function ringkasKolom(){const I=S.in,it=ITEMS[I.j],ks=S.siswa,pc=!!it.pc,ord=pc?['Melampaui','Tercapai','Tidak']:['A','A-','B','C','-'];
+const fbLabel=()=>`Hanya belum dinilai (${nbHitung(S.ks,ITEMS)})`;
+function ringkasKolom(){const I=S.in,it=ITEMS[I.j],ks=S.ks,pc=!!it.pc,ord=pc?['Melampaui','Tercapai','Tidak']:['A','A-','B','C','-'];
   const vs=ks.map(s=>val(s,it)),cnt={},kos=vs.filter(v=>!v).length;ord.forEach(k=>cnt[k]=0);
   vs.forEach(v=>{if(!v)return;const k=pc?v:(BK[v]||v);cnt[k]=(cnt[k]||0)+1});
   const bar=ord.filter(k=>cnt[k]).map(k=>`<span style="flex:${cnt[k]};background:${nlWrn[k]||'#8b93a7'}" title="${esc(k)}: ${cnt[k]}"></span>`).join('')+(kos?`<span style="flex:${kos};background:var(--ln)" title="Kosong: ${kos}"></span>`:'');
@@ -747,24 +774,24 @@ function ringkasKolom(){const I=S.in,it=ITEMS[I.j],ks=S.siswa,pc=!!it.pc,ord=pc?
   if(!ITEMS.some(x=>x.pc)){const W=ITEMS.map((x,j)=>[j,ks.filter(s=>{const n=NILAI[val(s,x)];return n!=null&&n<=65}).length]).filter(a=>a[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,3);
     if(W.length)wi=`<p class="mut" style="margin:8px 0 4px">Item paling banyak nilai C/Maqbul:</p><div class="nsb">${W.map(([j,n])=>`<button class="sm" data-colgo="${j}">${esc(ITEMS[j].l)} (${n})</button>`).join('')}</div>`}
   return `<div class="nbar">${bar}</div><div class="nleg">${leg}</div>${rt}${low}${wi}`}
-const cpIdx=()=>{const I=S.in,N=S.siswa.length,M=ITEMS.length;return I.mode==='siswa'?I.i*M+I.j:I.j*N+I.i};
-function cpGo(k){const I=S.in,N=S.siswa.length,M=ITEMS.length,t=N*M;k=((k%t)+t)%t;if(I.mode==='siswa'){I.i=Math.floor(k/M);I.j=k%M}else{I.j=Math.floor(k/N);I.i=k%N}}
-function cpOk(k){const I=S.in,N=S.siswa.length,M=ITEMS.length;let i,j;if(I.mode==='siswa'){i=Math.floor(k/M);j=k%M}else{j=Math.floor(k/N);i=k%N}
-  const s=S.siswa[i],it=ITEMS[j];return fbOn()?belumNilai(s,it):!val(s,it)}
-function cpCari(from,dir){const t=S.siswa.length*ITEMS.length;for(let n=1;n<=t;n++){const k=(((from+dir*n)%t)+t)%t;if(cpOk(k))return k}return -1}
-function viewCepat(){const I=S.in,N=S.siswa.length,M=ITEMS.length,s=S.siswa[I.i],it=ITEMS[I.j];
+const cpIdx=()=>{const I=S.in,N=S.ks.length,M=ITEMS.length;return I.mode==='siswa'?I.i*M+I.j:I.j*N+I.i};
+function cpGo(k){const I=S.in,N=S.ks.length,M=ITEMS.length,t=N*M;k=((k%t)+t)%t;if(I.mode==='siswa'){I.i=Math.floor(k/M);I.j=k%M}else{I.j=Math.floor(k/N);I.i=k%N}}
+function cpOk(k){const I=S.in,N=S.ks.length,M=ITEMS.length;let i,j;if(I.mode==='siswa'){i=Math.floor(k/M);j=k%M}else{j=Math.floor(k/N);i=k%N}
+  const s=S.ks[i],it=ITEMS[j];return fbOn()?belumNilai(s,it):!val(s,it)}
+function cpCari(from,dir){const t=S.ks.length*ITEMS.length;for(let n=1;n<=t;n++){const k=(((from+dir*n)%t)+t)%t;if(cpOk(k))return k}return -1}
+function viewCepat(){const I=S.in,N=S.ks.length,M=ITEMS.length,s=S.ks[I.i],it=ITEMS[I.j];
   return `<div class="card cpw"><div class="cph"><span class="mut">${cpIdx()+1} / ${N*M}${fbOn()?' · hanya belum dinilai':''}</span><b>${esc(s.nama)}</b></div><div class="cpi">${esc(it.l)}${belumNilai(s,it)?nbTag:''}</div>${ctl(s,I.j)}<div class="row cpn"><button class="btn ghost" data-qn="-1">‹ Sebelumnya</button><button class="btn ghost" data-qn="1">Berikutnya ›</button></div><button class="btn" data-qe="1" style="width:100%;margin-top:8px">${fbOn()?'Lompat ke yang belum dinilai':'Lompat ke yang masih kosong'}</button></div>`}
 function nlSnap(L,its){const r=[];L.forEach(s=>its.forEach(it=>r.push([s,it,it.pc?{status:ob(s,it).status,pos:ob(s,it).pos,raw:ob(s,it).raw}:val(s,it)])));return r}
 function nlUndo(sn){sn.forEach(([s,it,p])=>{if(it.pc)Object.assign(ob(s,it),p);else put(s,it,p)});svAll();if(S.page==='nilai')render()}
 function nilaiMeta(){const I=S.in;TABS.forEach(([k,t])=>{const c=document.querySelector(`.chip[data-tab="${k}"]`);if(c)c.innerHTML=chipIn(k,t)});
   const a=$('#nlInfo');if(a)a.textContent=infoNl();const f=document.querySelector('[data-fb]');if(f)f.textContent=fbLabel();
   const m=$('#nlSum');if(m&&I.mode==='kolom')m.innerHTML=ringkasKolom();
-  const c=$('#colsel');if(c)[...c.options].forEach((o,j)=>{const it=ITEMS[j],n=nbBisa(I.tab)?nbHitung(S.siswa,[it]):0;o.textContent=it.l+(n?` ⚠${n}`:'')})}
+  const c=$('#colsel');if(c)[...c.options].forEach((o,j)=>{const it=ITEMS[j],n=nbBisa(I.tab)?nbHitung(S.ks,[it]):0;o.textContent=it.l+(n?` ⚠${n}`:'')})}
 function nilaiSegar(b,s){const I=S.in,e=b.closest('.it'),j=+b.dataset.j;if(!e)return render();
   e.outerHTML=row(I.mode==='siswa'?ITEMS[j].l:`${s.no}. ${s.nama}`,s,j);nilaiMeta()}
-function viewNilai(){const N=S.siswa.length;
+function viewNilai(){const N=S.ks.length;
   if(!N)return `<h1>Input Nilai</h1><div class="card"><p class="mut">Belum ada siswa. Tambahkan atau impor dulu di halaman Siswa.</p></div>`;
-  const I=S.in,ks=S.siswa;I.i=Math.min(I.i,N-1);if(jzIn()!==30&&I.tab==='pc')I.tab='tahfidz';ITEMS=itemsJuz(I.tab);I.j=Math.min(I.j,ITEMS.length-1);
+  const I=S.in,ks=S.ks;I.i=Math.min(I.i,N-1);if(jzIn()!==30&&I.tab==='pc')I.tab='tahfidz';ITEMS=itemsJuz(I.tab);I.j=Math.min(I.j,ITEMS.length-1);
   const chips=TABS.filter(x=>x[0]!=='pc'||jzIn()===30).map(([k,t])=>`<button class="chip${k===I.tab?' on':''}" data-tab="${k}">${chipIn(k,t)}</button>`).join('');
   const sw=m=>`<button class="${I.mode===m?'on':''}" data-mode="${m}">${m==='siswa'?'Per siswa':'Per kolom'}</button>`;
   const o=ITEMS[I.mode==='siswa'?0:I.j],fill=`<div class="seg">${(o.pc?PO:o.o).map(([v,l])=>`<button data-fill="${esc(v)}">${l}</button>`).join('')}</div>`;
@@ -780,34 +807,34 @@ function viewNilai(){const N=S.siswa.length;
     <div class="card" style="margin-top:14px"><details><summary>Isi massal & salin</summary><p class="mut" style="margin:8px 0">Isi semua siswa untuk "${esc(it.l)}":</p>${fill}${it.pc?'':`<p class="mut" style="margin:12px 0 6px">Salin dari kolom lain:</p><div class="row"><select id="cp"><option value="">Pilih kolom…</option>${ITEMS.map((x,j)=>j===I.j?'':`<option value="${j}">${esc(x.l)}</option>`).join('')}</select><button class="btn ghost" data-cp="1">Salin</button></div>`}</details></div>`}
   return `<h1>Input Nilai</h1><div class="seg" style="margin-bottom:12px">${sw('siswa')}${sw('kolom')}</div><label style="margin-bottom:10px">Juz<select id="juzsel">${rjOpsi().map(n=>`<option value="${n}"${n===jzIn()?' selected':''}>Juz ${juzLbl(n)}${n===30?' (rapor lama)':''}</option>`).join('')}</select></label><div class="chips">${chips}</div>${tools}${jzIn()!==30?'<p class="mut" style="margin:0 0 10px">Pencapaian paket juz ini otomatis: tahfidz = Melampaui target; BTQ mengikuti setoran BTQ terakhir.</p>':''}${body}`}
 function bindNilai(){const V=$('#view');let x0=0;
-  V.onclick=e=>{if(S.page!=='nilai')return;const b=e.target.closest('button');if(!b)return;const I=S.in,d=b.dataset,N=S.siswa.length,sy=scrollY,re=()=>{render();scrollTo(0,sy)};
+  V.onclick=e=>{if(S.page!=='nilai')return;const b=e.target.closest('button');if(!b)return;const I=S.in,d=b.dataset,N=S.ks.length,sy=scrollY,re=()=>{render();scrollTo(0,sy)};
     if(d.tab){I.tab=d.tab;I.j=0;return re()}
     if(d.mode){I.mode=d.mode;return re()}
     if(d.qm){I.cp=!I.cp;return re()}
     if(d.fb){I.fb=!I.fb;return re()}
     if(d.qn){cpGo(cpIdx()+ +d.qn);return re()}
     if(d.qe){const k=cpCari(cpIdx(),1);if(k<0)return toast(fbOn()?'Semua sudah dinilai.':'Semua terisi.');cpGo(k);return re()}
-    if(d.jump){const i=S.siswa.findIndex(z=>z.id===d.jump);if(i<0)return;I.mode='siswa';I.i=i;I.cp=false;return re()}
+    if(d.jump){const i=S.ks.findIndex(z=>z.id===d.jump);if(i<0)return;I.mode='siswa';I.i=i;I.cp=false;return re()}
     if(d.colgo!==undefined){I.mode='kolom';I.j=+d.colgo;I.cp=false;return re()}
     if(d.nav){I.i=(I.i+ +d.nav+N)%N;return re()}
-    if(d.s&&d.v!==undefined){const s=S.siswa.find(z=>z.id===d.s),it=ITEMS[+d.j];put(s,it,val(s,it)===d.v?'':d.v);sv(s);
+    if(d.s&&d.v!==undefined){const s=S.ks.find(z=>z.id===d.s),it=ITEMS[+d.j];put(s,it,val(s,it)===d.v?'':d.v);sv(s);
       if(I.cp){if(val(s,it)&&!it.pc){const k=cpCari(cpIdx(),1);if(k<0)toast(fbOn()?'Semua sudah dinilai.':'Semua terisi.');else cpGo(k)}return re()}
       return nilaiSegar(b,s)}
-    if(d.fill!==undefined){const L=I.mode==='siswa'?[S.siswa[I.i]]:S.siswa,its=I.mode==='siswa'?ITEMS:[ITEMS[I.j]];
+    if(d.fill!==undefined){const L=I.mode==='siswa'?[S.ks[I.i]]:S.ks,its=I.mode==='siswa'?ITEMS:[ITEMS[I.j]];
       if(L.some(s=>its.some(it=>val(s,it)))&&!confirm('Sebagian sudah terisi. Timpa semuanya?'))return;
       const sn=nlSnap(L,its);L.forEach(s=>its.forEach(it=>put(s,it,d.fill)));svAll();re();return toast('Terisi.',()=>nlUndo(sn))}
     if(d.cp){const v=$('#cp').value;if(v==='')return toast('Pilih sumber salinan dulu.');let sn;
-      if(I.mode==='siswa'){const src=S.siswa.find(z=>z.id===v),t=S.siswa[I.i];if(!confirm(`Salin semua nilai tab ini dari ${src.nama}?`))return;sn=nlSnap([t],ITEMS);
+      if(I.mode==='siswa'){const src=S.ks.find(z=>z.id===v),t=S.ks[I.i];if(!confirm(`Salin semua nilai tab ini dari ${src.nama}?`))return;sn=nlSnap([t],ITEMS);
         ITEMS.forEach(it=>{if(it.pc)Object.assign(ob(t,it),{status:ob(src,it).status,pos:ob(src,it).pos,raw:ob(src,it).raw});else put(t,it,val(src,it))})}
-      else{const a=ITEMS[+v],t=ITEMS[I.j];if(!confirm(`Salin "${a.l}" ke "${t.l}" untuk semua siswa?`))return;sn=nlSnap(S.siswa,[t]);S.siswa.forEach(s=>put(s,t,val(s,a)))}
+      else{const a=ITEMS[+v],t=ITEMS[I.j];if(!confirm(`Salin "${a.l}" ke "${t.l}" untuk semua siswa?`))return;sn=nlSnap(S.ks,[t]);S.ks.forEach(s=>put(s,t,val(s,a)))}
       svAll();re();return toast('Tersalin.',()=>nlUndo(sn))}};
   V.oninput=e=>{const t=e.target;if(S.page!=='nilai'||!t.classList.contains('pos'))return;
-    const s=S.siswa.find(z=>z.id===t.dataset.s),p=ob(s,ITEMS[+t.dataset.j]);p.pos=t.value.trim();p.raw=pcText(p);sv(s)};
+    const s=S.ks.find(z=>z.id===t.dataset.s),p=ob(s,ITEMS[+t.dataset.j]);p.pos=t.value.trim();p.raw=pcText(p);sv(s)};
   V.onchange=e=>{if(S.page==='nilai'&&e.target.id==='colsel'){S.in.j=+e.target.value;render()}
     if(S.page==='nilai'&&e.target.id==='juzsel'){S.in.juz=+e.target.value;S.in.j=0;render()}};
   V.ontouchstart=e=>{x0=e.touches[0].clientX};
   V.ontouchend=e=>{if(S.page!=='nilai'||S.in.mode!=='siswa'||S.in.cp||/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;
-    const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>70){const N=S.siswa.length;S.in.i=(S.in.i+(dx<0?1:-1)+N)%N;render()}}}
+    const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>70){const N=S.ks.length;S.in.i=(S.in.i+(dx<0?1:-1)+N)%N;render()}}}
 /* ===== SETORAN HARIAN (tahfidz & BTQ) -> otomatis ke Pencapaian rapor ===== */
 const NS=[7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6];
 const SN=["Al-Fatihah","Al-Baqarah","Ali 'Imran","An-Nisa'","Al-Ma'idah","Al-An'am","Al-A'raf","Al-Anfal","At-Taubah","Yunus","Hud","Yusuf","Ar-Ra'd","Ibrahim","Al-Hijr","An-Nahl","Al-Isra'","Al-Kahfi","Maryam","Thaha","Al-Anbiya'","Al-Hajj","Al-Mu'minun","An-Nur","Al-Furqan","Asy-Syu'ara'","An-Naml","Al-Qashash","Al-'Ankabut","Ar-Rum","Luqman","As-Sajdah","Al-Ahzab","Saba'","Fathir","Yasin","Ash-Shaffat","Shad","Az-Zumar","Ghafir","Fushshilat","Asy-Syura","Az-Zukhruf","Ad-Dukhan","Al-Jatsiyah","Al-Ahqaf","Muhammad","Al-Fath","Al-Hujurat","Qaf","Adz-Dzariyat","Ath-Thur","An-Najm","Al-Qamar","Ar-Rahman","Al-Waqi'ah","Al-Hadid","Al-Mujadilah","Al-Hasyr","Al-Mumtahanah","Ash-Shaff","Al-Jumu'ah","Al-Munafiqun","At-Taghabun","Ath-Thalaq","At-Tahrim","Al-Mulk","Al-Qalam","Al-Haqqah","Al-Ma'arij","Nuh","Al-Jinn","Al-Muzzammil","Al-Muddatstsir","Al-Qiyamah","Al-Insan","Al-Mursalat","An-Naba'","An-Nazi'at","'Abasa","At-Takwir","Al-Infithar","Al-Muthaffifin","Al-Insyiqaq","Al-Buruj","Ath-Thariq","Al-A'la","Al-Ghasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Adh-Dhuha","Asy-Syarh","At-Tin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qari'ah","At-Takatsur","Al-'Ashr","Al-Humazah","Al-Fil","Quraisy","Al-Ma'un","Al-Kautsar","Al-Kafirun","An-Nashr","Al-Lahab","Al-Ikhlash","Al-Falaq","An-Nas"];
@@ -856,7 +883,7 @@ const hari=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth(
 const lastSet=(s,j)=>(s.setoran||[]).filter(x=>x.j===j&&x.maju).sort((a,b)=>a.tgl<b.tgl?-1:a.tgl>b.tgl?1:a.t-b.t).pop();
 const opt=(arr,cur,ph)=>`<option value="">${ph}</option>`+arr.map(([v,l])=>`<option value="${v}"${String(v)===String(cur)?' selected':''}>${esc(l)}</option>`).join('');
 const ST={j:'tahfidz',i:0,tgl:hari(),juz:'',surat:'',ayat:'',selesai:false,status:'Bertambah',ket:'',bm:'iqra',iqra:'',hal:'',baris:''};
-function prefillSt(){const s=S.siswa[ST.i],e=s&&lastSet(s,ST.j);ST.ayat='';ST.selesai=false;ST.hal='';ST.baris='';
+function prefillSt(){const s=S.ks[ST.i],e=s&&lastSet(s,ST.j);ST.ayat='';ST.selesai=false;ST.hal='';ST.baris='';
   if(e){ST.juz=e.juz||'';ST.surat=e.surat||'';if(e.bm)ST.bm=e.bm;if(e.iqra)ST.iqra=e.iqra;if(ST.j==='btq'&&e.bm==='iqra'){ST.hal=e.hal||''}}
   else{ST.juz='';ST.surat=''}ST.tm=(e&&e.tahap)?'tahap':'surat';ST.tahap=(e&&e.tahap)?String(e.tahap):'';ST.ntp='';ST.harus=false;ST.nilai=(s&&ST.j==='tahfidz'&&ST.juz&&ST.surat)?nilaiAmbil(s,ST.juz,+ST.surat):''}
 function posTeks(e){if(e.tahap)return 'Tahap '+e.tahap+(e.selesai?', selesai':'');if(e.j==='tahfidz')return e.selesai?`${SN[e.surat-1]}, selesai`:`${SN[e.surat-1]} ayat ${e.ayat}`;
@@ -870,10 +897,10 @@ function quranFields(){const L=ST.juz?juzSurat(+ST.juz):[],cur=L.find(x=>x.n===+
   <label>Surat<select data-f="surat"${ST.juz?'':' disabled'}>${opt(L.map(x=>[x.n,`${x.n}. ${x.nama}`]),ST.surat,'– pilih surat –')}</select></label>
   <label>Ayat${cur?` <span class="mut">(ayat ${cur.lo}–${cur.hi} di juz ini)</span>`:''}<select data-f="ayat"${cur?'':' disabled'}>${opt(ay,ST.ayat,'– pilih ayat –')}</select></label>
   <label class="ck"><input type="checkbox" data-f="selesai"${ST.selesai?' checked':''}> Selesai (surat ini tuntas)</label>`}
-function viewSetoran(){const N=S.siswa.length;
+function viewSetoran(){const N=S.ks.length;
   if(!N)return `<h1>Setoran Harian</h1><div class="card"><p class="mut">Belum ada siswa. Tambahkan atau impor dulu di halaman Siswa.</p></div>`;
-  ST.i=Math.min(ST.i,N-1);{const q=urutSetor(ST.j);if(!q.length)return viewSetoranKosong();if(!q.includes(ST.i)){ST.i=q[0];prefillSt()}}const s=S.siswa[ST.i],last=lastSet(s,ST.j),pc=ST.j==='tahfidz'?s.pcTah:s.pcBTQ;
-  const qg=urutSetor(ST.j),Ng=qg.length,sudah=qg.filter(k=>sdHari(S.siswa[k],ST.j)).length;
+  ST.i=Math.min(ST.i,N-1);{const q=urutSetor(ST.j);if(!q.length)return viewSetoranKosong();if(!q.includes(ST.i)){ST.i=q[0];prefillSt()}}const s=S.ks[ST.i],last=lastSet(s,ST.j),pc=ST.j==='tahfidz'?s.pcTah:s.pcBTQ;
+  const qg=urutSetor(ST.j),Ng=qg.length,sudah=qg.filter(k=>sdHari(S.ks[k],ST.j)).length;
   const sw=(k,t)=>`<button class="${ST.j===k?'on':''}" data-j="${k}">${t}</button>`;
   let f;
   if(ST.j==='tahfidz')f=`${tmSeg()}${ST.tm==='tahap'?fldTahap():quranFields()+fldNilai()}<label>Status<select data-f="status">${opt([['Bertambah','Bertambah (hafalan baru)'],['Mengulang','Mengulang'],['Murojaah','Murojaah']],ST.status,'')}</select></label>`;
@@ -888,7 +915,7 @@ function viewSetoran(){const N=S.siswa.length;
   const tgc=tg?`<div class="card" style="margin-bottom:12px"><h3>Target kelas ${kelasNo()} semester ${smtNo()}</h3><p style="font-size:14px"><b>Tahfidz:</b> ${esc(tg.tl)}${gp?` – ${esc(s.nama.split(' ')[0])} tuntas ${gp.n} dari ${gp.tot} surat`:''}<br><b>BTQ:</b> ${esc(tg.bl)}</p><div class="row"><button class="btn ghost" id="tgApply">Terapkan target ke rapor</button></div></div>`
    :`<div class="card" style="margin-bottom:12px"><p class="mut">Target belum dikenali. Pastikan Kelas dan Semester di Pengaturan diawali angka Romawi, mis. "IV (Empat)" dan "II (Dua)".</p></div>`;
   return `<h1>Setoran Harian</h1><div class="stw"><div class="stA">${tgc}</div><div class="stB"><div class="seg" style="margin-bottom:12px">${sw('tahfidz','Tahfidz')}${sw('btq','BTQ')}</div>${klpSeg('kg',ST.j,ST.kg[ST.j])}</div><div class="stQ">${stQueue()}</div><div class="stC">
-  <div class="card"><div class="nav"><button class="sm" data-snav="-1" aria-label="Sebelumnya">‹</button><div class="mid"><select id="stsel">${urutSetor(ST.j).map(k=>{const x=S.siswa[k];return `<option value="${k}"${k===ST.i?' selected':''}>${sdHari(x,ST.j)?'✓ ':''}${x.no}. ${esc(x.nama)}</option>`}).join('')}</select></div><button class="sm" data-snav="1" aria-label="Berikutnya">›</button></div>
+  <div class="card"><div class="nav"><button class="sm" data-snav="-1" aria-label="Sebelumnya">‹</button><div class="mid"><select id="stsel">${urutSetor(ST.j).map(k=>{const x=S.ks[k];return `<option value="${k}"${k===ST.i?' selected':''}>${sdHari(x,ST.j)?'✓ ':''}${x.no}. ${esc(x.nama)}</option>`}).join('')}</select></div><button class="sm" data-snav="1" aria-label="Berikutnya">›</button></div>
    <p class="mut" style="text-align:center;margin-bottom:10px">Sudah setor ${tglF(ST.tgl)}: ${sudah} dari ${Ng} siswa • sisa antrean ${Ng-sudah}</p>
    <div class="row" style="justify-content:center;margin:0 0 10px"><button class="sm" id="stUrut">${ST.urut==='auto'?'Urutan: terlama belum setor · ganti ke nomor absen':'Urutan: nomor absen · ganti ke otomatis'}</button></div>
    <p class="mut" style="text-align:center;margin-bottom:10px">Terakhir setor: ${tglAkhir(s,ST.j)?tglF(tglAkhir(s,ST.j)):'belum pernah'}</p>
@@ -899,7 +926,7 @@ function viewSetoran(){const N=S.siswa.length;
     <button class="btn" id="stSave">💾 Simpan setoran & berikutnya</button></div></div></div><div class="stD">
   <div class="card" style="margin-top:14px"><details><summary>Riwayat ${ST.j==='tahfidz'?'tahfidz':'BTQ'} (${esc(s.nama)})</summary>${rw.length?rw.map(e=>`<div class="att"><div><b>${esc(e.pos)}${e.maju?'':' <span class="mut">('+esc(e.status)+')</span>'}</b><span class="mut">${tglF(e.tgl)}${e.ket?' • '+esc(e.ket):''}${e.nilai?' • nilai '+esc(e.nilai==='-'?'–':e.nilai):''}${e.harus?(e.j==='tahfidz'?' • harus setor ke koordinator':' • harus setor'):''}</span></div><button class="sm" data-del="${e.id}">Hapus</button></div>`).join(''):'<p class="mut" style="margin-top:8px">Belum ada riwayat.</p>'}</details></div>
   <p class="mut" style="margin-top:12px">Setoran terbaru (status Bertambah) otomatis jadi isi kolom Pencapaian di rapor. Tercapai bila semua surat target sudah tuntas (tahfidz) atau sudah sampai jilid target (BTQ, tidak perlu tamat); bisa diubah manual di Input Nilai › Pencapaian.</p></div></div>`}
-function simpanSt(){const s=S.siswa[ST.i],q=ST.j==='tahfidz'||ST.bm==='quran',q0=urutSetor(ST.j);let e;
+function simpanSt(){const s=S.ks[ST.i],q=ST.j==='tahfidz'||ST.bm==='quran',q0=urutSetor(ST.j);let e;
   if(!ST.tgl)return toast('Pilih tanggal dulu.');
   if(ST.j==='tahfidz'&&ST.tm==='tahap'){if(!ST.tahap)return toast('Pilih tahap dulu.');e={tahap:String(ST.tahap),selesai:!!ST.selesai}}
   else if(q){if(!ST.juz||!ST.surat)return toast('Pilih juz dan surat dulu.');if(!ST.selesai&&!ST.ayat)return toast('Pilih ayat, atau centang Selesai.');
@@ -927,8 +954,8 @@ function bindSetoran(){const V=$('#view');let sx=0,sy0=0;
     if(b.id==='stUrut'){ST.urut=ST.urut==='auto'?'absen':'auto';if(ST.urut==='auto')ST.i=urutSetor(ST.j)[0];ST.ket='';prefillSt();return re()}
     if(b.id==='stSave')return simpanSt();
     if(b.id==='tgApply'){const t=targetNow();if(!t)return;if(!confirm('Isi "Target" di rapor dan hitung ulang ketercapaian semua siswa yang sudah punya setoran? Status yang diubah manual akan ikut dihitung ulang.'))return;
-      S.set.target=targetTeks(t);S.siswa.forEach(x=>{applyPc(x,'tahfidz');applyPc(x,'btq')});svAll();toast('Target diterapkan.');return re()}
-    if(d.del){const s=S.siswa[ST.i],k=(s.setoran||[]).findIndex(x=>x.id===d.del);if(k<0)return;const [x]=s.setoran.splice(k,1);applyPc(s,x.j);sv(s);
+      S.set.target=targetTeks(t);S.ks.forEach(x=>{applyPc(x,'tahfidz');applyPc(x,'btq')});svAll();toast('Target diterapkan.');return re()}
+    if(d.del){const s=S.ks[ST.i],k=(s.setoran||[]).findIndex(x=>x.id===d.del);if(k<0)return;const [x]=s.setoran.splice(k,1);applyPc(s,x.j);sv(s);
       toast('Setoran dihapus.',()=>{s.setoran.push(x);applyPc(s,x.j);sv(s);render()});re()}};
   V.oninput=e=>{const t=e.target;if(S.page==='setoran'&&t.dataset.f==='ket')ST.ket=t.value};
   V.onchange=e=>{const t=e.target,f=t.dataset.f,sy=scrollY;if(S.page!=='setoran')return;
@@ -939,7 +966,7 @@ function bindSetoran(){const V=$('#view');let sx=0,sy0=0;
     if(f==='juz'){ST.surat='';ST.ayat='';ST.selesai=false}
     if(f==='surat'){ST.ayat='';ST.selesai=false}
     if(f==='ayat'){const L=juzSurat(+ST.juz).find(x=>x.n===+ST.surat);ST.selesai=!!(L&&+ST.ayat===L.hi)}
-    if(f==='juz')ST.nilai='';if(f==='surat')ST.nilai=ST.surat?nilaiAmbil(S.siswa[ST.i],ST.juz,+ST.surat):'';
+    if(f==='juz')ST.nilai='';if(f==='surat')ST.nilai=ST.surat?nilaiAmbil(S.ks[ST.i],ST.juz,+ST.surat):'';
     render();scrollTo(0,sy)}}
 VIEWS.setoran=viewSetoran;VIEWS.rekap=viewRekap;
 /* ===== RAPOR: render persis tata letak Excel (data tata letak = RP) ===== */
@@ -961,7 +988,7 @@ function fitText(root){root.querySelectorAll('.rp td>span').forEach(e=>{const td
   if(e.classList.contains('fit')&&td.colSpan>1){let f=parseFloat(getComputedStyle(e).fontSize);while(e.offsetWidth>td.clientWidth-2&&f>5){f-=.5;e.style.fontSize=f+'px'}}
   const o=e.offsetWidth-td.clientWidth;  /* teks rata tengah yang melebihi sel meluber ke dua sisi, seperti Excel */
   if(o>0&&cs.textAlign==='center'&&cs.whiteSpace==='pre'){e.style.display='inline-block';e.style.marginLeft=-o/2+'px'}})}
-function cetak(list,juz){autoSet();juz=juz||S.rjuz||30;list=(list||[S.siswa[S.rp]]).filter(Boolean);if(!list.length)return toast('Pilih siswa dulu.');if(!cekLengkap(list,juz))return;
+function cetak(list,juz){autoSet();juz=juz||S.rjuz||30;list=(list||[S.ks[S.rp]]).filter(Boolean);if(!list.length)return toast('Pilih siswa dulu.');if(!cekLengkap(list,juz))return;
   const pa=$('#printArea');pa.innerHTML=list.map(s=>rapJ(s,juz)).join('');fitText(pa);
   const t0=document.title;const jt=juz===30?'':'Juz'+juz+'-';document.title=list.length===1?'Rapor-'+jt+list[0].nama.replace(/\s+/g,'_'):'Rapor-'+jt+S.set.kelas.split(' ')[0]+'-'+list.length+'-siswa';
   window.onafterprint=()=>{document.title=t0;pa.innerHTML=''};setTimeout(()=>print(),60)}
@@ -1002,24 +1029,24 @@ function raporJuzHTML(s,j){const m=S.set,g=RP.lg,R=(s.rj&&s.rj[j])||{},A=R.aspek
   return `<div class="page"><div class="rj-w">${ttl}${id}${tA}${tB}${tC}${tD}${lg}${sg}</div>
   <img class="lg" alt="" src="${S.set.logo||LOGO_DEF}" style="left:${g[0]}mm;top:${g[1]}mm;width:${g[2]}mm;height:${g[3]}mm"></div>`}
 const rapJ=(s,j)=>{const m=S.set,g0=m.guru;m.guru=guruRapor(s);try{return j===30?raporHTML(s):raporJuzHTML(s,juzLead(j))}finally{m.guru=g0}};
-function viewRapor(){const N=S.siswa.length;
+function viewRapor(){const N=S.ks.length;
   if(!N)return `<h1>Rapor</h1><div class="card"><p class="mut">Belum ada siswa. Tambahkan atau impor dulu di halaman Siswa.</p></div>`;
   S.rp=Math.min(S.rp,N-1);
-  return `<h1>Rapor</h1><div class="card"><label>Juz rapor<select id="rjz">${rjOpsi().map(j=>`<option value="${j}"${j===juzLead(S.rjuz||30)?' selected':''}>Juz ${juzLbl(j)}${j===30?' (format asli)':''}</option>`).join('')}</select></label><div class="nav" style="margin-top:12px"><button class="sm" data-rn="-1" aria-label="Sebelumnya">‹</button><div class="mid"><select id="rsel">${S.siswa.map((s,i)=>`<option value="${i}"${i===S.rp?' selected':''}>${s.no}. ${esc(s.nama)}</option>`).join('')}</select></div><button class="sm" data-rn="1" aria-label="Berikutnya">›</button></div>
+  return `<h1>Rapor</h1><div class="card"><label>Juz rapor<select id="rjz">${rjOpsi().map(j=>`<option value="${j}"${j===juzLead(S.rjuz||30)?' selected':''}>Juz ${juzLbl(j)}${j===30?' (format asli)':''}</option>`).join('')}</select></label><div class="nav" style="margin-top:12px"><button class="sm" data-rn="-1" aria-label="Sebelumnya">‹</button><div class="mid"><select id="rsel">${S.ks.map((s,i)=>`<option value="${i}"${i===S.rp?' selected':''}>${s.no}. ${esc(s.nama)}</option>`).join('')}</select></div><button class="sm" data-rn="1" aria-label="Berikutnya">›</button></div>
   <div class="row"><button class="btn" id="pr">Cetak</button><button class="btn ghost" id="pdf">Unduh PDF</button></div><p class="mut" style="margin-top:10px">Di jendela cetak: kertas A4, margin "Tidak ada", skala 100%.</p></div><div class="pvw" id="pvw"><div id="pv"></div></div>
-  <div class="card" style="margin-top:14px"><details><summary>Cetak banyak siswa / satu kelas</summary><div class="row"><button class="btn" id="prAll">Cetak satu kelas (${N})</button></div><p class="mut" style="margin:12px 0 6px">Atau pilih siswa tertentu (urutan sesuai nomor absen):</p><div class="row" style="margin:0 0 6px"><button class="sm" id="ckAll">Pilih semua</button><button class="sm" id="ckNone">Kosongkan</button></div><div id="cklist">${S.siswa.map(s=>`<label class="ckr"><input type="checkbox" class="ck" value="${s.id}"${S.sel.has(s.id)?' checked':''}> ${s.no}. ${esc(s.nama)}</label>`).join('')}</div><button class="btn" id="prSel">Cetak terpilih (<span id="nsel">0</span>)</button><p class="mut" style="margin-top:10px">Di jendela cetak, pilih "Simpan sebagai PDF" untuk mendapat satu file berisi semua halaman.</p></details></div>`}
-function bindRapor(){if(!S.siswa.length)return;
-  const sh=()=>{const s=S.siswa[S.rp],pv=$('#pv');if(!s||!pv)return;pv.innerHTML=rapJ(s,S.rjuz||30);fitText(pv);
+  <div class="card" style="margin-top:14px"><details><summary>Cetak banyak siswa / satu kelas</summary><div class="row"><button class="btn" id="prAll">Cetak satu kelas (${N})</button></div><p class="mut" style="margin:12px 0 6px">Atau pilih siswa tertentu (urutan sesuai nomor absen):</p><div class="row" style="margin:0 0 6px"><button class="sm" id="ckAll">Pilih semua</button><button class="sm" id="ckNone">Kosongkan</button></div><div id="cklist">${S.ks.map(s=>`<label class="ckr"><input type="checkbox" class="ck" value="${s.id}"${S.sel.has(s.id)?' checked':''}> ${s.no}. ${esc(s.nama)}</label>`).join('')}</div><button class="btn" id="prSel">Cetak terpilih (<span id="nsel">0</span>)</button><p class="mut" style="margin-top:10px">Di jendela cetak, pilih "Simpan sebagai PDF" untuk mendapat satu file berisi semua halaman.</p></details></div>`}
+function bindRapor(){if(!S.ks.length)return;
+  const sh=()=>{const s=S.ks[S.rp],pv=$('#pv');if(!s||!pv)return;pv.innerHTML=rapJ(s,S.rjuz||30);fitText(pv);
     const k=Math.min(1,($('#view').clientWidth-32)/793.7);pv.style.cssText=`transform:scale(${k});transform-origin:0 0;width:793.7px`;
     const w=$('#pvw');w.style.width=793.7*k+'px';w.style.height=1122.5*k+'px'};
   sh();$('#rsel').onchange=e=>{S.rp=+e.target.value;sh()};$('#rjz').onchange=e=>{S.rjuz=+e.target.value;sh()};
-  document.querySelectorAll('[data-rn]').forEach(b=>b.onclick=()=>{const N=S.siswa.length;S.rp=(S.rp+ +b.dataset.rn+N)%N;render()});
+  document.querySelectorAll('[data-rn]').forEach(b=>b.onclick=()=>{const N=S.ks.length;S.rp=(S.rp+ +b.dataset.rn+N)%N;render()});
   $('#pr').onclick=()=>cetak();$('#pdf').onclick=()=>{cetak();toast('Di jendela cetak, pilih "Simpan sebagai PDF".')};
-  const selL=()=>S.siswa.filter(s=>S.sel.has(s.id)),ns=()=>{$('#nsel').textContent=selL().length};ns();
+  const selL=()=>S.ks.filter(s=>S.sel.has(s.id)),ns=()=>{$('#nsel').textContent=selL().length};ns();
   $('#cklist').onchange=e=>{const t=e.target;if(!t.classList.contains('ck'))return;t.checked?S.sel.add(t.value):S.sel.delete(t.value);ns()};
-  $('#ckAll').onclick=()=>{S.siswa.forEach(s=>S.sel.add(s.id));document.querySelectorAll('.ck').forEach(c=>c.checked=true);ns()};
+  $('#ckAll').onclick=()=>{S.ks.forEach(s=>S.sel.add(s.id));document.querySelectorAll('.ck').forEach(c=>c.checked=true);ns()};
   $('#ckNone').onclick=()=>{S.sel.clear();document.querySelectorAll('.ck').forEach(c=>c.checked=false);ns()};
-  $('#prAll').onclick=()=>cetak(S.siswa);$('#prSel').onclick=()=>cetak(selL());
+  $('#prAll').onclick=()=>cetak(S.ks);$('#prSel').onclick=()=>cetak(selL());
   window.onresize=()=>{if(S.page==='rapor')sh()}}
 /* ===== v1.6: MIGRASI + KONTROL TANGGAL/SEMESTER/TAHUN (idempoten) ===== */
 function migrasi(){const m=S.set;
@@ -1056,12 +1083,12 @@ function itemsJuz(tab){const j=jzIn(),T=TABS.find(x=>x[0]===tab)[2];if(j===30)re
 /* ===== v1.9: URUTAN OTOMATIS SETORAN ===== */
 ST.urut='auto';
 const sdHari=(s,j)=>(s.setoran||[]).some(e=>e.j===j&&e.tgl===ST.tgl),tglAkhir=(s,j)=>(s.setoran||[]).reduce((m,e)=>e.j===j&&e.tgl>m?e.tgl:m,'');
-function urutSetor(j,gk){const A=S.siswa.map((s,i)=>({i,la:tglAkhir(s,j),sd:sdHari(s,j),no:+s.no||0})).filter(a=>klpIkut(S.siswa[a.i],j,gk));
+function urutSetor(j,gk){const A=S.ks.map((s,i)=>({i,la:tglAkhir(s,j),sd:sdHari(s,j),no:+s.no||0})).filter(a=>klpIkut(S.ks[a.i],j,gk));
   if(ST.urut==='absen')return A.map(a=>a.i);
   const g=a=>a.sd?2:a.la?1:0;
   return A.sort((a,b)=>g(a)-g(b)||(g(a)===1?(a.la<b.la?-1:a.la>b.la?1:0):0)||a.no-b.no||a.i-b.i).map(a=>a.i)}
 function nextSt(cur,q0){const j=ST.j;
-  if(ST.urut==='auto'){const h=urutSetor(j).find(i=>!sdHari(S.siswa[i],j));if(h!==undefined)return h}
+  if(ST.urut==='auto'){const h=urutSetor(j).find(i=>!sdHari(S.ks[i],j));if(h!==undefined)return h}
   return q0[(q0.indexOf(cur)+1)%q0.length]}
 /* ===== v1.10: REKAP BULANAN BTQ/TAHFIDZ ===== */
 const REK={j:'tahfidz',a:'',b:'',tp:''};
@@ -1071,7 +1098,7 @@ const rekLabS=ym=>{const [y,m]=ym.split('-');return BLN[m-1]+' '+y.slice(2)};
 function rekRange(a,b){const o=[];if(!/^\d{4}-\d{2}$/.test(a||'')||!/^\d{4}-\d{2}$/.test(b||''))return o;let [y,m]=a.split('-').map(Number);const [y2,m2]=b.split('-').map(Number);
   while((y<y2||(y===y2&&m<=m2))&&o.length<240){o.push(y+'-'+String(m).padStart(2,'0'));m++;if(m>12){m=1;y++}}return o}
 function rekTp(tp){const m=/^(\d{4})\/(\d{4})$/.exec(tp||'');const y=m?+m[1]:new Date().getFullYear();return rekRange(y+'-07',(y+1)+'-06')}
-function rekOpsi(j,sis){const st=new Set(rekTp(S.set.tp));(sis||S.siswa).forEach(s=>(s.setoran||[]).forEach(e=>{if(e.j===j&&e.maju&&/^\d{4}-\d{2}/.test(e.tgl||''))st.add(rekYm(e.tgl))}));return [...st].sort()}
+function rekOpsi(j,sis){const st=new Set(rekTp(S.set.tp));(sis||S.ks).forEach(s=>(s.setoran||[]).forEach(e=>{if(e.j===j&&e.maju&&/^\d{4}-\d{2}/.test(e.tgl||''))st.add(rekYm(e.tgl))}));return [...st].sort()}
 function rekPos(e){return e?(e.pos||posTeks(e)):''}
 function rekTg(e){const [y,m,t]=e.tgl.split('-');return (+t)+' '+BLN[m-1]}
 function rekHitung(j,a,b,sis){const bl=rekRange(a,b);
@@ -1083,7 +1110,7 @@ function rekAtur(){const op=rekOpsi(REK.j),d=rekTp(S.set.tp);
   if(REK.a>REK.b){const t=REK.a;REK.a=REK.b;REK.b=t}return op}
 const rekSel=(id,op,cur)=>`<select id="${id}">${op.map(k=>`<option value="${k}"${k===cur?' selected':''}>${rekLab(k)}</option>`).join('')}</select>`;
 const rekCel=c=>c?`<div>${esc(rekPos(c.aw))}</div><small class="mut">${rekTg(c.aw)}</small>`:'<span class="mut">–</span>';
-function viewRekap(){const N=S.siswa.length;
+function viewRekap(){const N=S.ks.length;
   if(!N)return `<h1>Rekap Bulanan</h1><div class="card"><p class="mut">Belum ada siswa. Tambahkan atau impor dulu di halaman Siswa.</p></div>`;
   const op=rekAtur(),bl=rekRange(REK.a,REK.b),D=rekHitung(REK.j,REK.a,REK.b),jn=REK.j==='tahfidz'?'Tahfidz':'BTQ';
   const head=`<tr><th class="rkp-n" rowspan="2">Siswa</th>${bl.map(k=>`<th colspan="2">${rekLab(k)}</th>`).join('')}<th rowspan="2">Terbaru saat ini</th></tr><tr>${bl.map(()=>'<th>Awal</th><th>Terbaru</th>').join('')}</tr>`;
@@ -1093,7 +1120,7 @@ function viewRekap(){const N=S.siswa.length;
   <div class="row" style="margin-top:12px"><button class="btn" id="rkX">Unduh Excel</button><button class="btn ghost" id="rkP">Cetak / PDF</button></div>
   <p class="mut" style="margin-top:10px">Hanya setoran maju (status Bertambah) yang dihitung. Awal = posisi setelah setoran pertama bulan itu; Terbaru = posisi setelah setoran terakhir bulan itu ("sama" bila hanya satu setoran). Bulan tanpa setoran tampil –. Bawaan: tahun pelajaran ${esc(S.set.tp)} (Juli–Juni).</p></div>
   <div class="card" style="margin-top:14px"><h3>Rekap ${jn} · ${bl.length} bulan · ${D.length} siswa</h3><div class="rkp-w"><table class="rkp-t"><thead>${head}</thead><tbody>${body}</tbody></table></div></div>`}
-function bindRekapBln(){if(!S.siswa.length)return;
+function bindRekapBln(){if(!S.ks.length)return;
   const re=()=>{const y=scrollY;render();scrollTo(0,y)};
   document.querySelectorAll('#rkJ [data-rj]').forEach(b=>b.onclick=()=>{REK.j=b.dataset.rj;REK.a=REK.b='';re()});
   $('#rkA').onchange=e=>{REK.a=e.target.value;re()};$('#rkB').onchange=e=>{REK.b=e.target.value;re()};
@@ -1120,7 +1147,7 @@ function rekHal(j,a,b,sis,per){const jn=j==='tahfidz'?'TAHFIDZ':'BTQ',bl=rekRang
     const bd=rs.map(r=>{const ix=bl.indexOf(g[0]);return `<tr><td>${r.no}</td><td class="rkp-l">${E(r.nama)}</td>${g.map((_,k)=>{const q=r.bln[ix+k];return c(q&&q.aw)+c(q&&q.tr)}).join('')}${last?c(r.kini):''}</tr>`}).join('');
     out.push(`<div class="rkp-pg"><div class="rkp-h">REKAP SETORAN ${jn} BULANAN</div><div class="rkp-s">${E(S.set.madrasah)} · Kelas ${E(S.set.kelas)} · Tahun Pelajaran ${E(S.set.tp)}</div><div class="rkp-s">Bulan ${E(g.length?rekLab(g[0])+(g.length>1?' – '+rekLab(g[g.length-1]):''):'-')} · halaman ${out.length+1}</div><table class="rkp-p" style="width:${w}mm"><colgroup>${cg}</colgroup><thead>${hd}</thead><tbody>${bd}</tbody></table><div class="rkp-f">Hanya setoran maju (status Bertambah). Awal = posisi setelah setoran pertama bulan itu; Terbaru = setelah setoran terakhir bulan itu. – = tidak ada setoran.</div></div>`)})});
   return out}
-function rekPdf(){rekAtur();if(!S.siswa.length)return toast('Belum ada siswa.');
+function rekPdf(){rekAtur();if(!S.ks.length)return toast('Belum ada siswa.');
   const pa=$('#printArea'),mm=96/25.4;let per=28;
   for(;per>=4;per-=4){pa.innerHTML=rekHal(REK.j,REK.a,REK.b,null,per).join('');
     if([...pa.querySelectorAll('.rkp-pg')].every(p=>p.querySelector('.rkp-f').getBoundingClientRect().bottom-p.getBoundingClientRect().top<=288*mm))break}
@@ -1134,10 +1161,10 @@ function cariFilter(key,ph,rows,txt,tempat){const d=document.createElement('div'
   const inp=d.firstChild,ap=()=>{CARI[key]=inp.value;document.querySelectorAll(rows).forEach(r=>{r.hidden=!cariCocok(txt(r),inp.value)})};
   inp.oninput=ap;tempat(d);ap()}
 function cariLompat(fn,tempat){const d=document.createElement('div'),id='dl'+Math.random().toString(36).slice(2,7);d.className='srch';
-  d.innerHTML=`<input type="search" list="${id}" placeholder="Cari nama siswa…" aria-label="Cari nama siswa" autocomplete="off"><datalist id="${id}">${S.siswa.map(s=>`<option value="${esc(s.nama)}"></option>`).join('')}</datalist>`;
-  const inp=d.firstChild;inp.onchange=()=>{const q=inp.value.trim();if(!q)return;const L=S.siswa.map((s,i)=>[s,i]),k=L.find(([s])=>s.nama.toLowerCase()===q.toLowerCase())||L.find(([s])=>cariCocok(s.nama,q));
+  d.innerHTML=`<input type="search" list="${id}" placeholder="Cari nama siswa…" aria-label="Cari nama siswa" autocomplete="off"><datalist id="${id}">${S.ks.map(s=>`<option value="${esc(s.nama)}"></option>`).join('')}</datalist>`;
+  const inp=d.firstChild;inp.onchange=()=>{const q=inp.value.trim();if(!q)return;const L=S.ks.map((s,i)=>[s,i]),k=L.find(([s])=>s.nama.toLowerCase()===q.toLowerCase())||L.find(([s])=>cariCocok(s.nama,q));
     if(!k)return toast('Siswa tidak ditemukan.');fn(k[1])};tempat(d)}
-function pasangCari(){if(!S.siswa.length)return;const V=$('#view'),p=S.page,h1=V.querySelector('h1');
+function pasangCari(){if(!S.ks.length)return;const V=$('#view'),p=S.page,h1=V.querySelector('h1');
   if(p==='siswa'){const r=V.querySelector('.sw');if(r)cariFilter('siswa','Cari nama siswa…','#view .sw',e=>e.querySelector('div').textContent,d=>r.closest('.card').before(d))}
   if(p==='setoran'&&h1)cariLompat(i=>{if(!urutSetor(ST.j).includes(i))ST.kg[ST.j]=0;ST.i=i;prefillSt();render()},d=>h1.after(d));
   if(p==='nilai'){const c=V.querySelector('.chips');if(!c)return;
@@ -1146,10 +1173,10 @@ function pasangCari(){if(!S.siswa.length)return;const V=$('#view'),p=S.page,h1=V
   if(p==='rapor'){if(h1)cariLompat(i=>{S.rp=i;render()},d=>h1.after(d));const l=$('#cklist');if(l)cariFilter('rapor','Cari di daftar centang…','#cklist .ckr',e=>e.textContent,d=>l.before(d))}}
 const selHari=(a,b)=>{const u=x=>{const [y,m,d]=x.split('-').map(Number);return Date.UTC(y,m-1,d)};return Math.round((u(b)-u(a))/864e5)};
 function belumSetor(j,min,hr){hr=hr||hari();const u=ST.urut,t=ST.tgl;ST.urut='auto';ST.tgl=hr;
-  try{return urutSetor(j,0).map(i=>{const s=S.siswa[i],a=tglAkhir(s,j);return {s,a,h:a?selHari(a,hr):null}}).filter(x=>x.h===null||x.h>=min)}finally{ST.urut=u;ST.tgl=t}}
+  try{return urutSetor(j,0).map(i=>{const s=S.ks[i],a=tglAkhir(s,j);return {s,a,h:a?selHari(a,hr):null}}).filter(x=>x.h===null||x.h>=min)}finally{ST.urut=u;ST.tgl=t}}
 function kartuSetor(){const bag=(j,t)=>{const L=belumSetor(j,7);return `<div class="tg"><b>${t}</b> <span class="mut">${L.length} siswa</span>${L.length?L.slice(0,5).map(x=>`<div class="att"><div><b>${x.s.no}. ${esc(x.s.nama)}</b><span class="mut">${x.a?x.h+' hari lalu ('+tglF(x.a)+')':'belum pernah setor'}</span></div></div>`).join('')+(L.length>5?`<p class="mut">dan ${L.length-5} lainnya.</p>`:''):'<p class="mut">Semua sudah setor dalam 7 hari terakhir. 👍</p>'}</div>`};
   return `<div class="card" style="margin-top:16px"><h3>Belum setor ≥ 7 hari</h3>${bag('tahfidz','Tahfidz')}<div style="height:10px"></div>${bag('btq','BTQ')}<div class="row" style="margin-top:10px"><button class="sm" data-go="setoran">Buka Setoran</button></div></div>`}
-function kartuCad(){if(!S.siswa.length)return '';const c=S.cad,h=c?selHari(c.slice(0,10),hari()):null;if(c&&h<=14)return '';
+function kartuCad(){if(!S.ks.length)return '';const c=S.cad,h=c?selHari(c.slice(0,10),hari()):null;if(c&&h<=14)return '';
   return `<div class="card" style="margin-bottom:16px"><h3>Pengingat cadangan</h3><p>${c?`Cadangan terakhir ${h} hari lalu (${tglF(c.slice(0,10))}).`:'Data belum pernah dicadangkan.'} Unduh cadangan agar data aman bila perangkat bermasalah.</p><div class="row" style="margin-top:10px"><button class="btn" id="bkNow">Unduh cadangan</button></div></div>`}
 function cekLengkap(list,juz){const j0=S.in.juz,rs=[];
   try{const its=[];
@@ -1168,8 +1195,8 @@ const klpAda=(s,j)=>{const v=s&&s.kel?s.kel[KJ(j)]:0;return v===1||v===2?v:0};
 const klpNamaOf=(j,g)=>(((S.set.klpNama||{})[KJ(j)])||[])[g-1]||('Kelompok '+g);
 /* g: 0 = semua, 1/2 = kelompok, -1 = belum dikelompokkan, undefined = ikuti pilihan halaman Setoran */
 function klpIkut(s,j,g){if(g===undefined||g===null)g=(ST.kg||{})[j]||0;if(!g)return true;if(g===-1)return !klpAda(s,j);return klpAda(s,j)===g}
-const sisKlp=(j,g)=>S.siswa.filter(s=>klpIkut(s,j,g||0));
-function klpHitung(j){const c={1:0,2:0,x:0};S.siswa.forEach(s=>{const v=klpAda(s,j);v?c[v]++:c.x++});return c}
+const sisKlp=(j,g)=>S.ks.filter(s=>klpIkut(s,j,g||0));
+function klpHitung(j){const c={1:0,2:0,x:0};S.ks.forEach(s=>{const v=klpAda(s,j);v?c[v]++:c.x++});return c}
 function migrasiKlp(){const m=S.set;
   if(!m.klpNama||typeof m.klpNama!=='object')m.klpNama={};
   ['t','b'].forEach(k=>{const a=Array.isArray(m.klpNama[k])?m.klpNama[k]:[];m.klpNama[k]=[String(a[0]||'Kelompok 1'),String(a[1]||'Kelompok 2')]});
@@ -1178,9 +1205,9 @@ function migrasiKlp(){const m=S.set;
     (s.setoran||[]).forEach(e=>{if(typeof e.harus!=='boolean')e.harus=!!e.harus})})}
 function klpBadge(s){const t=klpAda(s,'tahfidz'),b=klpAda(s,'btq');if(!t&&!b)return '';
   return `<span class="klpb">${t?'Tahfidz: '+esc(klpNamaOf('tahfidz',t)):''}${t&&b?' · ':''}${b?'BTQ: '+esc(klpNamaOf('btq',b)):''}</span>`}
-function klpSeg(attr,j,cur){const c=klpHitung(j),N=S.siswa.length,b=(v,t)=>`<button class="${cur===v?'on':''}" data-${attr}="${v}">${t}</button>`;
+function klpSeg(attr,j,cur){const c=klpHitung(j),N=S.ks.length,b=(v,t)=>`<button class="${cur===v?'on':''}" data-${attr}="${v}">${t}</button>`;
   return `<div class="seg klpsg" style="margin-bottom:12px">${b(0,'Semua ('+N+')')}${b(1,esc(klpNamaOf(j,1))+' ('+c[1]+')')}${b(2,esc(klpNamaOf(j,2))+' ('+c[2]+')')}${c.x?b(-1,'Belum ('+c.x+')'):''}</div>`}
-function klpCard(){const N=S.siswa.length;if(!N)return '';const ct=klpHitung('tahfidz'),cb=klpHitung('btq'),Nm=S.set.klpNama,
+function klpCard(){const N=S.ks.length;if(!N)return '';const ct=klpHitung('tahfidz'),cb=klpHitung('btq'),Nm=S.set.klpNama,
   ni=(k,i,l)=>`<label>${l}<input type="text" data-kn="${k}${i}" value="${esc(Nm[k][i])}" maxlength="30" autocomplete="off"></label>`,
   sg=(s,j)=>[1,2].map(g=>`<button class="${klpAda(s,j)===g?'on':''}" data-ks="${s.id}" data-kj="${j}" data-kv="${g}" aria-label="${j==='btq'?'BTQ':'Tahfidz'} kelompok ${g}">${g}</button>`).join(''),
   rs=(j,c)=>`<b>${j==='btq'?'BTQ':'Tahfidz'}</b>: ${esc(klpNamaOf(j,1))} ${c[1]} · ${esc(klpNamaOf(j,2))} ${c[2]}${c.x?` · belum diatur ${c.x}`:''}`;
@@ -1190,35 +1217,35 @@ function klpCard(){const N=S.siswa.length;if(!N)return '';const ct=klpHitung('ta
   <p class="mut" style="margin:10px 0 4px">Nama kelompok (boleh diubah):</p><div class="form" style="grid-template-columns:1fr 1fr;margin:0 0 10px">${ni('t',0,'Tahfidz 1')}${ni('t',1,'Tahfidz 2')}${ni('b',0,'BTQ 1')}${ni('b',1,'BTQ 2')}</div>
   <div class="row" style="margin:0 0 6px"><button class="sm" data-kauto="tahfidz">Bagi dua otomatis: Tahfidz</button><button class="sm" data-kauto="btq">Bagi dua otomatis: BTQ</button><button class="sm" data-kauto="salin">BTQ ikut Tahfidz</button><button class="sm" data-kauto="reset">Kosongkan</button></div>
   <p class="mut" style="margin:6px 0 0">Bagi otomatis: separuh pertama menurut nomor absen = kelompok 1, sisanya kelompok 2. Ketuk angka lagi untuk mengosongkan.</p>
-  <div style="margin-top:8px">${S.siswa.map(s=>`<div class="kr"><span class="kn"><b>${s.no}.</b> ${esc(s.nama)}</span><span class="kg"><small>Tahfidz</small><span class="seg">${sg(s,'tahfidz')}</span></span><span class="kg"><small>BTQ</small><span class="seg">${sg(s,'btq')}</span></span></div>`).join('')}</div></details></div>`}
-function klpBagi(j){const k=KJ(j),h=Math.ceil(S.siswa.length/2);
-  if(S.siswa.some(s=>klpAda(s,j))&&!confirm('Kelompok '+(j==='btq'?'BTQ':'tahfidz')+' yang sudah diatur akan diganti. Lanjut?'))return false;
-  S.siswa.forEach((s,i)=>{s.kel[k]=i<h?1:2});return true}
+  <div style="margin-top:8px">${S.ks.map(s=>`<div class="kr"><span class="kn"><b>${s.no}.</b> ${esc(s.nama)}</span><span class="kg"><small>Tahfidz</small><span class="seg">${sg(s,'tahfidz')}</span></span><span class="kg"><small>BTQ</small><span class="seg">${sg(s,'btq')}</span></span></div>`).join('')}</div></details></div>`}
+function klpBagi(j){const k=KJ(j),h=Math.ceil(S.ks.length/2);
+  if(S.ks.some(s=>klpAda(s,j))&&!confirm('Kelompok '+(j==='btq'?'BTQ':'tahfidz')+' yang sudah diatur akan diganti. Lanjut?'))return false;
+  S.ks.forEach((s,i)=>{s.kel[k]=i<h?1:2});return true}
 function bindKlp(){const D=$('#klpD');if(!D)return;D.ontoggle=()=>{klpOpen=D.open};
   const re=()=>{const y=scrollY;render();scrollTo(0,y)};
   D.onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
-    if(d.ks){const s=S.siswa.find(x=>x.id===d.ks),k=KJ(d.kj),v=+d.kv;s.kel[k]=s.kel[k]===v?0:v;sv(s);return re()}
+    if(d.ks){const s=S.ks.find(x=>x.id===d.ks),k=KJ(d.kj),v=+d.kv;s.kel[k]=s.kel[k]===v?0:v;sv(s);return re()}
     if(d.kauto){const a=d.kauto;
       if(a==='tahfidz'||a==='btq'){if(!klpBagi(a))return}
-      else if(a==='salin'){if(S.siswa.some(s=>klpAda(s,'btq'))&&!confirm('Kelompok BTQ yang sudah diatur akan diganti mengikuti kelompok tahfidz. Lanjut?'))return;S.siswa.forEach(s=>{s.kel.b=s.kel.t})}
-      else if(a==='reset'){if(!confirm('Kosongkan semua kelompok tahfidz dan BTQ?'))return;S.siswa.forEach(s=>{s.kel.t=0;s.kel.b=0})}
+      else if(a==='salin'){if(S.ks.some(s=>klpAda(s,'btq'))&&!confirm('Kelompok BTQ yang sudah diatur akan diganti mengikuti kelompok tahfidz. Lanjut?'))return;S.ks.forEach(s=>{s.kel.b=s.kel.t})}
+      else if(a==='reset'){if(!confirm('Kosongkan semua kelompok tahfidz dan BTQ?'))return;S.ks.forEach(s=>{s.kel.t=0;s.kel.b=0})}
       svAll();klpOpen=true;return re()}};
   D.oninput=e=>{const t=e.target;if(!t.dataset.kn)return;const k=t.dataset.kn[0],i=+t.dataset.kn[1];S.set.klpNama[k][i]=t.value.trim()||('Kelompok '+(i+1));saved()}}
 /* Impor Rekap Nilai: siswa yang ada di daftar tahfidz/BTQ sumber = kelompok 1, sisanya kelompok 2 (hanya yang belum punya kelompok) */
 function klpImpor(db,kid,kl){const T=((db.tahfidzSiswa||{})[kid]||[]).map(nm),B=((db.btqSiswa||{})[kid]||[]).map(nm),all=(kl.siswa||[]).map(x=>nm(x.nama));let n=0;
-  const pasang=(arr,k)=>{if(!arr.length)return;const ids=new Set(arr);all.forEach(a=>{const s=S.siswa.find(x=>x.nama===a);if(!s)return;s.kel||(s.kel={t:0,b:0});if(!s.kel[k]){s.kel[k]=ids.has(a)?1:2;n++}})};
+  const pasang=(arr,k)=>{if(!arr.length)return;const ids=new Set(arr);all.forEach(a=>{const s=S.ks.find(x=>x.nama===a);if(!s)return;s.kel||(s.kel={t:0,b:0});if(!s.kel[k]){s.kel[k]=ids.has(a)?1:2;n++}})};
   pasang(T,'t');pasang(B,'b');return n}
 function viewSetoranKosong(){const sw=(k,t)=>`<button class="${ST.j===k?'on':''}" data-j="${k}">${t}</button>`;
   return `<h1>Setoran Harian</h1><div class="seg" style="margin-bottom:12px">${sw('tahfidz','Tahfidz')}${sw('btq','BTQ')}</div>${klpSeg('kg',ST.j,ST.kg[ST.j])}<div class="card"><p class="mut">Belum ada siswa di pilihan kelompok ini. Atur anggota di Siswa › Kelompok Tahfidz & BTQ, atau pilih "Semua".</p></div>`}
 /* ===== v1.23: NIS/NISN resmi dari Rapor_Digital_Madrasah.xlsx; cocokkan nama (huruf besar, ejaan resmi) dan isi NIS/NISN ===== */
 const NIS_RESMI=[["ABIZAR REYNAND UTAMA","230111","3160974717"],["AKIRA TRISHA MAHESWARI","230110","3162169073"],["ALDEERA NUR RATIFA","230139","3169936005"],["ALVIN FAQIH HUSEINI","240255","3179623724"],["ANNASYA ADIFA RUMAIZA","230127","3173783702"],["ARSAKHA VIENDRA TSAQIB","230113","3161643196"],["ATHAYA SYABIL PRATAMA","240264","3167097793"],["FAHMI AZHAR","230137","3163519559"],["HARUN ABDURRAHMAN","230102","3176537707"],["INSYIRA RAHIIL JILAN","230109","3174242952"],["MAULA FATIH SUGIARTO","230114","3164024456"],["MUHAMMAD HABRI DHANURENDRA","230115","3166486917"],["MUTIARA ANUGERAH RINJANI","230116","0164606880"],["MAHREZ MUHAMAD VICTORY REZKY","260461","0168566001"],["NIZAM ZIA ALBARRA","230136","3161778687"],["NAUFAL DIRGA ATALLAH","260459","3166247083"],["QAIREEN ALESHA PUTRI","230138","3160880007"],["RADIN AGATHA KIMORA VALLERY S","230131","3174571373"],["RAKHA RAFASYA AL-HAQ","230143","3178176528"],["REZA ABHISTA RAFIF","230118","3167148907"],["SHAKILA AULIA ZAHRANI SUTARDI","230112","3172199469"],["VALHAVI HARMIOR","230106","3160809434"],["YUSUF NURHAN MUNIR","230124","3164742667"]];
 function cocokNis(){const R=new Map(NIS_RESMI.map(r=>[nm(r[0]),r])),pakai=new Set(),ganti=[],isi=[],tak=[];
-  S.siswa.forEach(s=>{const r=R.get(nm(s.nama));if(!r){tak.push(s.nama);return}pakai.add(r[0]);
+  S.ks.forEach(s=>{const r=R.get(nm(s.nama));if(!r){tak.push(s.nama);return}pakai.add(r[0]);
     if(s.nama!==r[0])ganti.push(s.nama+' → '+r[0]);if(s.nis!==r[1]||s.nisn!==r[2])isi.push(r[0])});
   const blm=NIS_RESMI.filter(r=>!pakai.has(r[0])).map(r=>r[0]);
   if(!ganti.length&&!isi.length&&!tak.length)return toast('Nama, NIS, dan NISN sudah sesuai daftar resmi.');
-  if(!confirm(`Cocokkan dengan Rapor_Digital_Madrasah.xlsx?\n• ${S.siswa.length-tak.length} siswa cocok (NIS/NISN diisi: ${isi.length})\n• ${ganti.length} nama disesuaikan ejaan resmi${ganti.length?':\n   '+ganti.join('\n   '):''}\n• ${tak.length} siswa tidak ada di daftar resmi${tak.length?':\n   '+tak.join('\n   '):''}${blm.length?'\n• Ada di daftar resmi tapi belum di aplikasi:\n   '+blm.join('\n   '):''}\nSetoran dan nilai tidak berubah.`))return;
-  S.siswa.forEach(s=>{const r=R.get(nm(s.nama));if(r){s.nama=r[0];s.nis=r[1];s.nisn=r[2]}});
+  if(!confirm(`Cocokkan dengan Rapor_Digital_Madrasah.xlsx?\n• ${S.ks.length-tak.length} siswa cocok (NIS/NISN diisi: ${isi.length})\n• ${ganti.length} nama disesuaikan ejaan resmi${ganti.length?':\n   '+ganti.join('\n   '):''}\n• ${tak.length} siswa tidak ada di daftar resmi${tak.length?':\n   '+tak.join('\n   '):''}${blm.length?'\n• Ada di daftar resmi tapi belum di aplikasi:\n   '+blm.join('\n   '):''}\nSetoran dan nilai tidak berubah.`))return;
+  S.ks.forEach(s=>{const r=R.get(nm(s.nama));if(r){s.nama=r[0];s.nis=r[1];s.nisn=r[2]}});
   persist();render();toast(`NIS/NISN terisi untuk ${isi.length} siswa; ${ganti.length} nama disesuaikan.`)}
 
 /* ===== v1.13: NILAI SURAT DI HALAMAN SETORAN (A, A-, B, C, –) ===== */
@@ -1227,7 +1254,7 @@ ST.nilai='';
 function nilaiAmbil(s,juz,n){if(!s||!juz||!n)return '';if(+juz===30&&n>=78)return (s.surat||{})[n-77]||'';return (((s.nj||{})[juz])||{})[n]||''}
 function nilaiSimpan(s,juz,n,v){if(+juz===30&&n>=78){(s.surat||(s.surat={}))[n-77]=v;return}
   s.nj||(s.nj={});(s.nj[juz]||(s.nj[juz]={}))[n]=v}
-function fldNilai(){if(ST.j!=='tahfidz'||!ST.juz||!ST.surat)return '';const s=S.siswa[ST.i],cur=nilaiAmbil(s,ST.juz,+ST.surat),
+function fldNilai(){if(ST.j!=='tahfidz'||!ST.juz||!ST.surat)return '';const s=S.ks[ST.i],cur=nilaiAmbil(s,ST.juz,+ST.surat),
   seg=SO.map(([v,l])=>`<button class="${ST.nilai===v?'on':''}" data-nl="${esc(v)}">${l}</button>`).join('');
   return `<div class="nlf"><b>Nilai surat ${esc(SN[ST.surat-1])}</b> <span class="mut">(opsional)</span><div class="seg" style="margin-top:6px">${seg}</div><p class="mut" style="margin-top:6px">${cur?`Nilai tersimpan: <b>${esc(cur==='-'?'–':cur)}</b>. `:'Belum ada nilai. '}Disimpan ke Input Nilai › Surat${+ST.juz===30?'':' (Juz '+ST.juz+')'} dan tampil di rapor. Kosong = nilai tidak diubah.</p></div>`}
 function nilaiTerap(s,e){if(e.j!=='tahfidz'||!e.nilai)return;if(e.tahap){(s.tahap||(s.tahap=['','','','','']))[+e.tahap-1]=e.nilai;return}if(!e.surat||!e.juz)return;nilaiSimpan(s,e.juz,e.surat,e.nilai)}
@@ -1236,7 +1263,7 @@ const RT={j:'tahfidz',ym:'',k:0};
 const bulanSmt=ym=>+String(ym).slice(5,7)>=7?1:2;
 const kodeKelas=()=>S.set.kode||String(kelasNo()||String(S.set.kelas||'').split(' ')[0]||'');
 function rtOpsi(){const st=new Set(rekTp(S.set.tp));st.add(hari().slice(0,7));
-  S.siswa.forEach(s=>(s.setoran||[]).forEach(e=>{if(/^\d{4}-\d{2}/.test(e.tgl||''))st.add(rekYm(e.tgl))}));return [...st].sort()}
+  S.ks.forEach(s=>(s.setoran||[]).forEach(e=>{if(/^\d{4}-\d{2}/.test(e.tgl||''))st.add(rekYm(e.tgl))}));return [...st].sort()}
 /* Target menurut kelas & semester (semester dari bulan: Juli–Desember = 1, Januari–Juni = 2), memakai tabel TGT yang sama dengan Setoran.
    Tahfidz berjalan naik dari An-Naba (78) ke An-Nas (114); di bawah 78 = sudah melewati Juz 30. */
 function rtTarget(j,e,ym){if(!e)return '–';const T=TGT[kelasNo()],sm=bulanSmt(ym);if(!T)return '–';
@@ -1260,7 +1287,7 @@ const rtHead=j=>j==='btq'?['Posisi Awal Bulan','Tgl Awal','Posisi Saat Ini','Tgl
   :['Hafalan Awal Bulan','Tgl Awal','Hafalan Saat Ini','Tgl Terbaru','Status','Jumlah Setoran','Target Tahfidz','Keterangan'];
 function rtHitung(j,ym,sis){const a=ym+'-01',z=ym+'-31',
   srt=(x,y)=>x.tgl<y.tgl?-1:x.tgl>y.tgl?1:(x.t||0)-(y.t||0);
-  return (sis||S.siswa).map((s,i)=>{
+  return (sis||S.ks).map((s,i)=>{
     const all=(s.setoran||[]).filter(e=>e.j===j&&/^\d{4}-\d{2}-\d{2}$/.test(e.tgl||'')).sort(srt),
       bln=all.filter(e=>e.tgl>=a&&e.tgl<=z),pos=all.filter(e=>e.status!=='Murojaah'&&e.tgl<=z),
       pb=pos.filter(e=>e.tgl>=a),pr=pos.filter(e=>e.tgl<a),
@@ -1275,7 +1302,7 @@ function rtDicetak(d){d=d||new Date();const p=n=>String(n).padStart(2,'0');
   return `Dicetak: ${p(d.getDate())} ${BLN_P[d.getMonth()]} ${d.getFullYear()} • ${p(d.getHours())}.${p(d.getMinutes())}`}
 function rtBaris(r){const dt=e=>e?`<td class="c">${tglF(e.tgl)}</td>`:'<td class="c dim">–</td>',ps=e=>e?`<td>${esc(rtPos(e))}</td>`:'<td class="dim">–</td>';
   return `<tr><td class="c">${r.urut}</td><td class="nm">${esc(r.nama)}</td>${ps(r.awal)}${dt(r.awal)}${ps(r.now)}${dt(r.now)}<td>${esc(r.status)}</td><td class="jm">${r.n}</td><td>${esc(r.target)}</td><td>${esc(r.ket)}</td></tr>`}
-function viewRekapT(){const N=S.siswa.length;
+function viewRekapT(){const N=S.ks.length;
   if(!N)return `<h1>Rekap Bulan</h1><div class="card"><p class="mut">Belum ada siswa. Tambahkan atau impor dulu di halaman Siswa.</p></div>`;
   const j=RT.j,op=rtOpsi();if(!RT.ym||!op.includes(RT.ym))RT.ym=hari().slice(0,7);
   if(RT.k===-1&&!klpHitung(j).x)RT.k=0;
@@ -1315,7 +1342,7 @@ function viewRekapMode(){const lama=REK.m==='lama';let h=lama?viewRekap():viewRe
   const sw=`<div class="seg" style="margin-bottom:12px"><button class="${lama?'':'on'}" data-rm="tabel">Rekap bulan</button><button class="${lama?'on':''}" data-rm="lama">Antarbulan</button></div>`;
   if(lama)h=h.replace('<div class="grid" style="margin-top:12px;gap:10px">',()=>klpSeg('rkg',REK.j==='btq'?'btq':'tahfidz',REK.kg||0)+'<div class="grid" style="margin-top:12px;gap:10px">');
   return h.replace('</h1>',()=>'</h1>'+sw)}
-function bindRekapT(){if(!S.siswa.length)return;const re=()=>{const y=scrollY;render();scrollTo(0,y)};
+function bindRekapT(){if(!S.ks.length)return;const re=()=>{const y=scrollY;render();scrollTo(0,y)};
   document.querySelectorAll('[data-rtj]').forEach(b=>b.onclick=()=>{RT.j=b.dataset.rtj;RT.k=0;re()});
   document.querySelectorAll('[data-rtk]').forEach(b=>b.onclick=()=>{RT.k=+b.dataset.rtk;re()});
   $('#rtB').onchange=e=>{RT.ym=e.target.value;re()};$('#rtP').onclick=rtCetak;$('#rtX').onclick=rtExcel}
@@ -1330,7 +1357,7 @@ ST.tm='surat';ST.tahap='';ST.ntp='';
 const TH_L=['Tahap I (An Nash – Al ‘Asr)','Tahap II (At Takatsur – Asy Syams)','Tahap III (Al Balad – Al Insiqaaq)','Tahap IV (Al Muthofifin – An Naba)','Tahap V (Sambung Ayat)'];
 function tmSeg(){const b=(k,t)=>`<button class="${ST.tm===k?'on':''}" data-tm="${k}">${t}</button>`;
   return `<div class="seg">${b('surat','Per surat')}${b('tahap','Per tahap')}</div>`}
-function fldTahap(){const s=S.siswa[ST.i],cur=ST.tahap?((s.tahap||[])[+ST.tahap-1]||''):'',
+function fldTahap(){const s=S.ks[ST.i],cur=ST.tahap?((s.tahap||[])[+ST.tahap-1]||''):'',
   nt=AO.map(([v,l])=>`<button class="${ST.ntp===v?'on':''}" data-nt="${esc(v)}">${l}</button>`).join('');
   return `<label>Tahap<select data-f="tahap">${opt(TH_L.map((l,i)=>[String(i+1),l]),ST.tahap,'– pilih tahap –')}</select></label>
   <label class="ck"><input type="checkbox" data-f="selesai"${ST.selesai?' checked':''}> Selesai (tahap ini tuntas)</label>
@@ -1379,18 +1406,18 @@ async function psTampil(){
       toast(PS.st==='ya'?'Penyimpanan kini terlindungi.':'Browser belum memberi izin. Coba lagi nanti, atau pasang aplikasi ke layar utama.');psTampil()}}}
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
 const ALAB=['Tajwid','Makhroj','Murojaah','Kelancaran','Tajwid','Makhroj','Menulis','Membaca'];
-async function ekspor(){if(!S.siswa.length)return toast('Belum ada siswa untuk diekspor.');
+async function ekspor(){if(!S.ks.length)return toast('Belum ada siswa untuk diekspor.');
   try{await loadX()}catch(_){return toast('Pustaka Excel gagal dimuat. Sambungkan internet sekali, lalu coba lagi.')}
   const U=XLSX.utils,ws={},w=(a,v)=>{if(v!==''&&v!=null)ws[a]={t:'s',v:String(v)}},C=(c0,i)=>U.encode_col(U.decode_col(c0)+i);
   [['D1',S.set.kelas],['D2',S.set.guru],['D3',S.set.semester],['D4',S.set.tempat],['D5',S.set.target]].forEach(([a,v])=>w(a,v));
   [['A','NO'],['B','NIS'],['C','NISN'],['D','NAMA'],['CH','PENCAPAIAN BTQ'],['CI','PENCAPAIAN TAHFIDZ']].forEach(([c,v])=>w(c+'8',v));
   [['E',48],['BA',14],['BO',11]].forEach(([c0,n])=>{for(let i=0;i<n;i++)w(C(c0,i)+'8',i+1)});
   ALAB.forEach((l,i)=>w(C('BZ',i)+'8',l));for(let i=0;i<5;i++)w(C('CJ',i)+'8','TAHAP '+(i+1));
-  S.siswa.forEach((s,k)=>{const r=9+k;ws['A'+r]={t:'n',v:s.no};w('B'+r,s.nis);w('C'+r,s.nisn);w('D'+r,s.nama);
+  S.ks.forEach((s,k)=>{const r=9+k;ws['A'+r]={t:'n',v:s.no};w('B'+r,s.nis);w('C'+r,s.nisn);w('D'+r,s.nama);
     [['E','surat'],['BA','hadist'],['BO','doa']].forEach(([c0,key])=>Object.entries(s[key]||{}).forEach(([n,v])=>w(C(c0,+n-1)+r,v)));
     ASPEK.forEach((k2,i)=>w(C('BZ',i)+r,s.aspek[k2]));w('CH'+r,s.pcBTQ.raw||pcText(s.pcBTQ));w('CI'+r,s.pcTah.raw||pcText(s.pcTah));
     s.tahap.forEach((v,i)=>w(C('CJ',i)+r,v))});
-  ws['!ref']='A1:CN'+(8+S.siswa.length);const wb=U.book_new();U.book_append_sheet(wb,ws,'ledger 30');
+  ws['!ref']='A1:CN'+(8+S.ks.length);const wb=U.book_new();U.book_append_sheet(wb,ws,'ledger 30');
   XLSX.writeFile(wb,`leger-btq-tahfidz-${new Date().toISOString().slice(0,10)}.xlsx`);toast('Leger diekspor.')}
 /* ===== DASHBOARD & ANALITIK (SVG manual, tanpa pustaka, offline) ===== */
 const NILAI={A:95,'A-':85,B:75,C:65,MUMTAZ:95,'JAYYID JIDDAN':85,JAYYID:75,MAQBUL:65},BK={A:'A',MUMTAZ:'A','A-':'A-','JAYYID JIDDAN':'A-',B:'B',JAYYID:'B',C:'C',MAQBUL:'C'};
@@ -1408,14 +1435,14 @@ function radar(vals,labs){const cx=120,cy=108,R=70,n=vals.length,pt=(i,r)=>[cx+r
   const ax=vals.map((_,i)=>{const [x,y]=pt(i,R);return `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="var(--ln)"/>`}).join('');
   const lb=labs.map((t,i)=>{const [x,y]=pt(i,R+14);return `<text x="${x}" y="${y+3}" text-anchor="${x<cx-5?'end':x>cx+5?'start':'middle'}" font-size="9.5" fill="var(--mu)">${t}</text>`}).join('');
   return `<svg viewBox="0 0 240 216" style="width:100%;max-width:340px;display:block;margin:0 auto" role="img" aria-label="Radar aspek">${rings}${ax}<polygon points="${poly(vals.map((v,i)=>pt(i,Math.max(0,(v-50)/50)*R)))}" fill="var(--ac)" fill-opacity=".28" stroke="var(--ac)" stroke-width="2"/>${lb}</svg>`}
-function targetBar(l,k){const c={Tercapai:0,Melampaui:0,Tidak:0,'':0};S.siswa.forEach(s=>c[s[k].status||'']++);const N=S.siswa.length;
+function targetBar(l,k){const c={Tercapai:0,Melampaui:0,Tidak:0,'':0};S.ks.forEach(s=>c[s[k].status||'']++);const N=S.ks.length;
   return `<p style="font-weight:600;font-size:14px;margin-top:10px">${l}</p><div class="bar"><span style="width:${100*(c.Tercapai+c.Melampaui)/N}%;background:var(--ac)"></span><span style="width:${100*c.Tidak/N}%;background:#e5484d"></span></div><p class="mut">Tercapai ${c.Tercapai}${c.Melampaui?` · Melampaui ${c.Melampaui}`:''} · Tidak tercapai ${c.Tidak} · Belum diisi ${c['']}</p>`}
-function viewDash(){const N=S.siswa.length,kls=esc(S.set.kelas);
+function viewDash(){const N=S.ks.length,kls=esc(S.set.kelas);
   const hero=`<div class="card hero"><h3>Kelas</h3><div class="big">${esc(S.set.kelas.split(' ')[0])}</div><p>${kls}<br>Semester ${esc(S.set.semester)} · ${esc(S.set.tp)}</p><p style="margin-top:8px;font-size:13px;opacity:.85">Guru: ${esc(guruDaftar())}<br>Target: ${esc(S.set.target)}</p></div>`;
   if(!N)return `<h1>Dashboard</h1><div class="grid">${hero}<div class="card"><h3>Jumlah siswa</h3><div class="big">0</div><p class="mut">Belum ada siswa. Tambah atau impor leger Excel di halaman Siswa; grafik muncul setelah ada nilai.</p></div></div>`;
-  const all=S.siswa.map(s=>({s,v:nilaiS(s).map(x=>NILAI[x]),pct:pcent([s],RI())})),ar=rata(all.flatMap(a=>a.v)),prog=pcent(S.siswa,RI());
-  const cnt={A:0,'A-':0,B:0,C:0};S.siswa.forEach(s=>nilaiS(s).forEach(x=>cnt[BK[x]]++));
-  const av=ASPEK.map(k=>rata(S.siswa.map(s=>NILAI[s.aspek[k]]).filter(x=>x!==undefined)));
+  const all=S.ks.map(s=>({s,v:nilaiS(s).map(x=>NILAI[x]),pct:pcent([s],RI())})),ar=rata(all.flatMap(a=>a.v)),prog=pcent(S.ks,RI());
+  const cnt={A:0,'A-':0,B:0,C:0};S.ks.forEach(s=>nilaiS(s).forEach(x=>cnt[BK[x]]++));
+  const av=ASPEK.map(k=>rata(S.ks.map(s=>NILAI[s.aspek[k]]).filter(x=>x!==undefined)));
   const perlu=all.map(a=>{const r=[],s=a.s,m=rata(a.v);if(a.pct<100)r.push(`terisi ${a.pct}%`);if(m!==null&&m<75)r.push(`rata-rata ${Math.round(m)}`);
     if(s.pcTah.status==='Tidak')r.push('target tahfidz belum tercapai');if(s.pcBTQ.status==='Tidak')r.push('target BTQ belum tercapai');return {...a,r,m}}).filter(a=>a.r.length).sort((a,b)=>a.pct-b.pct||b.r.length-a.r.length);
   const top=all.filter(a=>a.v.length).map(a=>({s:a.s,m:rata(a.v)})).sort((a,b)=>b.m-a.m).slice(0,5);
@@ -1430,7 +1457,7 @@ function viewDash(){const N=S.siswa.length,kls=esc(S.set.kelas);
   ${kartuSetor()}
   <div class="card" style="margin-top:16px"><h3>Perlu perhatian (${perlu.length})</h3>${perlu.length?perlu.slice(0,8).map(a=>`<div class="att"><div><b>${a.s.no}. ${esc(a.s.nama)}</b><span class="mut">${a.r.join(' · ')}</span></div><button class="sm" data-fix="${a.s.id}">Isi</button></div>`).join('')+(perlu.length>8?`<p class="mut" style="margin-top:8px">dan ${perlu.length-8} siswa lainnya.</p>`:''):'<p class="mut">Semua siswa lengkap dan tanpa catatan. 👍</p>'}</div>
   <div class="card" style="margin-top:16px"><details><summary>Peringkat 5 teratas (opsional)</summary><div style="margin-top:8px">${top.length?top.map((a,i)=>`<div class="rk"><b>${i+1}</b><span>${esc(a.s.nama)}</span><span>${a.m.toFixed(1)}</span></div>`).join(''):'<p class="mut">Belum ada nilai.</p>'}</div></details></div>`}
-function bindDash(){document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));const bk=$('#bkNow');if(bk)bk.onclick=backup;document.querySelectorAll('[data-fix]').forEach(b=>b.onclick=()=>{const i=S.siswa.findIndex(s=>s.id===b.dataset.fix);S.in.mode='siswa';S.in.i=Math.max(0,i);S.in.cp=false;S.in.fb=false;S.in.tab='tahfidz';go('nilai')})}
+function bindDash(){document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));const bk=$('#bkNow');if(bk)bk.onclick=backup;document.querySelectorAll('[data-fix]').forEach(b=>b.onclick=()=>{const i=S.ks.findIndex(s=>s.id===b.dataset.fix);S.in.mode='siswa';S.in.i=Math.max(0,i);S.in.cp=false;S.in.fb=false;S.in.tab='tahfidz';go('nilai')})}
 /* ===== BACKUP / RESTORE ===== */
 function backup(){
   const d={app:'btq-tahfidz',versi:VERSI,tanggal:new Date().toISOString(),pengaturan:S.set,siswa:S.siswa};
@@ -1440,7 +1467,7 @@ async function restore(e){const f=e.target.files[0];e.target.value='';if(!f)retu
   try{const d=JSON.parse(await f.text());
     if(d.app!=='btq-tahfidz'||!Array.isArray(d.siswa))throw 0;
     if(!confirm(`Pulihkan cadangan (${d.siswa.length} siswa)? Data saat ini akan diganti, termasuk data bersama di server untuk semua guru.`))return;
-    await DB.clear();S.set={...DEFAULT,...d.pengaturan};S.siswa=d.siswa;migrasi();
+    await DB.clear();S.set={...DEFAULT,...d.pengaturan};S.siswa=d.siswa;migrasi();await kelasInit();
     await DB.set('pengaturan',S.set);if(S.cad)await DB.set('cadanganTerakhir',S.cad);for(const s of S.siswa)await DB.put(s);
     theme(S.set.tema);toast('Data berhasil dipulihkan.');render()
   }catch(_){toast('File bukan cadangan BTQ–Tahfidz yang valid.')}}
@@ -1461,15 +1488,15 @@ function impRekap(db,asal){
   if(ids.length>1){const v=(prompt('Impor kelas apa? Pilihan: '+ids.join(', '),kid)||'').trim().toUpperCase();kid=ids.find(x=>x.toUpperCase()===v);if(!kid)return toast('Kelas tidak dikenali.')}
   const kl=db.kelasList.find(k=>String(k.id)===kid),T=(db.tahfidz||[]).filter(r=>r.kelasId===kid),B=(db.btq||[]).filter(r=>r.kelasId===kid);
   const names=[...(kl.siswa||[]).map(x=>x.nama),...((db.tahfidzSiswa||{})[kid]||[]),...((db.btqSiswa||{})[kid]||[]),...T.map(r=>r.siswa),...B.map(r=>r.siswa)].map(nm).filter(Boolean);
-  const baru=[...new Set(names)].filter(n=>!S.siswa.some(s=>s.nama===n));
+  const baru=[...new Set(names)].filter(n=>!S.ks.some(s=>s.nama===n));
   if(!confirm(`Impor kelas ${kid} dari ${asal}?\n• ${baru.length} siswa baru\n• ${T.length} setoran tahfidz\n• ${B.length} setoran BTQ\nData yang sudah ada tidak dihapus; setoran yang sama dilewati.\n• Kelompok tahfidz/BTQ diisi dari daftar siswa Rekap Nilai (daftar itu = kelompok 1, sisanya kelompok 2), hanya untuk siswa yang belum punya kelompok.`))return;
   baru.forEach(n=>S.siswa.push(Object.assign(blank(),{nama:n})));
   let nt=0,nb=0,nh=0;
-  [[T,'tahfidz'],[B,'btq']].forEach(([A,j])=>A.forEach((r,k)=>{const s=S.siswa.find(x=>x.nama===nm(r.siswa));if(!s)return;
+  [[T,'tahfidz'],[B,'btq']].forEach(([A,j])=>A.forEach((r,k)=>{const s=S.ks.find(x=>x.nama===nm(r.siswa));if(!s)return;
     const e=konvRekap(r,j,k);s.setoran||(s.setoran=[]);
     {const dp=s.setoran.find(x=>x.j===j&&x.tgl===e.tgl&&x.pos===e.pos&&x.ket===e.ket);if(dp){if(e.harus&&!dp.harus){dp.harus=true;nh++}return}}
     s.setoran.push(e);j==='tahfidz'?nt++:nb++}));
-  S.siswa.forEach(s=>{applyPc(s,'tahfidz');applyPc(s,'btq')});
+  S.ks.forEach(s=>{applyPc(s,'tahfidz');applyPc(s,'btq')});
   migrasi();const ng=klpImpor(db,kid,kl);if(!S.set.kode)S.set.kode=String(kid);persist();render();toast(`Diimpor: ${baru.length} siswa, ${nt} setoran tahfidz, ${nb} setoran BTQ${ng?`; ${ng} penempatan kelompok`:''}${nh?`; ${nh} tanda harus setor diperbarui`:''}.`)}
 function bindRekap(){$('#impRk').onclick=()=>$('#impRkIn').click();
   $('#impRkIn').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;let d;
@@ -1485,7 +1512,7 @@ const Cloud=(()=>{
   const kunci=id=>String(id).replace(/[.$#\[\]\/\s]/g,'_'),tidur=ms=>new Promise(r=>setTimeout(r,ms));
   const rawPut=DB.put,rawSave=DB.saveSiswa,rawSet=DB.set;
   let M={},base={},ready=false,busy=false,kotor=false,st='mulai',es=null,tp,tr,trk,tu,tb,tbs,backoff=0,gen=0,tolakSudah=false;
-  const setOut=()=>{const o={...S.set};delete o.tema;if(o.auto!==false)AUTO_OUT.forEach(k=>delete o[k]);return o};
+  const setOut=()=>{kelasSimpan();const o={...S.set};delete o.tema;delete o.kelasAktif;KLS_CK.forEach(k=>delete o[k]);if(o.auto!==false)AUTO_OUT.forEach(k=>delete o[k]);return o};
   function lokal(){const L={};S.siswa.forEach(s=>{if(!s.id)s.id=newId();const k=kunci(s.id),{setoran,...core}=s;L[`siswa/${k}/core`]=J(core);
     (setoran||[]).forEach(e=>{if(!e.id)e.id=newId();L[`siswa/${k}/setoran/${kunci(e.id)}`]=J(e)})});L.set=J(setOut());return L}
   function kosong(pre){if(pre==='')for(const k in M)delete M[k];else for(const k in M)if(k===pre||k.startsWith(pre+'/'))delete M[k]}
@@ -1495,7 +1522,7 @@ const Cloud=(()=>{
   /* gabung 3 arah: r(server) vs b(dasar) vs l(lokal). Server menang bila lokal belum berubah; bentrok langsung = lokal menang (lalu didorong). */
   function rekon(){const L=lokal(),ps=[...new Set([...Object.keys(L),...Object.keys(base),...Object.keys(M)])].sort((a,b)=>(+/\/core$/.test(b))-(+/\/core$/.test(a)));let ubah=false;
     for(const p of ps){const b=base[p],l=L[p],r=M[p];if(r===b||l===r)continue;if(l!==b)continue;
-      if(p==='set'){if(r!==undefined)try{Object.assign(S.set,JSON.parse(r));ubah=true}catch(_){}continue}
+      if(p==='set'){if(r!==undefined)try{klsTerap(r);ubah=true}catch(_){}continue}
       const m=/^siswa\/([^/]+)\/(?:core|setoran\/(.+))$/.exec(p);if(!m)continue;const k=m[1];let s=S.siswa.find(x=>kunci(x.id)===k);
       if(m[2]===undefined){
         if(r===undefined){if(s){S.siswa.splice(S.siswa.indexOf(s),1);ubah=true}}
@@ -1608,7 +1635,7 @@ const gSkipK=(s,j)=>j+':'+s.id+':'+ST.tgl,gAlasan=(s,j)=>((s.alasan||[]).find(x=
 function gAgo(e){if(!e||!e.tgl||!ST.tgl)return '';const n=selHari(e.tgl,ST.tgl);if(!(n>=0))return '';
   return ' <span class="gag'+(n>=7?' w':'')+'">· '+(n===0?'hari ini':n+' hari lalu')+'</span>'}
 function gUrut(j){if(ST.urut==='absen')return sisKlp(j,ST.kg[j]).slice().sort(urutNo);
-  const L=urutSetor(j).map(i=>S.siswa[i]),sk=s=>!sdHari(s,j)&&gSkip(s,j),bk=s=>!sdHari(s,j)&&!gSkip(s,j)&&gBack(s,j)>0;
+  const L=urutSetor(j).map(i=>S.ks[i]),sk=s=>!sdHari(s,j)&&gSkip(s,j),bk=s=>!sdHari(s,j)&&!gSkip(s,j)&&gBack(s,j)>0;
   return L.filter(s=>!sdHari(s,j)&&!sk(s)&&!bk(s)).concat(L.filter(bk).sort((a,b)=>gBack(a,j)-gBack(b,j)),L.filter(sk),L.filter(s=>sdHari(s,j)))}
 function gSetAlasan(s,j,v){s.alasan=(s.alasan||[]).filter(x=>!(x.tgl===ST.tgl&&x.j===j));if(v)s.alasan.push({tgl:ST.tgl,j,a:v});sv(s)}
 function gSusun(){const l=document.querySelector('.glist');if(!l||S.page!=='setoran'||ST.mode!=='klp')return;
@@ -1678,7 +1705,7 @@ function gRingkasan(){const j=ST.j,t=rkTeks(j,ST.kg[j],ST.tgl),old=document.getE
   d.onclick=e=>{const b=e.target.closest('button');if(!b&&e.target!==d)return;const a=b?b.dataset.sa:'tutup';if(a==='salin')rkSalin(t);else if(a==='bagi')rkBagi(t);else d.remove()};
   document.body.append(d)}
 const RH={tgl:''};
-function viewRekapH(){if(!S.siswa.length)return `<h1>Rekap Harian</h1><div class="card"><p class="mut">Belum ada siswa. Tambahkan atau impor dulu di halaman Siswa.</p></div>`;
+function viewRekapH(){if(!S.ks.length)return `<h1>Rekap Harian</h1><div class="card"><p class="mut">Belum ada siswa. Tambahkan atau impor dulu di halaman Siswa.</p></div>`;
   const j=RT.j;if(!RH.tgl)RH.tgl=hari();if(RT.k===-1&&!klpHitung(j).x)RT.k=0;
   const R=rkBaris(j,RT.k,RH.tgl),c=x=>R.filter(r=>r.st===x).length,sw=(k,t)=>`<button class="${j===k?'on':''}" data-rtj="${k}">${t}</button>`;
   return `<h1>Rekap Harian</h1><div class="card"><div class="seg" style="margin-bottom:12px">${sw('tahfidz','Tahfidz')}${sw('btq','BTQ')}</div>${klpSeg('rtk',j,RT.k)}
@@ -1689,7 +1716,7 @@ function viewRekapH(){if(!S.siswa.length)return `<h1>Rekap Harian</h1><div class
 async function rhExcel(){try{await loadX()}catch(_){return toast('Pustaka Excel gagal dimuat. Sambungkan internet sekali, lalu coba lagi.')}
   const j=RT.j,R=rkBaris(j,RT.k,RH.tgl),U=XLSX.utils,ws=U.aoa_to_sheet([[rkJudul(j,RT.k,RH.tgl)],[],['No','Nama Siswa','Status','Posisi / Alasan','Catatan'],...R.map(r=>[r.no,r.nama,r.st,r.pos,r.cat])]);
   ws['!cols']=[{wch:5},{wch:30},{wch:14},{wch:34},{wch:30}];const wb=U.book_new();U.book_append_sheet(wb,ws,'Harian');XLSX.writeFile(wb,`setoran-${j}-${kodeKelas()}-${RH.tgl}.xlsx`);toast('Rekap harian diekspor.')}
-function bindRekapH(){if(!S.siswa.length)return;const re=()=>{const y=scrollY;render();scrollTo(0,y)};
+function bindRekapH(){if(!S.ks.length)return;const re=()=>{const y=scrollY;render();scrollTo(0,y)};
   document.querySelectorAll('[data-rtj]').forEach(b=>b.onclick=()=>{RT.j=b.dataset.rtj;RT.k=0;re()});
   document.querySelectorAll('[data-rtk]').forEach(b=>b.onclick=()=>{RT.k=+b.dataset.rtk;re()});
   const T=$('#rhT');if(T)T.onchange=e=>{RH.tgl=e.target.value||hari();re()};
@@ -1702,7 +1729,7 @@ function bindRekapH(){if(!S.siswa.length)return;const re=()=>{const y=scrollY;re
 {const vm=viewRekapMode;viewRekapMode=function(){if(REK.m!=='hari')return vm().replace('<button class="'+(REK.m==='lama'?'on':'')+'" data-rm="lama">Antarbulan</button>',x=>x+'<button data-rm="hari">Harian</button>');
   return viewRekapH().replace('</h1>',()=>'</h1><div class="seg" style="margin-bottom:12px"><button data-rm="tabel">Rekap bulan</button><button data-rm="lama">Antarbulan</button><button class="on" data-rm="hari">Harian</button></div>')};VIEWS.rekap=viewRekapMode}
 {const br=bindRekapAll;bindRekapAll=function(){if(REK.m==='hari'){const re=()=>{const y=scrollY;render();scrollTo(0,y)};document.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{REK.m=b.dataset.rm;re()});bindRekapH()}else br()}}
-const gCari=el=>{const row=el.closest('.gr');return {row,s:row&&S.siswa.find(z=>z.id===row.dataset.gr)}};
+const gCari=el=>{const row=el.closest('.gr');return {row,s:row&&S.ks.find(z=>z.id===row.dataset.gr)}};
 function gUpd(row,s,j){const r=gGet(s,j),q=gQ(j,r),d=row.querySelector('.gdl');if(d)d.textContent=gDelta(s,j,r);
   const ai=row.querySelector('[data-gf=ayat]');if(ai)ai.value=r.selesai&&r.surat?NS[r.surat-1]:(r.ayat||'');
   const hi=row.querySelector('[data-gf=hal]');if(hi)hi.value=r.hal||'';
@@ -1751,7 +1778,7 @@ function gSave(s,j,row,qt){const TT=qt?()=>{}:toast,r=gGet(s,j);if(r.tahap)retur
     const el=document.querySelector(`.gr[data-gr="${s.id}"]`);if(el&&S.page==='setoran'&&ST.mode==='klp'&&ST.j===j)gGanti(el,s,j);gCnt();gSusun()});return true}
 {const vs=VIEWS.setoran;VIEWS.setoran=function(){
   const tog=`<div class="seg" style="margin-bottom:12px"><button class="${ST.mode!=='klp'?'on':''}" data-md="satu">Satu per satu</button><button class="${ST.mode==='klp'?'on':''}" data-md="klp">Per kelompok</button></div>`;
-  if(!S.siswa.length)return vs();
+  if(!S.ks.length)return vs();
   if(ST.mode==='klp')return '<h1>Setoran Harian</h1>'+tog+viewKlp();
   const h=vs();return h.includes('<h1>Setoran Harian</h1>')?h.replace('<h1>Setoran Harian</h1>','<h1>Setoran Harian</h1>'+tog):tog+h}}
 {const b0=bindSetoran;bindSetoran=function(){b0();const V=$('#view'),oc=V.onclick,och=V.onchange;
@@ -1776,7 +1803,7 @@ function gSave(s,j,row,qt){const TT=qt?()=>{}:toast,r=gGet(s,j);if(r.tahap)retur
   document.querySelectorAll('#themes button').forEach(b=>b.onclick=()=>{theme(b.dataset.t);saved()});
   try{await DB.open();const p=await DB.get('pengaturan');if(p)S.set={...DEFAULT,...p};S.cad=(await DB.get('cadanganTerakhir'))||'';S.siswa=await DB.all()}
   catch(_){toast('Penyimpanan perangkat tidak tersedia; data tidak akan tersimpan.')}
-  migrasi();{const t=S.siswa.map(s=>s.id+s.no).join();urutAZ();if(S.siswa.map(s=>s.id+s.no).join()!==t)DB.saveSiswa(S.siswa)}autoSet();theme(S.set.tema);
+  migrasi();await kelasInit();{const t=S.siswa.map(s=>s.id+s.no).join();urutAZ();if(S.siswa.map(s=>s.id+s.no).join()!==t)DB.saveSiswa(S.siswa)}autoSet();theme(S.set.tema);
   const h=location.hash.slice(1);go(PAGES.some(p=>p[0]===h)?h:'dashboard');
   Cloud.start();
   psBoot();

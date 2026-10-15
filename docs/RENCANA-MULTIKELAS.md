@@ -29,7 +29,7 @@ Baca juga: blok `proyek-handoff` di dalam `index.html` (aturan proyek, fingerpri
 - Tanda tangan rapor: `guruRapor(s)` (sudah ada) = `guruT[kelompok tahfidz siswa]`, kosong → `guru` kelas itu.
 
 ## Status tahap
-- [ ] **Tahap 1 (v1.34)** model kelas, migrasi 4A, `S.ks`, pemilih kelas di header.
+- [x] **Tahap 1 (v1.34)** model kelas, migrasi 4A, `S.ks`, pemilih kelas di header.
 - [ ] **Tahap 2 (v1.34)** halaman **Kelas** (12 kartu), impor daftar nama (tempel / Excel-CSV) ke kelas aktif, tambah siswa ke kelas aktif.
 - [ ] **Tahap 3 (v1.34)** pengaturan guru & nama kelompok per kelas, peringatan bila guru tahfidz belum diisi, cek tanda tangan rapor.
 - [ ] **Tahap 4 (usulan)** pindah/naik kelas siswa; salin pengaturan antarkelas; kenaikan tingkat akhir tahun.
