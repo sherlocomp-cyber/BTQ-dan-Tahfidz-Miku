@@ -18,7 +18,7 @@ Versi saat ini: **v1.31**
 
 ## Cara memakai
 
-1. Buka `index.html` lewat alamat **HTTPS** (misalnya GitHub Pages repo ini). HTTPS dibutuhkan agar bisa dipasang ke layar utama dan agar perlindungan penyimpanan tersedia.
+1. Buka `index.html` lewat alamat **HTTPS**, misalnya GitHub Pages repo ini: https://sherlocomp-cyber.github.io/BTQ-dan-Tahfidz-Miku/ (aktifkan di Settings › Pages › Deploy from a branch › `main` / root). HTTPS dibutuhkan agar bisa dipasang ke layar utama dan agar perlindungan penyimpanan tersedia.
 2. Di HP, pasang ke layar utama lewat menu browser.
 3. Isi identitas madrasah di **Pengaturan**, lalu tambahkan siswa di halaman **Siswa**.
 4. Unduh **cadangan JSON** secara berkala. Cadangan tidak bisa digantikan oleh perlindungan penyimpanan: data tetap hilang bila data situs atau browser dihapus.
@@ -33,6 +33,11 @@ Fitur impor dan ekspor Excel memuat SheetJS dari internet satu kali (di APK suda
 | `package.json` | Dependensi Capacitor dan script build |
 | `capacitor.config.json` | Konfigurasi pembungkus APK (`webDir`: `www`) |
 | `.gitignore` | Berkas yang tidak ikut di-commit |
+| `.nojekyll` | Menyuruh GitHub Pages menyajikan berkas apa adanya (tanpa Jekyll) |
+| `.github/workflows/build-apk.yml` | Workflow GitHub Actions pembuat APK |
+| `prepare-www.js`, `prepare-android.js` | Skrip penyiapan `www/` dan proyek Android saat build APK |
+| `PrintHelperPlugin.java` | Templat plugin cetak; dipakai `prepare-android.js` saat build APK |
+| `android-plugins/` | Versi manual plugin dan panduan pasang (`PASANG.md`) |
 
 Folder `www/`, `android/`, dan `node_modules/` dibuat saat build dan tidak disimpan di repo.
 
