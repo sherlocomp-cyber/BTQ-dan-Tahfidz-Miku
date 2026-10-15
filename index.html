@@ -423,6 +423,16 @@ html[data-theme=angkasa] .nbt,html[data-theme=gelap] .nbt{color:#f5a524}
 html.zm header,html.zm #navSide,html.zm main,html.zm .tabbar,html.zm dialog,html.zm .toast{zoom:var(--zm)}
 html.fhp body{max-width:520px;margin:0 auto}
 html.fhp .tabbar{left:50%;right:auto;width:100%;max-width:520px;transform:translateX(-50%)}
+/* v1.38 pilih kelas, default per perangkat, atur A/B */
+#gerbang{position:fixed;inset:0;z-index:20;background:var(--bg);color:var(--tx);overflow:auto;padding:max(20px,env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));display:flex;justify-content:center;align-items:flex-start}
+.pkw{width:100%;max-width:560px}.pkw h1{margin:8px 0 12px}.pki{margin:0 0 4px;min-height:44px}
+.pkg2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+.pkt{display:grid;gap:4px;align-content:start;min-height:92px;padding:14px;border:0;text-align:left;font:inherit;color:inherit;cursor:pointer;min-width:0}
+.pkt .pkh{display:flex;align-items:center;gap:8px}.pkt .pkh b{font-size:26px;line-height:1;color:var(--ac2)}
+[data-theme=gelap] .pkt .pkh b,html[data-theme=angkasa] .pkt .pkh b{color:var(--ac)}
+.pkt.on{outline:2px solid var(--ac2)}.pkt.kosong{opacity:.6}.pkt .pkg{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.abt{flex-wrap:nowrap}.abt button{min-width:0;padding:0 2px}.abt button small{display:block;font-size:11px;font-weight:600;opacity:.75}
+.kr.abr{grid-template-columns:1fr auto}.kr.abr .kn{grid-column:auto}
 </style>
 </head>
 <body>
@@ -483,7 +493,7 @@ html.fhp .tabbar{left:50%;right:auto;width:100%;max-width:520px;transform:transl
 </script>
 <script>
 'use strict';
-const VERSI='v1.37';
+const VERSI='v1.38';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -567,6 +577,7 @@ const VIEWS={
  nilai:()=>viewNilai(),
  rapor:()=>viewRapor(),
  setelan(){return `<h1>Pengaturan</h1>
+  ${kdKartu()}
   <div class="card"><h3>Identitas & rapor</h3>
   <label class="ck" style="margin-bottom:6px"><input type="checkbox" id="autoIn"${S.set.auto!==false?' checked':''}> Semester, tahun pelajaran, dan tanggal rapor otomatis</label>
   <p class="mut" style="margin-bottom:12px">Mengikuti tanggal hari ini: Juli–Desember = Semester I, Januari–Juni = Semester II. Matikan bila ingin mengisi sendiri.</p>
@@ -598,6 +609,8 @@ const VIEWS={
   <p><b>Kelompok</b> – satu kelas dibagi 2 kelompok tahfidz dan 2 kelompok BTQ (anggota boleh berbeda). Atur di Siswa › Kelompok Tahfidz & BTQ (bagi dua otomatis atau ketuk angka per siswa; nama kelompok bisa diubah). Halaman Setoran punya tombol pilihan kelompok sehingga antrean hanya berisi siswa kelompok itu. Impor dari Rekap Nilai mengisi kelompok dari daftar siswa tahfidz/BTQ di sana.</p>
   <p><b>5. Cadangan</b> – unduh cadangan JSON berkala; pulihkan bila ganti perangkat. Ekspor leger Excel ada di halaman Siswa › menu ⋯. Di Pengaturan › Cadangan data ada status perlindungan penyimpanan; ketuk Lindungi penyimpanan agar browser tidak menghapus data otomatis saat memori penuh (cadangan tetap perlu).</p>
   <p><b>6. Tampilan</b> – pilih tema di pojok atas: ☀️ terang, 🌤️ biru, 🌙 gelap, atau 🪐 Angkasa (latar kertas berlapis dan planet). Tema hanya mengubah tampilan di layar; cetak rapor tidak terpengaruh.</p></div></details></div>
+  <p><b>Pilih kelas & default</b> – bila ada lebih dari satu kelas berisi siswa dan belum ada default, layar Pilih kelas tampil saat aplikasi dibuka. Centang “Buka kelas ini otomatis” agar lain kali langsung masuk ke kelas itu. Default tersimpan per perangkat dan bisa diubah di Pengaturan.</p>
+  <p><b>Kenaikan kelas & pembagian A/B</b> – di halaman Kelas, setelah Naikkan semua kelas, atur siapa masuk A atau B per tingkat: ketuk A/B pada siswa, Tukar seluruh A ↔ B, atau Bagi rata (acak). Tukar dan Bagi rata bisa diurungkan.</p>
   <p class="mut" style="margin-top:14px">Versi ${VERSI}</p>`}
 };
 function render(){ksBuat();kelasUI();autoSet();if(S.page==='setoran'&&!ST.mulai&&S.ks.length){ST.mulai=1;const q=urutSetor(ST.j);if(q.length){ST.i=q[0];prefillSt()}}$('#view').innerHTML=VIEWS[S.page]();if(S.page==='setelan')bindSetelan();if(S.page==='siswa')bindSiswa();if(S.page==='kelas')bindKelas();if(S.page==='nilai')bindNilai();if(S.page==='setoran')bindSetoran();if(S.page==='rapor')bindRapor();if(S.page==='rekap')bindRekapAll();if(S.page==='dashboard')bindDash();pasangCari();gsIsi()}
@@ -757,13 +770,13 @@ function klsKartu(k){const a=k===S.set.kelasAktif,o=klsData(k),g=klsGuruT(k),n=k
   <div class="row" style="margin-top:8px"><select data-ks="${k}"><option value="">Salin guru &amp; kelompok dari…</option>${KLS_ALL.filter(x=>x!==k).map(x=>`<option value="${x}">Kelas ${x}</option>`).join('')}</select><button class="sm" data-ka="salin" data-k="${k}">Salin</button></div></details></div>`}
 VIEWS.kelas=()=>{kelasSimpan();const tot=S.siswa.length;
   return `<h1>Kelas</h1><p class="mut" style="margin:0 0 12px">${tot} siswa di semua kelas. Pilih kelas, lalu impor atau tambah siswa. Tanda tangan rapor mengikuti guru kelompok tahfidz tiap siswa. Siswa 4A yang lama tetap tersimpan di Kelas 4A.</p><div class="kg">${KLS_ALL.map(klsKartu).join('')}</div>
-  <div class="card" style="margin-top:14px"><h3>Kenaikan kelas akhir tahun</h3><p class="mut">Memindahkan semua siswa naik satu tingkat (4A→5A, 3B→4B, dst.). Siswa kelas 6 ditandai lulus dan tidak muncul di daftar kelas (data tetap tersimpan). Cadangan otomatis dibuat dulu. Lakukan sekali saja saat tahun ajaran baru, sebaiknya setelah rapor dicetak.${S.siswa.some(s=>s.kelas==='LULUS')?` Saat ini ${S.siswa.filter(s=>s.kelas==='LULUS').length} siswa berstatus lulus.`:''}</p><button class="btn ghost" data-ka="naik">Naikkan semua kelas…</button></div>`};
+  <div class="card" style="margin-top:14px"><h3>Kenaikan kelas akhir tahun</h3><p class="mut">Memindahkan semua siswa naik satu tingkat (4A→5A, 3B→4B, dst.). Siswa kelas 6 ditandai lulus dan tidak muncul di daftar kelas (data tetap tersimpan). Cadangan otomatis dibuat dulu. Lakukan sekali saja saat tahun ajaran baru, sebaiknya setelah rapor dicetak.${S.siswa.some(s=>s.kelas==='LULUS')?` Saat ini ${S.siswa.filter(s=>s.kelas==='LULUS').length} siswa berstatus lulus.`:''}</p><button class="btn ghost" data-ka="naik">Naikkan semua kelas…</button></div>${abKartu()}`};
 async function kelasNaik(){const n=S.siswa.filter(s=>klsOk(s.kelas)).length;if(!n)return toast('Belum ada siswa di kelas mana pun.');
   if(!confirm(`Naikkan ${n} siswa satu tingkat? Siswa kelas 6 menjadi lulus. Cadangan dibuat otomatis.`))return;
   if(prompt('Ketik NAIK untuk melanjutkan.')!=='NAIK')return toast('Dibatalkan.');
   try{await DB.set('cadanganSebelumNaikKelas',{tgl:new Date().toISOString(),siswa:klsKlon(S.siswa)})}catch(_){return toast('Cadangan gagal dibuat; kenaikan dibatalkan.')}
   S.siswa.forEach(s=>{if(klsOk(s.kelas))s.kelas=klsT(s.kelas)>=6?'LULUS':(klsT(s.kelas)+1)+s.kelas.slice(1)});
-  persist();render();toast('Kenaikan kelas selesai.')}
+  persist();AB.t=[1,2,3,4,5,6].find(n=>S.siswa.some(s=>klsT(s.kelas)===n&&klsOk(s.kelas)))||0;render();toast('Kenaikan kelas selesai. Atur pembagian A/B di bawah.');const kk=$('#abKartu');if(kk)kk.scrollIntoView({behavior:'smooth',block:'start'})}
 function bindKelas(){const V=$('#view');
   V.onclick=e=>{const b=e.target.closest('[data-ka]');if(!b)return;const k=b.dataset.k,a=b.dataset.ka;
     if(a==='salin'){const src=V.querySelector(`[data-ks="${k}"]`).value;if(!src)return toast('Pilih kelas sumber dulu.');if(!confirm(`Salin guru dan nama kelompok dari Kelas ${src} ke Kelas ${k}? Isian Kelas ${k} akan diganti.`))return;
@@ -777,6 +790,39 @@ function bindKelas(){const V=$('#view');
     if(k===S.set.kelasAktif)kelasMuat();saved()}}
 {const _r=VIEWS.rapor;VIEWS.rapor=()=>{const mis=S.ks.filter(s=>!String(guruRapor(s)||'').trim()).length;
   return (mis?`<div class="card kcw2"><b>${mis} siswa belum punya nama guru untuk tanda tangan rapor.</b> Isi guru tahfidz kelas ${esc(S.set.kelasAktif)} di halaman Kelas.</div>`:'')+_r()}}
+/* ===== v1.38: LAYAR PILIH KELAS, KELAS DEFAULT PER PERANGKAT (localStorage, tidak disinkron), ATUR PEMBAGIAN A/B ===== */
+const kdGet=()=>{try{const v=localStorage.getItem('btqKelasDefault');return klsOk(v)?v:''}catch(_){return ''}};
+const kdSet=v=>{try{v?localStorage.setItem('btqKelasDefault',v):localStorage.removeItem('btqKelasDefault')}catch(_){}};
+function gerbangTutup(){const e=$('#gerbang');if(e)e.remove();document.body.style.overflow=''}
+function gerbangPilih(k,ingat){if(ingat)kdSet(k);if(k!==S.set.kelasAktif)kelasPilih(k);gerbangTutup();render()}
+function gerbangBuka(){gerbangTutup();const n={};S.siswa.forEach(s=>n[s.kelas]=(n[s.kelas]||0)+1);const d=kdGet(),a=S.set.kelasAktif;
+  const tile=k=>{const g=klsGuruT(k).filter(Boolean),w=String(klsData(k).guru||'').trim(),gur=(g.length?g:(w?[w]:[])).join(' / ');
+    return `<button class="card pkt${k===a?' on':''}${n[k]?'':' kosong'}" data-pk="${k}"><span class="pkh"><b>${k}</b>${k===d?'<span class="kcb">default</span>':''}</span><span class="mut">${n[k]?n[k]+' siswa':'Belum ada siswa'}</span>${gur?`<span class="mut pkg">${esc(gur)}</span>`:''}</button>`};
+  const e=document.createElement('div');e.id='gerbang';e.setAttribute('role','dialog');e.setAttribute('aria-modal','true');e.setAttribute('aria-label','Pilih kelas');
+  e.innerHTML=`<div class="pkw"><h1>Pilih kelas</h1><label class="ck pki"><input type="checkbox" id="pkIngat"${d?'':' checked'}> Buka kelas ini otomatis di perangkat ini</label><p class="mut">Disimpan di perangkat ini saja, jadi tiap guru bisa punya kelas sendiri. Bisa diubah di Pengaturan.</p><div class="pkg2">${KLS_ALL.map(tile).join('')}</div><div class="row"><button class="btn ghost" id="pkLanjut">Lanjut di Kelas ${a}</button></div></div>`;
+  document.body.append(e);document.body.style.overflow='hidden';
+  e.onclick=ev=>{const b=ev.target.closest('[data-pk]');if(b)return gerbangPilih(b.dataset.pk,$('#pkIngat').checked);if(ev.target.closest('#pkLanjut'))gerbangTutup()};
+  e.onkeydown=ev=>{if(ev.key==='Escape')gerbangTutup()};
+  const f=e.querySelector('.pkt.on')||e.querySelector('.pkt');if(f)f.focus()}
+function kdKartu(){const d=kdGet();return `<div class="card" style="margin-bottom:16px"><h3>Kelas default perangkat ini</h3><p class="mut" style="margin-bottom:10px">Aplikasi langsung membuka kelas ini setiap dibuka. Berlaku di perangkat ini saja, tidak ikut tersinkron ke guru lain.</p><select id="kdSel" aria-label="Kelas default"><option value="">Tanya setiap kali dibuka</option>${KLS_ALL.map(k=>`<option value="${k}"${k===d?' selected':''}>Kelas ${k}</option>`).join('')}</select><div class="row"><button class="sm" id="kdTampil">Tampilkan layar pilih kelas</button></div></div>`}
+const AB={t:0};
+const abTingkat=()=>AB.t>=1&&AB.t<=6?AB.t:(klsT(S.set.kelasAktif)||4);
+const abSis=t=>S.siswa.filter(s=>s.kelas===t+'A'||s.kelas===t+'B').sort((x,y)=>cmpNama(x.nama,y.nama));
+function abKartu(){const t=abTingkat(),L=abSis(t),na=L.filter(s=>s.kelas===t+'A').length,jml=n=>S.siswa.filter(s=>s.kelas===n+'A'||s.kelas===n+'B').length;
+  return `<div class="card" id="abKartu" style="margin-top:14px"><h3>Atur pembagian kelas A/B</h3><p class="mut">Untuk tahun ajaran baru: pilih tingkat, lalu ketuk A atau B pada tiap siswa. Kelompok tahfidz/BTQ ikut siswa; atur ulang di Siswa › Kelompok bila perlu.</p>
+  <div class="seg abt" style="margin:10px 0">${[1,2,3,4,5,6].map(n=>`<button class="${n===t?'on':''}" data-ab="t" data-v="${n}" aria-label="Tingkat ${n}">${n}<small>${jml(n)}</small></button>`).join('')}</div>
+  ${L.length?`<p class="mut"><b>Kelas ${t}A</b>: ${na} siswa · <b>Kelas ${t}B</b>: ${L.length-na} siswa</p><div class="row" style="margin:6px 0"><button class="sm" data-ab="tukar">Tukar seluruh A ↔ B</button><button class="sm" data-ab="acak">Bagi rata (acak)</button></div><div>${L.map(s=>`<div class="kr abr"><span class="kn">${esc(s.nama)}</span><span class="seg">${['A','B'].map(h=>`<button class="${s.kelas===t+h?'on':''}" data-ab="s" data-id="${s.id}" data-h="${h}" aria-label="${esc(s.nama)} ke kelas ${t}${h}">${h}</button>`).join('')}</span></div>`).join('')}</div>`:`<p class="mut">Belum ada siswa di tingkat ${t}.</p>`}</div>`}
+function abRender(y){render();if(y!==undefined)scrollTo(0,y)}
+function abAksi(b){const a=b.dataset.ab,t=abTingkat(),y=scrollY;
+  if(a==='t'){AB.t=+b.dataset.v;return abRender(y)}
+  if(a==='s'){const s=S.siswa.find(x=>x.id===b.dataset.id),k=t+b.dataset.h;if(!s||s.kelas===k)return;s.kelas=k;persist();return abRender(y)}
+  const sn=abSis(t).map(s=>[s.id,s.kelas]);if(!sn.length)return;
+  if(a==='tukar')S.siswa.forEach(s=>{if(s.kelas===t+'A')s.kelas=t+'B';else if(s.kelas===t+'B')s.kelas=t+'A'});
+  else if(a==='acak'){const L=abSis(t);for(let i=L.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[L[i],L[j]]=[L[j],L[i]]}L.forEach((s,i)=>{s.kelas=t+(i<Math.ceil(L.length/2)?'A':'B')})}
+  persist();abRender(y);
+  toast(a==='tukar'?'A dan B ditukar.':'Siswa dibagi rata secara acak.',()=>{const m=new Map(sn);S.siswa.forEach(s=>{if(m.has(s.id))s.kelas=m.get(s.id)});persist();abRender()})}
+{const _bk=bindKelas;bindKelas=function(){_bk();const V=$('#view'),oc=V.onclick;V.onclick=e=>{const b=e.target.closest('[data-ab]');if(b)return abAksi(b);if(oc)oc(e)}}}
+{const _bs=bindSetelan;bindSetelan=function(){_bs();const e=$('#kdSel');if(e)e.onchange=()=>{kdSet(e.value);toast(e.value?'Kelas default: '+e.value+'.':'Default dihapus; layar pilih kelas tampil saat dibuka.')};const t=$('#kdTampil');if(t)t.onclick=gerbangBuka}}
 /* ===== v1.37: TAMPILAN: mode Otomatis/HP/Desktop + perbesar/perkecil (per perangkat, disimpan di localStorage) ===== */
 const TP_MQ=[];
 function tampilMq(){if(!TP_MQ.length)for(const sh of document.styleSheets){let rs;try{rs=sh.cssRules}catch(_){continue}
@@ -1874,9 +1920,10 @@ function gSave(s,j,row,qt){const TT=qt?()=>{}:toast,r=gGet(s,j);if(r.tahap)retur
   document.querySelectorAll('#themes button').forEach(b=>b.onclick=()=>{theme(b.dataset.t);saved()});
   try{await DB.open();const p=await DB.get('pengaturan');if(p)S.set={...DEFAULT,...p};S.cad=(await DB.get('cadanganTerakhir'))||'';S.siswa=await DB.all()}
   catch(_){toast('Penyimpanan perangkat tidak tersedia; data tidak akan tersimpan.')}
-  migrasi();await kelasInit();{const t=S.siswa.map(s=>s.id+s.no).join();urutAZ();if(S.siswa.map(s=>s.id+s.no).join()!==t)DB.saveSiswa(S.siswa)}autoSet();theme(S.set.tema);
+  migrasi();await kelasInit();{const t=S.siswa.map(s=>s.id+s.no).join();urutAZ();if(S.siswa.map(s=>s.id+s.no).join()!==t)DB.saveSiswa(S.siswa)}autoSet();theme(S.set.tema);{const d=kdGet();if(d&&d!==S.set.kelasAktif)kelasPilih(d)}
   const h=location.hash.slice(1);go(PAGES.some(p=>p[0]===h)?h:'dashboard');
   Cloud.start();
+  if(!kdGet()&&new Set(S.siswa.map(s=>s.kelas).filter(klsOk)).size>1)gerbangBuka();
   psBoot();
 })();
 </script>
