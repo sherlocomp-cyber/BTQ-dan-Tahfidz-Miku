@@ -443,6 +443,45 @@ html.fhp .tabbar{left:50%;right:auto;width:100%;max-width:520px;transform:transl
 @media(max-width:440px){.save span{display:none}}
 @media(max-width:820px){.sm,.chip{min-height:40px}.hd .btn,.mbtn{min-height:40px}summary{padding:8px 0}}
 </style>
+<style id="v140">
+/* ===== v1.40 POLES TEMA (Terang, Biru, Gelap, Angkasa) =====
+ Sistem: (1) teks >= 4.5:1 dan komponen UI >= 3:1 di keempat tema; (2) satu token per peran:
+ --mu teks redup, --acf isian aksi (teks putih), --warn peringatan, --dng galat, --fok cincin fokus;
+ (3) semua perubahan hanya di blok ini; bagian terlindungi (rapor/cetak) tidak disentuh;
+ (4) tanpa :is() dan tanpa fitur CSS baru agar aman di WebView lama. */
+html{--acf:var(--ac2);--warn:#f59e0b;--dng:#e5484d;--fok:var(--ac)}
+/* 1. Skema warna bawaan peramban: kontrol formulir, bilah gulir, pemilih tanggal */
+[data-theme=terang],[data-theme=biru]{color-scheme:light}
+[data-theme=gelap]{color-scheme:dark}
+@media print{[data-theme=gelap]{color-scheme:light}}
+/* 2. TERANG: teks redup #6b7794 (4.25:1) -> #56627f (5.8:1 di kartu, 5.2:1 di latar) */
+[data-theme=terang]{--mu:#56627f;--warn:#a35207;--dng:#c4262d;--fok:var(--ac2)}
+/* 3. BIRU: teks redup langsung di latar #7f90b4 hanya 1.67:1. --mu = navy di luar kartu, abu-biru di dalam kartu */
+[data-theme=biru]{--mu:#1b2748;--warn:#a35207;--dng:#c4262d;--fok:var(--ac2)}
+[data-theme=biru] .card,[data-theme=biru] .tabbar,[data-theme=biru] dialog,[data-theme=biru] .themes,[data-theme=biru] .gr,[data-theme=biru] .gsm,[data-theme=biru] .last,[data-theme=biru] .mnu,[data-theme=biru] .rkp-w,[data-theme=biru] .rt-w,[data-theme=biru] .nlf,[data-theme=biru] .swh,[data-theme=biru] .stQ,[data-theme=biru] .chip,[data-theme=biru] .sm,[data-theme=biru] .seg button,[data-theme=biru] .btn.ghost,[data-theme=biru] .gact .gal,[data-theme=biru] .nav.stk,[data-theme=biru] label.stk,[data-theme=biru] input,[data-theme=biru] select,[data-theme=biru] textarea{--mu:#4f5d7a}
+/* 4. GELAP: --ac2 dipakai sebagai isian (putih di atasnya 3.69:1) dan sebagai teks di kartu gelap (4.26:1). Dipisah: --acf isian, --ac2 teks */
+[data-theme=gelap]{--ac2:#7aa0ff;--acf:#3a63e0;--dng:#ff7b7f}
+.toast,.seg button.on,.gtool .sm.on,.gc .gsl.on,.kcb{background:var(--acf)}
+/* 5. Tombol bahaya: putih di atas #c9302c = 5.3:1 (sebelumnya 3.9:1; Angkasa 2.0:1 di ujung gradien) */
+.btn.red{background:#c9302c}
+html[data-theme=angkasa] .btn.red{background:radial-gradient(130% 150% at 28% 8%,#d13b41 0%,#c0262d 48%,#94191f 100%)}
+/* 6. Galat dan peringatan memakai token per tema */
+.err{color:var(--dng)}
+.gag.w,.gnote{color:var(--warn)}
+/* 7. Teks sekunder yang diredupkan lewat opacity */
+.chip small{opacity:.86}.abt button small{opacity:.94}
+/* 8. Cincin fokus: semua kontrol (dulu hanya input dan button), warna cukup kontras di latar terang */
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--fok);outline-offset:2px}
+/* 9. Indikator simpan/sinkron di latar terang: teks cyan 1.98:1 (Terang) dan 1.24:1 (Biru). Cincin menjaga titik tetap terlihat walau warnanya diberi inline oleh JS */
+[data-theme=terang] .save,[data-theme=biru] .save{color:var(--mu);opacity:1}
+[data-theme=terang] .save i,[data-theme=biru] .save i{background:#0e7c8a;box-shadow:0 0 0 1px var(--mu)}
+[data-theme=terang] .save.busy i,[data-theme=biru] .save.busy i{background:#8a4b00}
+/* 10. Placeholder mengikuti token tema */
+::placeholder{color:var(--mu);opacity:1}
+/* 11. Ikon tema: satu keluarga garis; area sentuh 44px di layar sentuh tanpa mengubah tata letak */
+.themes button svg{stroke-linecap:round;stroke-linejoin:round}
+@media(pointer:coarse){.themes button{position:relative}.themes button::after{content:"";position:absolute;top:-5px;right:-5px;bottom:-5px;left:-5px}}
+</style>
 </head>
 <body>
 <header>
@@ -454,9 +493,9 @@ html.fhp .tabbar{left:50%;right:auto;width:100%;max-width:520px;transform:transl
   <div class="save" id="saveInd"><i></i><span>Tersimpan</span></div>
   <div class="hnav" id="navHdr"></div>
   <div class="themes" id="themes">
-    <button data-t="terang" title="Terang" aria-label="Tema terang">☀️</button>
-    <button data-t="biru" title="Biru gelap" aria-label="Tema biru gelap">🌤️</button>
-    <button data-t="gelap" title="Gelap" aria-label="Tema gelap">🌙</button>
+    <button data-t="terang" title="Terang" aria-label="Tema terang"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7"/></svg></button>
+    <button data-t="biru" title="Biru gelap" aria-label="Tema biru gelap"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 17a5.5 5.5 0 0 1 11 0"/><path d="M3 17h18M12 6.5v2.3M5.4 10.4L7 12M18.6 10.4L17 12"/></svg></button>
+    <button data-t="gelap" title="Gelap" aria-label="Tema gelap"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.2 8.2 0 1 0 10.2 10.2z"/></svg></button>
     <button data-t="angkasa" title="Angkasa" aria-label="Tema angkasa"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><ellipse cx="12" cy="12" rx="10" ry="3.3" transform="rotate(-24 12 12)"/></svg></button>
   </div>
 </header>
@@ -502,7 +541,7 @@ html.fhp .tabbar{left:50%;right:auto;width:100%;max-width:520px;transform:transl
 </script>
 <script>
 'use strict';
-const VERSI='v1.39';
+const VERSI='v1.40';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -565,7 +604,7 @@ function go(p){S.page=p;location.hash=p;document.body.dataset.pg=p;
   document.querySelectorAll('[data-p]').forEach(b=>b.classList.toggle('on',b.dataset.p===p));render()}
 const TEMA_OK=['terang','biru','gelap','angkasa'];
 function theme(t){if(!TEMA_OK.includes(t))t='terang';S.set.tema=t;document.documentElement.dataset.theme=t;
-  {const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='angkasa'?'#16171b':'#12b5c4'}
+  {const m=document.querySelector('meta[name=theme-color]');if(m)m.content={terang:'#e9ecf6',biru:'#7f90b4',gelap:'#06182f',angkasa:'#16171b'}[t]}
   document.querySelectorAll('#themes button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))}
 function toast(m,undo){const e=document.createElement('div');e.className='toast';e.textContent=m+' ';
   if(undo){const b=document.createElement('button');b.textContent='Urungkan';b.className='sm';b.onclick=()=>{undo();e.remove()};e.append(b)}
@@ -2193,6 +2232,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 21: v1.40 Poles tema: style id=v140 (terakhir, sebelum </head>) memperbaiki kontras WCAG AA di 4 tema (token --mu/--acf/--warn/--dng/--fok), color-scheme per tema, cincin fokus semua kontrol, ikon tema emoji->SVG, theme-color per tema; bagian terlindungi tidak disentuh, sidik jari dan golden tetap SAMA, tanpa perubahan DB.
 - Sesi 20: v1.37 Tampilan: mode Otomatis/HP/Desktop (TAMPIL, DESK(); menulis ulang media query non-cetak saat jalan, meta viewport) + zoom 70–150% (CSS zoom pada header/menu/main/tabbar/dialog, bukan #printArea); kunci localStorage btqTampil; kartu 'Tampilan' di Pengaturan.
 - Sesi 19: v1.36 Tahap 4–5: pindah kelas (form siswa), salin guru/kelompok antarkelas, kenaikan kelas akhir tahun (kelasNaik; kelas 'LULUS' = alumni, klsSis), sinkron Firebase per kelas (kunci kelas/<kode>; 'set' tanpa kls; klsTerap menyemai kls lama dari server).
 - Sesi 18: v1.34–v1.35 multi-kelas 1A–6B: model kelas (S.siswa semua kelas, S.ks kelas aktif, S.set.kls per kelas, migrasi ke 4A), halaman Kelas (kartu 12 kelas, buka/impor Excel/tempel nama, guru tahfidz per kelompok per kelas, peringatan guru kosong di Rapor). Rencana & status tahap: docs/RENCANA-MULTIKELAS.md.
