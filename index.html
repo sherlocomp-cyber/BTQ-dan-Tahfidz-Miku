@@ -482,39 +482,6 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 .themes button svg{stroke-linecap:round;stroke-linejoin:round}
 @media(pointer:coarse){.themes button{position:relative}.themes button::after{content:"";position:absolute;top:-5px;right:-5px;bottom:-5px;left:-5px}}
 </style>
-<style id="v141">
-/* ===== v1.41 PERBAIKAN TATA LETAK SISWA + KELOMPOK (UI/UX) =====
- Masalah: di mode Desktop pada HP (lebar 1100px) atau jendela 1024-1400px, tabel Siswa butuh >=690px tetapi kolomnya
- hanya ~450px, sehingga kolom Tahfidz/BTQ meluber ke bawah panel kanan, dan tombol BTQ di kartu Kelompok terpotong.
- Perbaikan: kolom fleksibel (NIS/NISN pindah ke bawah nama), panel kanan lebih ramping, baris Kelompok 2 tingkat.
- Hanya CSS; bagian terlindungi tidak disentuh. Tanpa :is()/container query agar aman di WebView lama. */
-@media(min-width:1024px){
- .md{grid-template-columns:minmax(0,1fr) minmax(300px,340px);gap:16px}
- .md-l,.md-r{min-width:0}
- .md-l .card{min-width:0}
- .sw,.swh{grid-template-columns:32px minmax(0,1fr) minmax(106px,.65fr) minmax(106px,.65fr) 16px;gap:8px}
- .sw>:nth-child(3),.sw>:nth-child(4),.swh>:nth-child(3),.swh>:nth-child(4){display:none}
- .sw .mob{display:block;font-size:12px;margin-top:2px}
- .sw .dk{min-width:0}
- .sw .kc{max-width:100%;padding:2px 8px;font-size:11.5px;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
- .sw[data-r]{cursor:pointer}
- .md-r .kr{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
- .md-r .kr .kn{grid-column:1/-1;overflow-wrap:anywhere}
- .md-r .kr .kg{justify-items:start}
- .md-r .kr .seg button{min-width:40px}
-}
-@media(min-width:1500px){
- .md{grid-template-columns:minmax(0,1fr) 360px;gap:20px}
- .sw,.swh{grid-template-columns:40px minmax(200px,2.4fr) 84px 124px minmax(110px,1fr) minmax(110px,1fr) 20px;gap:12px}
- .sw>:nth-child(3),.sw>:nth-child(4),.swh>:nth-child(3),.swh>:nth-child(4){display:block}
- .sw .mob{display:none}
-}
-@media(max-width:480px){.kr{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.kr .kn{overflow-wrap:anywhere}}
-/* Area sentuh minimal 40px untuk tombol kecil di layar sentuh */
-@media(pointer:coarse){.sm,.seg button{min-height:40px}}
-/* Hormati pengaturan "kurangi gerakan" */
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
-</style>
 </head>
 <body>
 <header>
@@ -620,7 +587,7 @@ const IC={kelas:'<path d="M3 21V9l9-6 9 6v12M9 21v-6h6v6"/>',rekap:'<path d="M4 
  setoran:'<path d="M5 4h10a3 3 0 013 3v13H8a3 3 0 01-3-3zM8 8h6M8 12h6"/>',
  rapor:'<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/>',
  setelan:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
-let TAMPIL={mode:'auto',zoom:100};const DESK=()=>TAMPIL.mode==='desktop'||(TAMPIL.mode!=='hp'&&matchMedia('(min-width:1024px)').matches);let SELS='';
+let TAMPIL={mode:'auto',zoom:100,ori:'auto'};const DESK=()=>TAMPIL.mode==='desktop'||(TAMPIL.mode!=='hp'&&matchMedia('(min-width:1024px)').matches);let SELS='';
 const NAV_INTI=['siswa','setoran','nilai','rapor','rekap'];
 const PAGES=[['dashboard','Dashboard'],['kelas','Kelas'],['siswa','Siswa'],['setoran','Setoran'],['nilai','Input Nilai'],['rapor','Rapor'],['rekap','Rekap'],['setelan','Pengaturan']];
 function buildNav(){
@@ -905,6 +872,17 @@ function abAksi(b){const a=b.dataset.ab,t=abTingkat(),y=scrollY;
   toast(a==='tukar'?'A dan B ditukar.':'Siswa dibagi rata secara acak.',()=>{const m=new Map(sn);S.siswa.forEach(s=>{if(m.has(s.id))s.kelas=m.get(s.id)});persist();abRender()})}
 {const _bk=bindKelas;bindKelas=function(){_bk();const V=$('#view'),oc=V.onclick;V.onclick=e=>{const b=e.target.closest('[data-ab]');if(b)return abAksi(b);if(oc)oc(e)}}}
 {const _bs=bindSetelan;bindSetelan=function(){_bs();const e=$('#kdSel');if(e)e.onchange=()=>{kdSet(e.value);toast(e.value?'Kelas default: '+e.value+'.':'Default dihapus; layar pilih kelas tampil saat dibuka.')};const t=$('#kdTampil');if(t)t.onclick=gerbangBuka}}
+/* ===== v1.41: ORIENTASI LAYAR: Otomatis/Potret/Lanskap (per perangkat, ikut btqTampil). Screen Orientation API:
+   Android Chrome mengunci tanpa layar penuh bila aplikasi terpasang (standalone); di tab biasa perlu layar penuh.
+   iPhone/iPad (Safari) tidak mendukung kunci: hanya menampilkan petunjuk. ===== */
+let ORI_MSG='',ORI_FS=false;const ORI_T={potret:'portrait',lanskap:'landscape'};
+function oriNote(m){ORI_MSG=m||'';const e=document.getElementById('oriNote');if(e)e.textContent=ORI_MSG}
+async function oriTerap(gest){const o=TAMPIL.ori,so=window.screen&&screen.orientation,md=ORI_T[o];
+  if(!md){if(!gest)return;if(so&&so.unlock){try{so.unlock()}catch(_){}}if(ORI_FS&&document.fullscreenElement){try{await document.exitFullscreen()}catch(_){}}ORI_FS=false;oriNote('');return}
+  if(!so||!so.lock){if(gest)oriNote('Peramban ini tidak mendukung kunci orientasi (mis. iPhone/iPad). Putar perangkat secara manual.');return}
+  try{await so.lock(md);if(gest)oriNote('Orientasi terkunci: '+o+'.')}
+  catch(_){if(gest&&!document.fullscreenElement&&document.documentElement.requestFullscreen){try{await document.documentElement.requestFullscreen();await so.lock(md);ORI_FS=true;oriNote('Orientasi terkunci: '+o+' (layar penuh, karena peramban mewajibkannya). Pasang aplikasi ke layar utama agar tidak perlu layar penuh.');return}catch(_){try{if(document.fullscreenElement)await document.exitFullscreen()}catch(_){}}}
+    if(gest)oriNote('Orientasi tidak bisa dikunci di sini. Pasang aplikasi ke layar utama lalu coba lagi, atau putar perangkat secara manual.')}}
 /* ===== v1.37: TAMPILAN: mode Otomatis/HP/Desktop + perbesar/perkecil (per perangkat, disimpan di localStorage) ===== */
 const TP_MQ=[];
 function tampilMq(){if(!TP_MQ.length)for(const sh of document.styleSheets){let rs;try{rs=sh.cssRules}catch(_){continue}
@@ -916,10 +894,11 @@ function tampilTerap(){const T=TAMPIL,h=document.documentElement,W=T.mode==='des
   const v=document.querySelector('meta[name=viewport]');if(v)v.content=T.mode==='desktop'&&innerWidth<900&&matchMedia('(pointer:coarse)').matches?'width=1100,initial-scale=1':'width=device-width,initial-scale=1,viewport-fit=cover'}
 function tampilSet(o){Object.assign(TAMPIL,o);TAMPIL.zoom=Math.min(150,Math.max(70,Math.round(TAMPIL.zoom)));
   try{localStorage.setItem('btqTampil',JSON.stringify(TAMPIL))}catch(_){}tampilTerap();render()}
-function tampilMuat(){try{const o=JSON.parse(localStorage.getItem('btqTampil')||'{}');if(['auto','hp','desktop'].includes(o.mode))TAMPIL.mode=o.mode;if(+o.zoom>=70&&+o.zoom<=150)TAMPIL.zoom=Math.round(+o.zoom)}catch(_){}tampilTerap()}
-{const s2=VIEWS.setelan;VIEWS.setelan=function(){const T=TAMPIL,m=(k,t)=>`<button class="${T.mode===k?'on':''}" data-tm="${k}">${t}</button>`;
-  return s2()+`<div class="card" style="margin-top:16px"><h3>Tampilan</h3><p class="mut">Berlaku hanya di perangkat ini.</p><p class="mut" style="margin:10px 0 6px">Mode tampilan</p><div class="seg">${m('auto','Otomatis')}${m('hp','HP')}${m('desktop','Desktop')}</div><p class="mut" style="margin:14px 0 6px">Ukuran tampilan: <b>${T.zoom}%</b></p><div class="row"><button class="sm" data-tz="-10">A− Perkecil</button><button class="sm" data-tz="10">A+ Perbesar</button><button class="sm" data-tz="0">Atur ulang</button></div></div>`}}
+function tampilMuat(){try{const o=JSON.parse(localStorage.getItem('btqTampil')||'{}');if(['auto','hp','desktop'].includes(o.mode))TAMPIL.mode=o.mode;if(+o.zoom>=70&&+o.zoom<=150)TAMPIL.zoom=Math.round(+o.zoom);if(['auto','potret','lanskap'].includes(o.ori))TAMPIL.ori=o.ori}catch(_){}tampilTerap();oriTerap(false)}
+{const s2=VIEWS.setelan;VIEWS.setelan=function(){const T=TAMPIL,m=(k,t)=>`<button class="${T.mode===k?'on':''}" data-tm="${k}">${t}</button>`,og=(k,t)=>`<button class="${T.ori===k?'on':''}" data-to="${k}">${t}</button>`;
+  return s2()+`<div class="card" style="margin-top:16px"><h3>Tampilan</h3><p class="mut">Berlaku hanya di perangkat ini.</p><p class="mut" style="margin:10px 0 6px">Mode tampilan</p><div class="seg">${m('auto','Otomatis')}${m('hp','HP')}${m('desktop','Desktop')}</div><p class="mut" style="margin:14px 0 6px">Orientasi layar</p><div class="seg">${og('auto','Otomatis')}${og('potret','Potret')}${og('lanskap','Lanskap')}</div><p class="mut" id="oriNote" role="status" style="margin-top:6px">${ORI_MSG}</p><p class="mut" style="margin:14px 0 6px">Ukuran tampilan: <b>${T.zoom}%</b></p><div class="row"><button class="sm" data-tz="-10">A− Perkecil</button><button class="sm" data-tz="10">A+ Perbesar</button><button class="sm" data-tz="0">Atur ulang</button></div></div>`}}
 {const b2=bindSetelan;bindSetelan=function(){b2();document.querySelectorAll('[data-tm]').forEach(b=>b.onclick=()=>tampilSet({mode:b.dataset.tm}));
+  document.querySelectorAll('[data-to]').forEach(b=>b.onclick=()=>{ORI_MSG='';tampilSet({ori:b.dataset.to});oriTerap(true)});
   document.querySelectorAll('[data-tz]').forEach(b=>b.onclick=()=>tampilSet({zoom:+b.dataset.tz?TAMPIL.zoom+ +b.dataset.tz:100}))}}
 /* ===== INPUT NILAI: per siswa (geser) & per kolom ===== */
 const SURAT=["An-Naba","An-Naazi'aat","'Abasa","At-Takwir","Al-Infithaar","Al-Muthaffifin","Al-Insyiqaaq","Al-Buruuj","At-Thaariq","Al-A'laa","Al-Ghaasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Dhuhaa","Al-Insyirah","At-Tiin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qori'ah","At-Takatsur","Al-'Asr","Al-Humazah","Al-Fiil","Al-Quraisy","Al-Ma'un","Al-Kautsar","Al-Kaafirun","An-Nasr","Al-Lahab","Al-Ikhlas","Al-Falaq","An-Naas"];
@@ -2265,7 +2244,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
-- Sesi 22: v1.41 Perbaikan tata letak Siswa/Kelompok (style id=v141, hanya CSS): kolom daftar siswa fleksibel (NIS/NISN pindah ke bawah nama di bawah 1500px), panel kanan 300-340px, baris Kelompok 2 tingkat (tombol BTQ tidak terpotong, juga di HP), area sentuh 40px, prefers-reduced-motion; sidik jari dan golden tetap SAMA.
+- Sesi 22: v1.41 Orientasi layar: TAMPIL.ori (auto/potret/lanskap) di kartu Tampilan, per perangkat (btqTampil); oriTerap() memakai screen.orientation.lock (fallback layar penuh bila bukan standalone; iOS tidak didukung, hanya petunjuk). Tanpa perubahan DB dan bagian terlindungi.
 - Sesi 21: v1.40 Poles tema: style id=v140 (terakhir, sebelum </head>) memperbaiki kontras WCAG AA di 4 tema (token --mu/--acf/--warn/--dng/--fok), color-scheme per tema, cincin fokus semua kontrol, ikon tema emoji->SVG, theme-color per tema; bagian terlindungi tidak disentuh, sidik jari dan golden tetap SAMA, tanpa perubahan DB.
 - Sesi 20: v1.37 Tampilan: mode Otomatis/HP/Desktop (TAMPIL, DESK(); menulis ulang media query non-cetak saat jalan, meta viewport) + zoom 70–150% (CSS zoom pada header/menu/main/tabbar/dialog, bukan #printArea); kunci localStorage btqTampil; kartu 'Tampilan' di Pengaturan.
 - Sesi 19: v1.36 Tahap 4–5: pindah kelas (form siswa), salin guru/kelompok antarkelas, kenaikan kelas akhir tahun (kelasNaik; kelas 'LULUS' = alumni, klsSis), sinkron Firebase per kelas (kunci kelas/<kode>; 'set' tanpa kls; klsTerap menyemai kls lama dari server).
