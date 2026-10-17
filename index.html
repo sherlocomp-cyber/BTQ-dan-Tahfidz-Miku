@@ -532,16 +532,29 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
     }
     return klik.apply(this,arguments);
   };
-  /* window.print() -> dialog cetak Android (pilih "Simpan sebagai PDF") */
+  /* window.print() -> dialog cetak Android (pilih "Simpan sebagai PDF").
+     v1.44: bila plugin cetak tidak ada atau gagal, alasannya ditampilkan (dulu diam saja) dan berkas HTML siap cetak dibagikan:
+     buka di Chrome > Cetak > Simpan sebagai PDF. */
+  function pesan(m){try{alert(m)}catch(_){try{toast(m)}catch(__){}}}
+  function htmlMandiri(){
+    var pa=document.getElementById('printArea');if(!pa||!pa.innerHTML.trim())return null;
+    var css=[].map.call(document.querySelectorAll('style'),function(s){return s.textContent}).join('\n'),
+        j=function(x){return String(x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+    return '<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+j(document.title||'Dokumen')+'</title><style>'+css+'</style><style>html,body{margin:0;background:#fff}#printArea{position:static!important;left:auto!important}@media screen{body{background:#9aa0aa}#printArea .page,#printArea .rkt-pg,#printArea .rkp-pg{margin:8px auto}}</style></head><body><div id="printArea">'+pa.innerHTML+'</div></body></html>'}
   window.print=function(){
     function selesai(){try{if(typeof window.onafterprint==='function')window.onafterprint()}catch(_){}}
-    PH.print({name:document.title||'Dokumen'}).then(selesai,selesai);
+    function gagal(e){var m=String(e&&(e.message||e)||'tidak diketahui'),h=htmlMandiri(),nama=document.title||'Dokumen';
+      selesai();
+      if(!h){pesan('Cetak gagal: '+m);return}
+      simpan(new Blob([h],{type:'text/html'}),nama+'.html');
+      pesan('Cetak langsung gagal ('+m+'). Berkas siap cetak dibagikan: buka di Chrome, lalu Cetak, Simpan sebagai PDF.')}
+    try{PH.print({name:document.title||'Dokumen'}).then(selesai,gagal)}catch(e){gagal(e)}
   };
 })();
 </script>
 <script>
 'use strict';
-const VERSI='v1.43';
+const VERSI='v1.44';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -2251,6 +2264,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 25: v1.44 Cetak di APK: window.print di native-shim kini menampilkan alasan bila PrintHelper tidak ada/gagal (dulu ditelan diam-diam) dan membagikan berkas HTML mandiri (htmlMandiri: semua <style> + isi #printArea) lewat simpan() sebagai cadangan jalan. Bagian terlindungi tidak disentuh.
 - Sesi 24: v1.43 Setoran satu per satu: tombol −/+1/+3 ayat (data-ay, kelas .gst/.sm yang sudah ada) di bawah dropdown ayat; handler di bindSetoran memotong ke rentang ayat surat di juz (L.lo..L.hi), mengatur ST.selesai bila mencapai ayat terakhir, minus diabaikan bila ayat masih kosong. Tanpa CSS/DB baru.
 - Sesi 23: v1.42 Setoran satu per satu: prefillSt mengisi ST.ayat = ayat terakhir (lastSet, hanya bila belum selesai dan ayat di rentang juz/surat) + ST.ayLast untuk petunjuk 'terakhir: ayat N' dan pengaman simpanSt (ayat sama dengan terakhir ditolak kecuali status Mengulang/Selesai); ganti juz/surat mengosongkan ayat dan ayLast. Tanpa perubahan DB dan bagian terlindungi.
 - Sesi 22: v1.41 Orientasi layar: TAMPIL.ori (auto/potret/lanskap) di kartu Tampilan, per perangkat (btqTampil); oriTerap() memakai screen.orientation.lock (fallback layar penuh bila bukan standalone; iOS tidak didukung, hanya petunjuk). Tanpa perubahan DB dan bagian terlindungi.
