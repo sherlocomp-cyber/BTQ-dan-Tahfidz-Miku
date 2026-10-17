@@ -541,7 +541,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 </script>
 <script>
 'use strict';
-const VERSI='v1.42';
+const VERSI='v1.43';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -642,7 +642,7 @@ const VIEWS={
   <div class="card fold"><details><summary>Data bawaan (jarang dipakai)</summary><p class="mut" style="margin:8px 0 10px">Memuat siswa dan setoran kelas 4A bawaan aplikasi. Data yang sudah ada tidak dihapus, tetapi siswa dan setoran baru akan ditambahkan. Unduh cadangan dulu bila ragu.</p><button class="btn ghost" id="impBw">Muat data Rekap kelas 4A</button></details></div>
   <div class="card" style="margin-top:16px"><details><summary>Panduan singkat</summary><div class="mut" style="margin-top:10px">
   <p><b>1. Pengaturan</b> – isi identitas madrasah, guru, kepala, dan unggah logo. Target rapor Juz 30 otomatis mengikuti kelas dan semester (atau pilih dari daftar / ketik sendiri). Isi nama guru tahfidz untuk tiap kelompok.</p>
-  <p><b>Setoran</b> – centang Selesai pada tahfidz otomatis mengisi ayat terakhir surat; geser layar ke kiri/kanan untuk pindah siswa.</p>
+  <p><b>Setoran</b> – centang Selesai pada tahfidz otomatis mengisi ayat terakhir surat; ayat otomatis terisi ayat terakhir yang disetor (tombol −, +1, +3 menggeser ayat); geser layar ke kiri/kanan untuk pindah siswa.</p>
   <p><b>Tanda tangan &amp; pencapaian rapor</b> – nama guru di tanda tangan mengikuti kelompok tahfidz siswa (belum berkelompok = guru umum). Rapor Juz 29–1: pencapaian tahfidz selalu "Melampaui target"; pencapaian BTQ mengikuti setoran BTQ terakhir.</p>
   <p><b>2. Siswa</b> – tambah satu per satu, tempel banyak nama, atau Impor leger Excel lewat menu ⋯ di kanan atas (butuh internet sekali). Daftar siswa selalu otomatis berurutan A–Z, dan nomor absen mengikuti urutan itu (juga saat ada siswa baru). Ketuk baris siswa untuk membuka detail; Ubah dan Hapus ada di sana. Dashboard dan Pengaturan ada di ikon header. Di layar lebar (≥1024 px) menu pindah ke sidebar kiri, daftar siswa menjadi tabel dengan panel detail di kanan, dan Setoran punya antrean di kiri (↑/↓ ganti siswa, Enter simpan).</p>
   <p><b>Setoran harian</b> – siswa tampil berurutan otomatis (belum pernah setor dulu, lalu yang terlama belum setor; yang sudah setor hari itu paling akhir; tombol Urutan untuk kembali ke nomor absen). Pilih Tahfidz/BTQ, isi juz lalu surat dan ayat muncul otomatis. Simpan, dan posisi terakhir langsung masuk kolom Pencapaian di rapor.</p>
@@ -1072,6 +1072,7 @@ function quranFields(){const L=ST.juz?juzSurat(+ST.juz):[],cur=L.find(x=>x.n===+
   return `<label>Juz<select data-f="juz">${opt(Array.from({length:30},(_,k)=>[k+1,'Juz '+(k+1)]),ST.juz,'– pilih juz –')}</select></label>
   <label>Surat<select data-f="surat"${ST.juz?'':' disabled'}>${opt(L.map(x=>[x.n,`${x.n}. ${x.nama}`]),ST.surat,'– pilih surat –')}</select></label>
   <label>Ayat${cur?` <span class="mut">(ayat ${cur.lo}–${cur.hi} di juz ini${ST.ayLast?` · terakhir: ayat ${ST.ayLast}`:''})</span>`:''}<select data-f="ayat"${cur?'':' disabled'}>${opt(ay,ST.ayat,'– pilih ayat –')}</select></label>
+  ${cur?`<div class="gst" role="group" aria-label="Ubah ayat cepat"><button class="sm" data-ay="-1" aria-label="Kurangi 1 ayat">−</button><button class="sm" data-ay="1" aria-label="Tambah 1 ayat">+1</button><button class="sm" data-ay="3" aria-label="Tambah 3 ayat">+3</button></div>`:''}
   <label class="ck"><input type="checkbox" data-f="selesai"${ST.selesai?' checked':''}> Selesai (surat ini tuntas)</label>`}
 function viewSetoran(){const N=S.ks.length;
   if(!N)return `<h1>Setoran Harian</h1><div class="card"><p class="mut">Belum ada siswa. Tambahkan atau impor dulu di halaman Siswa.</p></div>`;
@@ -1120,6 +1121,8 @@ function bindSetoran(){const V=$('#view');let sx=0,sy0=0;
     if(Math.abs(dx)>70&&Math.abs(dx)>2*Math.abs(dy)){const q=urutSetor(ST.j);if(q.length<2)return;
       ST.i=q[(q.indexOf(ST.i)+(dx<0?1:-1)+q.length)%q.length];ST.ket='';prefillSt();render()}};
   V.onclick=e=>{if(S.page!=='setoran')return;const b=e.target.closest('button');if(!b)return;const d=b.dataset,sy=scrollY,re=()=>{render();scrollTo(0,sy)};
+    if(d.ay!==undefined){/* v1.43: geser ayat -1/+1/+3 (batas = rentang ayat surat di juz ini) */const L=ST.juz&&ST.surat?juzSurat(+ST.juz).find(x=>x.n===+ST.surat):null,dl=+d.ay;if(!L||(!ST.ayat&&dl<0))return;
+      const n=Math.min(L.hi,Math.max(L.lo,(+ST.ayat||L.lo-1)+dl));ST.ayat=String(n);ST.selesai=(n===L.hi);return re()}
     if(d.tm!==undefined){ST.tm=d.tm;return re()}
      if(d.nt!==undefined){ST.ntp=ST.ntp===d.nt?'':d.nt;return re()}
      if(d.nl!==undefined){ST.nilai=ST.nilai===d.nl?'':d.nl;return re()}
@@ -2248,6 +2251,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 24: v1.43 Setoran satu per satu: tombol −/+1/+3 ayat (data-ay, kelas .gst/.sm yang sudah ada) di bawah dropdown ayat; handler di bindSetoran memotong ke rentang ayat surat di juz (L.lo..L.hi), mengatur ST.selesai bila mencapai ayat terakhir, minus diabaikan bila ayat masih kosong. Tanpa CSS/DB baru.
 - Sesi 23: v1.42 Setoran satu per satu: prefillSt mengisi ST.ayat = ayat terakhir (lastSet, hanya bila belum selesai dan ayat di rentang juz/surat) + ST.ayLast untuk petunjuk 'terakhir: ayat N' dan pengaman simpanSt (ayat sama dengan terakhir ditolak kecuali status Mengulang/Selesai); ganti juz/surat mengosongkan ayat dan ayLast. Tanpa perubahan DB dan bagian terlindungi.
 - Sesi 22: v1.41 Orientasi layar: TAMPIL.ori (auto/potret/lanskap) di kartu Tampilan, per perangkat (btqTampil); oriTerap() memakai screen.orientation.lock (fallback layar penuh bila bukan standalone; iOS tidak didukung, hanya petunjuk). Tanpa perubahan DB dan bagian terlindungi.
 - Sesi 21: v1.40 Poles tema: style id=v140 (terakhir, sebelum </head>) memperbaiki kontras WCAG AA di 4 tema (token --mu/--acf/--warn/--dng/--fok), color-scheme per tema, cincin fokus semua kontrol, ikon tema emoji->SVG, theme-color per tema; bagian terlindungi tidak disentuh, sidik jari dan golden tetap SAMA, tanpa perubahan DB.
