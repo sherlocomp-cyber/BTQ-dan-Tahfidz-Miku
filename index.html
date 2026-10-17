@@ -541,7 +541,7 @@ input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-vis
 </script>
 <script>
 'use strict';
-const VERSI='v1.41';
+const VERSI='v1.42';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -1056,8 +1056,11 @@ const hari=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth(
 const lastSet=(s,j)=>(s.setoran||[]).filter(x=>x.j===j&&x.maju).sort((a,b)=>a.tgl<b.tgl?-1:a.tgl>b.tgl?1:a.t-b.t).pop();
 const opt=(arr,cur,ph)=>`<option value="">${ph}</option>`+arr.map(([v,l])=>`<option value="${v}"${String(v)===String(cur)?' selected':''}>${esc(l)}</option>`).join('');
 const ST={j:'tahfidz',i:0,tgl:hari(),juz:'',surat:'',ayat:'',selesai:false,status:'Bertambah',ket:'',bm:'iqra',iqra:'',hal:'',baris:''};
-function prefillSt(){const s=S.ks[ST.i],e=s&&lastSet(s,ST.j);ST.ayat='';ST.selesai=false;ST.hal='';ST.baris='';
-  if(e){ST.juz=e.juz||'';ST.surat=e.surat||'';if(e.bm)ST.bm=e.bm;if(e.iqra)ST.iqra=e.iqra;if(ST.j==='btq'&&e.bm==='iqra'){ST.hal=e.hal||''}}
+function prefillSt(){const s=S.ks[ST.i],e=s&&lastSet(s,ST.j);ST.ayat='';ST.ayLast=0;ST.selesai=false;ST.hal='';ST.baris='';
+  if(e){ST.juz=e.juz||'';ST.surat=e.surat||'';
+    /* v1.42: ayat langsung terisi ayat terakhir yang disetor (seperti mode kelompok); kosong bila surat sudah selesai */
+    if(e.ayat&&e.surat&&e.juz&&!e.selesai&&!e.tahap&&(ST.j==='tahfidz'||e.bm==='quran')){const L=juzSurat(+e.juz).find(x=>x.n===+e.surat);if(L&&+e.ayat>=L.lo&&+e.ayat<=L.hi){ST.ayat=String(e.ayat);ST.ayLast=+e.ayat}}
+    if(e.bm)ST.bm=e.bm;if(e.iqra)ST.iqra=e.iqra;if(ST.j==='btq'&&e.bm==='iqra'){ST.hal=e.hal||''}}
   else{ST.juz='';ST.surat=''}ST.tm=(e&&e.tahap)?'tahap':'surat';ST.tahap=(e&&e.tahap)?String(e.tahap):'';ST.ntp='';ST.harus=false;ST.nilai=(s&&ST.j==='tahfidz'&&ST.juz&&ST.surat)?nilaiAmbil(s,ST.juz,+ST.surat):''}
 function posTeks(e){if(e.tahap)return 'Tahap '+e.tahap+(e.selesai?', selesai':'');if(e.j==='tahfidz')return e.selesai?`${SN[e.surat-1]}, selesai`:`${SN[e.surat-1]} ayat ${e.ayat}`;
   if(e.bm==='iqra')return `Iqra ${e.iqra} hal. ${e.hal}, baris 1-${e.baris}${e.tamat?', tamat':''}`;
@@ -1068,7 +1071,7 @@ function quranFields(){const L=ST.juz?juzSurat(+ST.juz):[],cur=L.find(x=>x.n===+
   const ay=cur?Array.from({length:cur.hi-cur.lo+1},(_,k)=>[cur.lo+k,'Ayat '+(cur.lo+k)]):[];
   return `<label>Juz<select data-f="juz">${opt(Array.from({length:30},(_,k)=>[k+1,'Juz '+(k+1)]),ST.juz,'– pilih juz –')}</select></label>
   <label>Surat<select data-f="surat"${ST.juz?'':' disabled'}>${opt(L.map(x=>[x.n,`${x.n}. ${x.nama}`]),ST.surat,'– pilih surat –')}</select></label>
-  <label>Ayat${cur?` <span class="mut">(ayat ${cur.lo}–${cur.hi} di juz ini)</span>`:''}<select data-f="ayat"${cur?'':' disabled'}>${opt(ay,ST.ayat,'– pilih ayat –')}</select></label>
+  <label>Ayat${cur?` <span class="mut">(ayat ${cur.lo}–${cur.hi} di juz ini${ST.ayLast?` · terakhir: ayat ${ST.ayLast}`:''})</span>`:''}<select data-f="ayat"${cur?'':' disabled'}>${opt(ay,ST.ayat,'– pilih ayat –')}</select></label>
   <label class="ck"><input type="checkbox" data-f="selesai"${ST.selesai?' checked':''}> Selesai (surat ini tuntas)</label>`}
 function viewSetoran(){const N=S.ks.length;
   if(!N)return `<h1>Setoran Harian</h1><div class="card"><p class="mut">Belum ada siswa. Tambahkan atau impor dulu di halaman Siswa.</p></div>`;
@@ -1103,6 +1106,7 @@ function simpanSt(){const s=S.ks[ST.i],q=ST.j==='tahfidz'||ST.bm==='quran',q0=ur
   if(!ST.tgl)return toast('Pilih tanggal dulu.');
   if(ST.j==='tahfidz'&&ST.tm==='tahap'){if(!ST.tahap)return toast('Pilih tahap dulu.');e={tahap:String(ST.tahap),selesai:!!ST.selesai}}
   else if(q){if(!ST.juz||!ST.surat)return toast('Pilih juz dan surat dulu.');if(!ST.selesai&&!ST.ayat)return toast('Pilih ayat, atau centang Selesai.');
+    if(ST.ayLast&&!ST.selesai&&+ST.ayat===ST.ayLast&&(ST.j==='btq'||ST.status==='Bertambah'))return toast('Ayat masih sama dengan setoran terakhir (ayat '+ST.ayLast+'). Ubah ayat, centang Selesai'+(ST.j==='tahfidz'?', atau pilih status Mengulang':'')+'.');
     const L=juzSurat(+ST.juz).find(x=>x.n===+ST.surat);e={juz:+ST.juz,surat:+ST.surat,ayat:ST.selesai&&!ST.ayat?L.hi:+ST.ayat,selesai:ST.selesai}}
   else{if(!ST.iqra||!ST.hal||!ST.baris)return toast('Lengkapi Iqra, halaman, dan baris.');e={iqra:+ST.iqra,hal:+ST.hal,baris:+ST.baris,tamat:ST.selesai}}
   Object.assign(e,{id:newId(),t:Date.now(),j:ST.j,bm:ST.j==='btq'?ST.bm:'',tgl:ST.tgl,ket:ST.ket.trim(),status:ST.j==='tahfidz'?ST.status:'Bertambah',harus:!!ST.harus,nilai:ST.j==='tahfidz'?(ST.tm==='tahap'?(ST.ntp||''):(q?(ST.nilai||''):'')):''});
@@ -1136,8 +1140,8 @@ function bindSetoran(){const V=$('#view');let sx=0,sy0=0;
     if(!f||f==='ket')return;
     if(t.type==='checkbox')ST[f]=t.checked;else ST[f]=t.value;
     if(f==='selesai'&&t.checked&&ST.j==='tahfidz'&&ST.juz&&ST.surat){const L=juzSurat(+ST.juz).find(x=>x.n===+ST.surat);if(L)ST.ayat=String(L.hi)}
-    if(f==='juz'){ST.surat='';ST.ayat='';ST.selesai=false}
-    if(f==='surat'){ST.ayat='';ST.selesai=false}
+    if(f==='juz'){ST.surat='';ST.ayat='';ST.ayLast=0;ST.selesai=false}
+    if(f==='surat'){ST.ayat='';ST.ayLast=0;ST.selesai=false}
     if(f==='ayat'){const L=juzSurat(+ST.juz).find(x=>x.n===+ST.surat);ST.selesai=!!(L&&+ST.ayat===L.hi)}
     if(f==='juz')ST.nilai='';if(f==='surat')ST.nilai=ST.surat?nilaiAmbil(S.ks[ST.i],ST.juz,+ST.surat):'';
     render();scrollTo(0,sy)}}
@@ -2244,6 +2248,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 23: v1.42 Setoran satu per satu: prefillSt mengisi ST.ayat = ayat terakhir (lastSet, hanya bila belum selesai dan ayat di rentang juz/surat) + ST.ayLast untuk petunjuk 'terakhir: ayat N' dan pengaman simpanSt (ayat sama dengan terakhir ditolak kecuali status Mengulang/Selesai); ganti juz/surat mengosongkan ayat dan ayLast. Tanpa perubahan DB dan bagian terlindungi.
 - Sesi 22: v1.41 Orientasi layar: TAMPIL.ori (auto/potret/lanskap) di kartu Tampilan, per perangkat (btqTampil); oriTerap() memakai screen.orientation.lock (fallback layar penuh bila bukan standalone; iOS tidak didukung, hanya petunjuk). Tanpa perubahan DB dan bagian terlindungi.
 - Sesi 21: v1.40 Poles tema: style id=v140 (terakhir, sebelum </head>) memperbaiki kontras WCAG AA di 4 tema (token --mu/--acf/--warn/--dng/--fok), color-scheme per tema, cincin fokus semua kontrol, ikon tema emoji->SVG, theme-color per tema; bagian terlindungi tidak disentuh, sidik jari dan golden tetap SAMA, tanpa perubahan DB.
 - Sesi 20: v1.37 Tampilan: mode Otomatis/HP/Desktop (TAMPIL, DESK(); menulis ulang media query non-cetak saat jalan, meta viewport) + zoom 70–150% (CSS zoom pada header/menu/main/tabbar/dialog, bukan #printArea); kunci localStorage btqTampil; kartu 'Tampilan' di Pengaturan.
