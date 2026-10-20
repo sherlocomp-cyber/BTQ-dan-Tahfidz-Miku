@@ -2,7 +2,7 @@
 
 Aplikasi web satu file (PWA) untuk mencatat setoran harian, nilai, dan mencetak rapor **BTQ** dan **Tahfidz** di madrasah. Berjalan di browser HP maupun komputer, bisa dipakai tanpa internet, dan bisa dibungkus menjadi APK dengan Capacitor.
 
-Versi saat ini: **v1.37**
+Versi saat ini: **v1.54**
 
 ## Fitur
 
@@ -14,7 +14,7 @@ Versi saat ini: **v1.37**
 - **Leger Excel** — impor dan ekspor leger.
 - **Cadangan** — unduh dan pulihkan cadangan JSON; pengingat cadangan di Dashboard.
 - **Penyimpanan** — data disimpan di perangkat (IndexedDB) dan bisa disinkronkan antar guru lewat Firebase Realtime Database. Mulai v1.31 aplikasi meminta browser melindungi data dari penghapusan otomatis (status ada di Pengaturan › Cadangan data).
-- **Tema** terang, biru, dan gelap.
+- **Tema** terang, biru, gelap, Angkasa, dan Dunia (ilustrasi kertas-potong: bola dunia, pesawat, topi toga, awan, dan gedung).
 
 ## Cara memakai
 
@@ -69,6 +69,7 @@ Catatan: kode aplikasi memanggil plugin native `PrintHelper` (dialog cetak Andro
 
 ## Riwayat singkat
 
+- **v1.54** — Tema Dunia: gaya kertas-potong bertema wisata dan pendidikan, dengan palet teal, navy, koral, dan kuning. Kontras teks tetap memenuhi WCAG AA. Tombol tema ke-5 di header.
 - **v1.37** — Pengaturan › Tampilan: mode Otomatis/HP/Desktop dan perbesar/perkecil tampilan (per perangkat).
 - **v1.36** — Pindah kelas, salin guru/kelompok antarkelas, kenaikan kelas akhir tahun, sinkron pengaturan per kelas.
 - **v1.35** — Multi-kelas 1A–6B: halaman Kelas (impor/tempel siswa per kelas, guru tahfidz per kelompok per kelas, peringatan tanda tangan). Data lama otomatis masuk Kelas 4A. Rencana tahap berikutnya: `docs/RENCANA-MULTIKELAS.md`.
