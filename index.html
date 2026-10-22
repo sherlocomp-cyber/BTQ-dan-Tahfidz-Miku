@@ -543,6 +543,18 @@ html[data-theme=dunia] .pg,html[data-theme=dunia] .gbar,html[data-theme=dunia] .
 html[data-theme=dunia] .pg span,html[data-theme=dunia] .gbar i{background:var(--cor)}
 html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 </style>
+<style id="v155">
+/* v1.55: toast selebar isi, kartu target Setoran yang bisa dilipat */
+.toast{display:flex;align-items:center;justify-content:center;gap:10px;width:max-content;max-width:min(92vw,460px);text-align:left;line-height:1.4;overflow-wrap:anywhere}
+.toast .sm{flex:none}
+.tgd>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.tgd>summary::-webkit-details-marker{display:none}
+.tgd>summary h3{margin:0}
+.tgd>summary::after{content:"";flex:none;width:9px;height:9px;margin-right:4px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg)}
+.tgd[open]>summary{margin-bottom:8px}
+.tgd[open]>summary::after{transform:rotate(-135deg)}
+@media(prefers-reduced-motion:no-preference){.tgd>summary::after{transition:transform .2s}}
+</style>
 </head>
 <body>
 <header>
@@ -616,7 +628,7 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 </script>
 <script>
 'use strict';
-const VERSI='v1.54';
+const VERSI='v1.55';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -686,8 +698,9 @@ function toast(m,undo){const e=document.createElement('div');e.className='toast'
   document.body.append(e);setTimeout(()=>e.remove(),undo?7000:2600)}
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 /* Autosave dengan indikator */
-let tm;function saved(){const e=$('#saveInd');e.classList.add('busy');e.lastChild.textContent='Menyimpan…';
-  clearTimeout(tm);tm=setTimeout(async()=>{await DB.set('pengaturan',S.set);e.classList.remove('busy');Cloud.tampil()},400)}
+let tm,tmP=0;async function flushSet(){clearTimeout(tm);if(!tmP)return;tmP=0;const e=$('#saveInd');await DB.set('pengaturan',S.set);if(e)e.classList.remove('busy');Cloud.tampil()}
+function saved(){const e=$('#saveInd');e.classList.add('busy');e.lastChild.textContent='Menyimpan…';
+  tmP=1;clearTimeout(tm);tm=setTimeout(flushSet,400)}
 /* ----- Halaman ----- */
 const soon=(t,n)=>`<h1>${t}</h1><div class="card"><h3>Segera hadir</h3><p class="mut">Halaman ini dikerjakan di ${n}. Kerangka, tema, dan penyimpanan sudah siap.</p></div>`;
 const VIEWS={
@@ -721,6 +734,7 @@ const VIEWS={
   <p><b>Tanda tangan &amp; pencapaian rapor</b> – nama guru di tanda tangan mengikuti kelompok tahfidz siswa (belum berkelompok = guru umum). Rapor Juz 29–1: pencapaian tahfidz selalu "Melampaui target"; pencapaian BTQ mengikuti setoran BTQ terakhir.</p>
   <p><b>2. Siswa</b> – tambah satu per satu, tempel banyak nama, atau Impor leger Excel lewat menu ⋯ di kanan atas (butuh internet sekali). Daftar siswa selalu otomatis berurutan A–Z, dan nomor absen mengikuti urutan itu (juga saat ada siswa baru). Ketuk baris siswa untuk membuka detail; Ubah dan Hapus ada di sana. Dashboard dan Pengaturan ada di ikon header. Di layar lebar (≥1024 px) menu pindah ke sidebar kiri, daftar siswa menjadi tabel dengan panel detail di kanan, dan Setoran punya antrean di kiri (↑/↓ ganti siswa, Enter simpan).</p>
   <p><b>Keterangan &amp; koordinator BTQ</b> – di Setoran satu per satu (Tahfidz dan BTQ), Keterangan bisa diisi dari dropdown Kelancaran (Lancar, Cukup lancar, Kurang lancar, Terbata-bata), catatan cepat yang diketuk (Tajwid, Makhroj, dll.), dan/atau ketikan sendiri; semuanya digabung dan muncul di Riwayat serta kolom Keterangan di Rekap bulan (hanya keterangan terbaru yang tampil; Rekap Harian juga memuatnya, dan bila hari itu tidak diisi keterangan maka yang muncul keterangan terakhir yang pernah diisi lengkap dengan tanggalnya, termasuk di teks Salin/Bagikan. Sakit/Izin dst. tetap dihitung di kolom Keterangan Rekap bulan). Di BTQ ada centang "Harus setor ke koordinator BTQ" (status Setor ke Koordinator di Rekap), terpisah dari "Harus setor lagi (belum lancar)". </p>
+  <p><b>Navigasi &amp; tampilan</b> – tombol Kembali di HP/peramban kini pindah ke halaman sebelumnya; kartu Target di Setoran terlipat di layar sempit (ketuk judulnya untuk membuka); pemberitahuan di bawah layar bertahan lebih lama untuk pesan panjang dan berhenti selagi disentuh.</p>
   <p><b>Mundurkan &amp; halaman</b> – di Setoran satu per satu, tombol "Mundurkan (belum siap)" memindahkan siswa ke belakang antrean (tandanya ⏭; ketuk "Batal mundur" atau Urungkan untuk mengembalikan). Di BTQ Iqra, tombol − dan + di bawah Halaman (1–32) menggeser satu halaman; di bawah Baris ada +2, +4 (maksimal 8) dan Selesai (baris 1–8). Untuk menurunkan baris, pilih dari dropdown.</p>
   <p><b>Setoran harian</b> – siswa tampil berurutan otomatis (belum pernah setor dulu, lalu yang terlama belum setor; yang sudah setor hari itu paling akhir; tombol Urutan untuk kembali ke nomor absen). Pilih Tahfidz/BTQ, isi juz lalu surat dan ayat muncul otomatis. Simpan, dan posisi terakhir langsung masuk kolom Pencapaian di rapor. Salah simpan? Ketuk Urungkan di notifikasi yang muncul sekitar 7 detik. Siswa yang tidak setor dicatat lewat pilihan “Tidak setor…” di bawah tombol Simpan (Sakit, Izin, dll.): ditandai ✗ di daftar dan dilewati di antrean; menyimpan setoran membatalkan catatannya.</p>
    <p><b>3. Input Nilai</b> – mode Per siswa (geser kiri/kanan) atau Per kolom; ketuk nilai lagi untuk mengosongkan. Otomatis tersimpan. Surat yang sudah selesai di Setoran tetapi belum ada nilainya diberi tanda “belum dinilai” (bisa difilter). “Mode cepat” menampilkan satu item per layar dan langsung maju ke berikutnya. Isi massal/Salin bisa diurungkan lewat tombol Urungkan. Mode Per kolom menampilkan ringkasan kelas.</p>
@@ -1168,7 +1182,7 @@ function viewSetoran(){const N=S.ks.length;
     <label class="ck"><input type="checkbox" data-f="selesai"${ST.selesai?' checked':''}> Tamat jilid ini</label>`:quranFields())}
   const rw=(s.setoran||[]).filter(e=>e.j===ST.j).sort((a,b)=>a.tgl<b.tgl?1:a.tgl>b.tgl?-1:b.t-a.t).slice(0,6);
   const tg=targetNow(),gp=tg&&tahProg(s,tg);
-  const tgc=tg?`<div class="card" style="margin-bottom:12px"><h3>Target kelas ${kelasNo()} semester ${smtNo()}</h3><p style="font-size:14px"><b>Tahfidz:</b> ${esc(tg.tl)}${gp?` – ${esc(s.nama.split(' ')[0])} tuntas ${gp.n} dari ${gp.tot} surat`:''}<br><b>BTQ:</b> ${esc(tg.bl)}</p><div class="row"><button class="btn ghost" id="tgApply">Terapkan target ke rapor</button></div></div>`
+  const tgc=tg?`<details class="card tgd" style="margin-bottom:12px"${tgBuka()?' open':''}><summary><h3>Target kelas ${kelasNo()} semester ${smtNo()}</h3></summary><p style="font-size:14px"><b>Tahfidz:</b> ${esc(tg.tl)}${gp?` – ${esc(s.nama.split(' ')[0])} tuntas ${gp.n} dari ${gp.tot} surat`:''}<br><b>BTQ:</b> ${esc(tg.bl)}</p><div class="row"><button class="btn ghost" id="tgApply">Terapkan target ke rapor</button></div></details>`
    :`<div class="card" style="margin-bottom:12px"><p class="mut">Target belum dikenali. Pastikan Kelas dan Semester di Pengaturan diawali angka Romawi, mis. "IV (Empat)" dan "II (Dua)".</p></div>`;
   return `<h1>Setoran Harian</h1><div class="stw"><div class="stA">${tgc}</div><div class="stB"><div class="seg" style="margin-bottom:12px">${sw('tahfidz','Tahfidz')}${sw('btq','BTQ')}</div>${klpSeg('kg',ST.j,ST.kg[ST.j])}</div><div class="stQ">${stQueue()}</div><div class="stC">
   <div class="card"><div class="nav"><button class="sm" data-snav="-1" aria-label="Sebelumnya">‹</button><div class="mid"><select id="stsel">${urutSetor(ST.j).map(k=>{const x=S.ks[k];return `<option value="${k}"${k===ST.i?' selected':''}>${sdHari(x,ST.j)?'✓ ':stAda(x,ST.j)?'✗ ':mdr(x,ST.j)?'⏭ ':''}${x.no}. ${esc(x.nama)}</option>`}).join('')}</select></div><button class="sm" data-snav="1" aria-label="Berikutnya">›</button></div>
@@ -1714,6 +1728,28 @@ function stAlasan(t){const s=S.ks[ST.i],j=ST.j,v=t.value;if(!s)return;
   if(!v){render();return scrollTo(0,y)}
   toast(s.nama.split(' ')[0]+': tidak setor ('+v+').',()=>{stSetAl(s,j,tgl,lama);Object.assign(ST,sn);if(S.page==='setoran')render()});
   ST.ket='';ST.i=nextSt(ST.i,q0);prefillSt();render()}
+/* ===== v1.55: tombol Kembali, judul/aria halaman, toast, fokus tetap setelah render, simpan saat ditutup, kartu target Setoran ===== */
+const JUDUL0=document.title,
+ fokusKunci=a=>{if(a.id)return '#'+CSS.escape(a.id);const d=Object.entries(a.dataset);return d.length?a.tagName.toLowerCase()+d.map(([k,v])=>'[data-'+k.replace(/[A-Z]/g,m=>'-'+m.toLowerCase())+'="'+CSS.escape(v)+'"]').join(''):''},
+ hashPg=()=>{const h=location.hash.slice(1);return PAGES.some(p=>p[0]===h)?h:''},
+ tgBuka=()=>ST.tgBuka===undefined?!matchMedia('(max-width:1023px)').matches:ST.tgBuka;
+{const _go=go,_render=render;
+ go=function(p){const ganti=S.page!==p;if(!location.hash&&history.replaceState)history.replaceState(null,'','#'+p);_go(p);
+  document.querySelectorAll('[data-p]').forEach(b=>b.dataset.p===p?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));
+  const L=(PAGES.find(x=>x[0]===p)||[])[1];document.title=L?L+' · '+JUDUL0:JUDUL0;if(ganti)scrollTo(0,0)};
+ render=function(){const v=document.getElementById('view'),a=document.activeElement,k=v&&a&&a!==v&&v.contains(a)?fokusKunci(a):'';_render();
+  if(k)try{const n=v.querySelector(k);if(n&&n!==document.activeElement){n.focus({preventScroll:true});if(n.tagName==='TEXTAREA'||(n.tagName==='INPUT'&&n.type==='text')){const L=n.value.length;n.setSelectionRange(L,L)}}}catch(_){}}}
+{const _ns=nilaiSegar;nilaiSegar=function(b,s){const k=document.activeElement===b?fokusKunci(b):'',r=_ns.apply(this,arguments);if(k)try{const n=document.querySelector('#view '+k);if(n&&n!==document.activeElement)n.focus({preventScroll:true})}catch(_){}return r}}
+addEventListener('hashchange',()=>{const h=hashPg();if(h&&h!==S.page)go(h)});
+addEventListener('pagehide',flushSet);document.addEventListener('visibilitychange',()=>{if(document.hidden)flushSet()});
+document.addEventListener('toggle',e=>{const x=e.target;if(x&&x.classList&&x.classList.contains('tgd'))ST.tgBuka=x.open},true);
+toast=function(m,undo){let box=document.getElementById('toastBox');
+  if(!box){box=document.createElement('div');box.id='toastBox';box.setAttribute('role','status');box.setAttribute('aria-live','polite');document.body.append(box)}
+  box.replaceChildren();const e=document.createElement('div');e.className='toast';e.textContent=m+' ';
+  const ms=Math.min(12000,Math.max(undo?7000:3000,2000+String(m).length*60));let w=0;const mulai=()=>{clearTimeout(w);w=setTimeout(()=>e.remove(),ms)};
+  if(undo){const b=document.createElement('button');b.textContent='Urungkan';b.className='sm';b.onclick=()=>{clearTimeout(w);undo();e.remove()};e.append(b)}
+  e.addEventListener('pointerenter',()=>clearTimeout(w));e.addEventListener('pointerleave',mulai);e.addEventListener('focusin',()=>clearTimeout(w));e.addEventListener('focusout',mulai);
+  box.append(e);mulai()};
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
 const ALAB=['Tajwid','Makhroj','Murojaah','Kelancaran','Tajwid','Makhroj','Menulis','Membaca'];
 async function ekspor(){if(!S.ks.length)return toast('Belum ada siswa untuk diekspor.');
@@ -2245,6 +2281,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 12
 ## Ringkas
+- Catatan sesi 35: versi sebenarnya = const VERSI di file (v1.55). Lihat riwayat sesi 35.
 - Catatan sesi 15: baris 'Versi aplikasi' di bawah tertinggal; versi sebenarnya = const VERSI di file (v1.31). Riwayat sesi 13–15 ada di bagian bawah.
 - Versi aplikasi: v1.19 (Tahap 1–16 selesai). File: aplikasi-btq-tahfidz-s12.html (master dengan blok proyek). Tahap berikutnya: tidak ada; tunggu cek manual pengguna, tawarkan 'rilis bersih'.
 - Sesi 11 = Tahap 13–15 (permintaan tambahan pengguna: target Juz 30 otomatis/dropdown, pencapaian rapor Juz 29–1, guru tanda tangan per kelompok tahfidz).
@@ -2384,6 +2421,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 35: v1.55 UI/UX/efisiensi (tanpa perubahan DB/skema; bagian terlindungi tidak disentuh): go() dibungkus (blok v1.55 sebelum EKSPOR LEGER): hashchange sehingga tombol Kembali/Maju pindah halaman (dulu hash berubah tetapi halaman tetap), scroll ke atas saat ganti halaman, aria-current di navigasi, judul dokumen per halaman. toast() diganti: satu wadah role=status/aria-live, menggantikan (bukan menumpuk), lebar sesuai isi (dulu menyempit setengah layar), durasi menurut panjang pesan, berhenti saat disentuh/fokus. render() dan nilaiSegar() dibungkus: fokus dikembalikan ke kontrol yang sama (kunci id atau data-*) setelah innerHTML/outerHTML diganti (Input Nilai memperbarui satu baris tanpa render()). saved() dipecah: flushSet() menulis pengaturan yang tertunda saat pagehide/visibilitychange (kelasSimpan dan sinkron cloud tetap lewat DB.set 'pengaturan', JANGAN dilewati saat tak berubah). Kartu Target di Setoran = details.tgd, terlipat di <1024 px (ST.tgBuka). Profil: render halaman 6-17 ms (Rapor 57 ms) pada CPU 4x lambat dengan 32 siswa x 70 setoran; saveSiswa penuh 68 ms (hanya dipanggil operasi massal) sehingga lapisan DB sengaja tidak diubah. CSS v155 (style id=v155, terakhir sebelum </head>).
 - Sesi 34: v1.53 Keterangan Rekap bulan = hanya ket TERBARU di bulan itu (rtHitung: kk terakhir, tanpa tanggal); Rekap Harian (rkKet) bila hari itu kosong memakai ket terakhir yang pernah diisi sampai tanggal itu, diberi tanggal. Hitungan 'Tidak setor: Sakit n×' (Sakit/Izin dst.) tidak diubah.
 - Sesi 33: v1.52 Keterangan masuk ke semua laporan: rtHitung (Rekap bulan) kini menggabung SEMUA ket di bulan itu ('5 Okt: …; 12 Okt: …', tanpa tanggal bila hanya satu; menggantikan 'ket terakhir'); Rekap Harian (rkBaris: ket, flag koordinator/harus setor lagi) tampil di kolom Keterangan tabel, di Excel, dan di teks Salin/Bagikan (ln). Kolom Excel bulan 60 lebar.
 - Sesi 32: v1.51 Halaman Iqra kembali −/+ satu-satu (stpHTML dihapus); Baris Iqra: tombol +2, +4 (maks 8) dan Selesai (data-bar='sel' mengisi baris 8 = baris 1–8). Dropdown baris tetap 1–10.
