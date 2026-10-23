@@ -586,6 +586,15 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 .brand[role=button]:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:12px}
 .gc .gck{flex:1 1 100%}
 </style>
+<style id="v160">
+/* v1.60 Tahap 1 UI/UX: chip tidak terpotong, target sentuh 44 px, latar angkasa tidak menyaingi kontrol di HP */
+.klpsg button,.chips .chip,.kor-f button{white-space:nowrap}
+.klpsg button{flex:1 1 auto;padding-left:12px;padding-right:12px}/* lebar mengikuti isi; bila tak muat, turun ke baris kedua */
+@media(max-width:820px){.sm,.chip,.hd .btn,.mbtn{min-height:44px}}
+@media(pointer:coarse){.seg button{min-height:44px}}
+@media(max-width:819px){html[data-theme=angkasa] body::before{opacity:.55}}
+.save{cursor:default}
+</style>
 </head>
 <body>
 <header>
@@ -659,7 +668,7 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 </script>
 <script>
 'use strict';
-const VERSI='v1.59';
+const VERSI='v1.60';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -1866,6 +1875,8 @@ function bindKor(){const V=$('#view');V.querySelectorAll('[data-kt]').forEach(b=
     q.onkeydown=e=>{if(e.key==='Escape'&&q.value){q.value='';q.oninput()}};if(matchMedia('(pointer:fine)').matches&&document.activeElement===document.body)q.focus()}
   korBindRows()}
 /* ===== /v1.56 */
+/* v1.60: teks status simpan/kirim juga jadi tooltip (di HP hanya titik yang terlihat) */
+try{const si=document.getElementById('saveInd');if(si){const pt=()=>{si.title=si.textContent.trim()};pt();new MutationObserver(pt).observe(si,{childList:true,subtree:true,characterData:true})}}catch(_){}
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
 const ALAB=['Tajwid','Makhroj','Murojaah','Kelancaran','Tajwid','Makhroj','Menulis','Membaca'];
 async function ekspor(){if(!S.ks.length)return toast('Belum ada siswa untuk diekspor.');
@@ -2398,6 +2409,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 12
 ## Ringkas
+- Catatan sesi 40: versi sebenarnya = const VERSI di file (v1.60). Lihat riwayat sesi 40.
 - Catatan sesi 39: versi sebenarnya = const VERSI di file (v1.59). Lihat riwayat sesi 39.
 - Catatan sesi 38: versi sebenarnya = const VERSI di file (v1.58). Lihat riwayat sesi 38.
 - Catatan sesi 37: versi sebenarnya = const VERSI di file (v1.57). Lihat riwayat sesi 37.
@@ -2542,6 +2554,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 40: v1.60 UI/UX Tahap 1 (lihat docs/HANDOFF-UIUX.md): chip/segmen tidak terpotong, target sentuh 44 px di HP, latar Angkasa 55% di HP, tooltip status simpan. Bagian terlindungi tidak disentuh.
 - Sesi 39: v1.59 Tampilan HP: tampilTerap memakai lebar layar fisik (screen) di perangkat sentuh, bukan innerWidth yang basi; meta viewport diganti elemen baru (replaceWith) dan diberi minimum-scale=1 di HP/Otomatis agar tidak tetap mengecil setelah mode Desktop. Bagian terlindungi tidak disentuh. Perlu dicek manual oleh pengguna di HP.
 - Sesi 38: v1.58 Koordinator: (1) sakelar Aktif/Nonaktif per perangkat (localStorage btqKorOk, bawaan aktif; korOk/korOkSet/korKartu; korAktif ikut korOk; kartu Koordinator di gerbang, opsi KOOR di kdSel, dan tab hilang bila nonaktif; menonaktifkan memanggil korMode(false)); (2) Batalkan nilai di tab Sudah dinilai (korBatal/korBindBatal; e.kor kini {nilai,t,sb} dengan sb = nilai sebelum dinilai; pulih ke sb, data lama ke e.nilai atau kosong; Urungkan lewat korUrung). Tanpa perubahan skema DB; bagian terlindungi tidak disentuh. Cek tampilan di HP: perlu dicek manual oleh pengguna.
 - Sesi 37: v1.57 Halaman depan + Koordinator yang mudah dipakai 3 orang (tanpa perubahan skema DB, bagian terlindungi tidak disentuh, sidik jari dan golden SAMA). Halaman depan = gerbangBuka() diperluas (overlay #gerbang yang sudah ada): kartu Koordinator Tahfidz (total siswa menunggu + rincian per kelas, dari korAntrean/korPerKelas) di atas 12 kartu kelas dengan lencana jumlah menunggu koordinator; pilihan LANGSUNG tersimpan: kelas -> kdSet(k) (btqKelasDefault) dan kdSet() kini selalu memanggil korMode(false); Koordinator -> gerbangKoor (kdSet('') + korMode(true), btqKoor=1). Kotak centang 'buka otomatis' dihapus. Boot: halaman depan tampil bila !kdGet()&&!korAktif() (dulu hanya bila >1 kelas berisi siswa); mode koordinator membuka halaman Koordinator sebagai halaman awal. Logo di header = tombol Beranda (korBrand; ikon header baru tidak muat di 360 px). Kartu Pengaturan 'Halaman awal perangkat ini' (kdKartu) kini punya pilihan Koordinator; kartu 'Mode koordinator' v1.56 dihapus (digantikan halaman depan). Koordinator: kotak cari (korNorm/korCocok: abaikan besar-kecil, aksen, apostrof, tanda hubung, urutan kata bebas, sebagian nama; korSaring mendahulukan kata yang DIAWALI ketikan), tombol saring kelas dengan jumlah (korChips), hasil kosong menjelaskan alasan dan menunjuk tab lain, setelah menilai kotak cari dikosongkan dan fokus kembali (korBindRows), antrean terbarui otomatis saat data tersinkron. Perlu cek manual: dua/tiga perangkat koordinator nyata sekaligus (siswa yang dinilai satu orang hilang di yang lain), tampilan ponsel nyata. Detektor desain: hanya 2 peringatan lama (font Plus Jakarta Sans, cahaya tema Angkasa), bukan dari perubahan ini.
