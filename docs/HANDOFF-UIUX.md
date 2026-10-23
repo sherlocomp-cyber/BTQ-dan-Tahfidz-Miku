@@ -21,7 +21,7 @@ Aturan proyek tetap berlaku: lihat `docs/RENCANA-MULTIKELAS.md` dan blok `proyek
 - Halaman depan: kelas kosong (1A, 1B, ...) memakan separuh layar, kelas yang berisi tenggelam.
 - Dashboard: kartu "Pengingat cadangan" oranye menutupi isi utama.
 - Pengaturan: satu halaman panjang tanpa pengelompokan.
-- Input Nilai/Koordinator: tombol nilai sudah besar; nama siswa tidak menempel saat gulir.
+- Input Nilai/Koordinator: tombol nilai sudah besar (dugaan awal "nama tidak menempel" ternyata salah, lihat Tahap 5).
 
 ## Daftar tahap
 | # | Tahap | Status |
@@ -30,7 +30,7 @@ Aturan proyek tetap berlaku: lihat `docs/RENCANA-MULTIKELAS.md` dan blok `proyek
 | 2 | Setoran di HP: kartu siswa lebih cepat terlihat | SELESAI v1.61 |
 | 3 | Halaman depan dan Dashboard: kelas kosong dilipat, pengingat lebih ringan | SELESAI v1.62 |
 | 4 | Pengaturan: kelompok yang bisa dilipat | SELESAI v1.63 |
-| 5 | Input Nilai dan Koordinator: nama siswa menempel, kemajuan terlihat | BELUM |
+| 5 | Input Nilai dan Koordinator: nama siswa menempel, kemajuan terlihat | SELESAI (tanpa perubahan kode) |
 | 6 | QA akhir: semua tema, 360/412/768/1280 px, fokus papan ketik, gerak dikurangi; hapus berkas ini | BELUM |
 
 Detail tiap tahap ada di bagian bawah. Isi "Catatan perubahan" saat tahap selesai.
@@ -79,9 +79,11 @@ Catatan perubahan:
 Perlu dicek manual: kebiasaan buka-tutup di HP sungguhan; apakah kartu yang paling sering dipakai sebaiknya terbuka secara bawaan.
 
 ## Tahap 5: Input Nilai dan Koordinator
-Status: BELUM
-Cek validasi: nama siswa menempel di atas saat menggulir daftar surat; Batalkan nilai (v1.58) tetap bekerja; tombol nilai tetap >= 44 px.
-Catatan perubahan: -
+Status: SELESAI (tanpa perubahan kode; versi tetap v1.63)
+Cek validasi: di 360 px halaman Input Nilai (Per siswa) bilah nama siswa `.nav.stk` bersifat `position:sticky; top:70px` dan tetap terlihat setelah gulir 600 px (menampilkan "1 dari 3 · terisi 54%"); di mode Per kolom label "Kolom" (`label.stk`) juga sticky; tombol nilai Koordinator tinggi >= 44 px (terukur 46 px); Batalkan nilai (v1.58) tetap ada di tab Sudah dinilai.
+Catatan perubahan:
+- Tidak ada. Dugaan di audit awal ("nama siswa tidak menempel saat gulir; kemajuan tidak terlihat") SALAH: sudah ada `.nav.stk` dan `label.stk` (CSS baris ~398) dan keterangan kemajuan "terisi N%". Diverifikasi dengan Playwright di 360x740.
+- Tidak ada gulir mendatar di 360 px pada Dashboard, Kelas, Siswa, Setoran, Nilai, Rapor, Rekap, Pengaturan.
 Perlu dicek manual: -
 
 ## Tahap 6: QA akhir
