@@ -29,7 +29,7 @@ Aturan proyek tetap berlaku: lihat `docs/RENCANA-MULTIKELAS.md` dan blok `proyek
 | 1 | Fondasi: chip tidak terpotong, target sentuh 44 px, fokus papan ketik, label ikon header, latar tidak mengganggu | SELESAI v1.60 |
 | 2 | Setoran di HP: kartu siswa lebih cepat terlihat | SELESAI v1.61 |
 | 3 | Halaman depan dan Dashboard: kelas kosong dilipat, pengingat lebih ringan | SELESAI v1.62 |
-| 4 | Pengaturan: kelompok yang bisa dilipat | BELUM |
+| 4 | Pengaturan: kelompok yang bisa dilipat | SELESAI v1.63 |
 | 5 | Input Nilai dan Koordinator: nama siswa menempel, kemajuan terlihat | BELUM |
 | 6 | QA akhir: semua tema, 360/412/768/1280 px, fokus papan ketik, gerak dikurangi; hapus berkas ini | BELUM |
 
@@ -68,10 +68,15 @@ Catatan perubahan:
 Perlu dicek manual: tampilan lipatan di tema terang/biru/dunia.
 
 ## Tahap 4: Pengaturan
-Status: BELUM
-Cek validasi: tiap kelompok (Halaman awal, Koordinator, Identitas, Tampilan, Cadangan, Panduan) bisa dilipat; isian tetap tersimpan; sakelar Koordinator (v1.58) tetap bekerja.
-Catatan perubahan: -
-Perlu dicek manual: -
+Status: SELESAI (v1.63)
+Cek validasi: buka Pengaturan di 360 px: enam kartu (Halaman awal perangkat ini, Pilihan Koordinator tahfidz, Identitas & rapor, Cadangan data, Tampilan, Penyimpanan bersama) tertutup secara bawaan dan bisa dibuka; buka "Identitas & rapor", ubah Guru, pindah halaman lalu kembali: lipatan tetap terbuka dan isian tersimpan; tombol di dalam lipatan (Aktif/Nonaktif Koordinator, Unduh cadangan, tema/ukuran tampilan) tetap bekerja; "Panduan singkat" tertutup dan SEMUA paragrafnya (sampai "Kenaikan kelas & pembagian A/B") ada di dalam lipatan.
+Catatan perubahan:
+- JS: blok "v1.63 Tahap 4" setelah `/* ===== /v1.56 */`: `SG` (baca/tulis localStorage `btqSetelanBuka`, per perangkat) dan pembungkus `bindSetelan` yang, setelah render, memindahkan isi tiap `#view > .card` berawalan `<h3>` ke `<details class="stg">` (judul h3 jadi summary). Elemen dipindah, bukan dibuat ulang, sehingga pengikat tombol yang sudah terpasang tetap hidup. Kartu `.fold` (Data bawaan, Panduan) tidak disentuh.
+- CSS di `<style id="v160">` (blok "v1.63 Tahap 4"): `.stg`, `.stgc`. Sengaja BUKAN kelas `.tgd` karena `.tgd` dipakai pendengar `toggle` untuk kartu Target di Setoran.
+- Perbaikan bug lama (sejak v1.57): tag `</div></details></div>` Panduan singkat berada sebelum dua paragraf terakhir sehingga "Pilih kelas & default" dan "Kenaikan kelas & pembagian A/B" tampil di luar lipatan; tag dipindah ke akhir paragraf terakhir. Isi paragraf tidak diubah.
+- TEMUAN, belum diubah (teks fakta, tanya pengguna): paragraf "Pilih kelas & default" masih menyebut kotak "Buka kelas ini otomatis" yang sudah dihapus di v1.57 (diganti halaman depan); sebaiknya dihapus atau ditulis ulang.
+- Percobaan: uji klik Playwright pada tombol di lipatan sempat gagal karena waktu; ketukan sungguhan (`tap`) berhasil di versi sebelum dan sesudah.
+Perlu dicek manual: kebiasaan buka-tutup di HP sungguhan; apakah kartu yang paling sering dipakai sebaiknya terbuka secara bawaan.
 
 ## Tahap 5: Input Nilai dan Koordinator
 Status: BELUM

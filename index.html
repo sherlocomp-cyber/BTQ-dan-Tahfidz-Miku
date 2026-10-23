@@ -597,6 +597,14 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 /* v1.62 Tahap 3: halaman depan dan Dashboard */
 .pkd{margin:0 0 14px}.pkd>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--mu)}.pkd .pkg2{margin-top:6px}
 .cad{padding:14px 16px}.cad h3{margin:0 0 4px;font-size:15px}.cad p{margin:0;font-size:14px}.cad .row{margin-top:10px}
+/* v1.63 Tahap 4: kartu Pengaturan bisa dilipat */
+.stgc{padding-top:6px;padding-bottom:6px}
+.stg>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px}
+.stg>summary::-webkit-details-marker{display:none}
+.stg>summary h3{margin:0}
+.stg>summary::after{content:"";flex:none;width:9px;height:9px;margin-right:4px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg)}
+.stg[open]>summary{margin-bottom:8px}.stg[open]>summary::after{transform:rotate(-135deg)}
+@media(prefers-reduced-motion:no-preference){.stg>summary::after{transition:transform .2s}}
 /* v1.61 Tahap 2: Setoran di HP */
 @media(max-width:819px){
  .stw .klpsg{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.stw .klpsg::-webkit-scrollbar{display:none}
@@ -677,7 +685,7 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 </script>
 <script>
 'use strict';
-const VERSI='v1.62';
+const VERSI='v1.63';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -799,9 +807,9 @@ const VIEWS={
   <p><b>Nilai surat di Setoran</b> – pada Setoran Tahfidz, setelah memilih surat muncul pilihan nilai A / A- / B / C / –. Nilai langsung masuk ke Input Nilai › Surat (Juz 30 atau juz yang dipilih) dan tampil di rapor; dibiarkan kosong berarti nilai lama tidak diubah. Nilai juga tercatat di Riwayat setoran.</p>
   <p><b>Kelompok</b> – satu kelas dibagi 2 kelompok tahfidz dan 2 kelompok BTQ (anggota boleh berbeda). Atur di Siswa › Kelompok Tahfidz & BTQ (bagi dua otomatis atau ketuk angka per siswa; nama kelompok bisa diubah). Halaman Setoran punya tombol pilihan kelompok sehingga antrean hanya berisi siswa kelompok itu. Impor dari Rekap Nilai mengisi kelompok dari daftar siswa tahfidz/BTQ di sana.</p>
   <p><b>5. Cadangan</b> – unduh cadangan JSON berkala; pulihkan bila ganti perangkat. Ekspor leger Excel ada di halaman Siswa › menu ⋯. Di Pengaturan › Cadangan data ada status perlindungan penyimpanan; ketuk Lindungi penyimpanan agar browser tidak menghapus data otomatis saat memori penuh (cadangan tetap perlu).</p>
-  <p><b>6. Tampilan</b> – pilih tema di pojok atas: ☀️ terang, 🌤️ biru, 🌙 gelap, atau 🪐 Angkasa (latar kertas berlapis dan planet). Tema hanya mengubah tampilan di layar; cetak rapor tidak terpengaruh.</p></div></details></div>
+  <p><b>6. Tampilan</b> – pilih tema di pojok atas: ☀️ terang, 🌤️ biru, 🌙 gelap, atau 🪐 Angkasa (latar kertas berlapis dan planet). Tema hanya mengubah tampilan di layar; cetak rapor tidak terpengaruh.</p>
   <p><b>Pilih kelas & default</b> – bila ada lebih dari satu kelas berisi siswa dan belum ada default, layar Pilih kelas tampil saat aplikasi dibuka. Centang “Buka kelas ini otomatis” agar lain kali langsung masuk ke kelas itu. Default tersimpan per perangkat dan bisa diubah di Pengaturan.</p>
-  <p><b>Kenaikan kelas & pembagian A/B</b> – di halaman Kelas, setelah Naikkan semua kelas, atur siapa masuk A atau B per tingkat: ketuk A/B pada siswa, Tukar seluruh A ↔ B, atau Bagi rata (acak). Tukar dan Bagi rata bisa diurungkan.</p>
+  <p><b>Kenaikan kelas & pembagian A/B</b> – di halaman Kelas, setelah Naikkan semua kelas, atur siapa masuk A atau B per tingkat: ketuk A/B pada siswa, Tukar seluruh A ↔ B, atau Bagi rata (acak). Tukar dan Bagi rata bisa diurungkan.</p></div></details></div>
   <p><b>Tampilan HP</b> – nama kelas aktif tampil di header; ketuk tombol tema untuk berganti tema. Halaman Kelas menampilkan kelas berisi siswa lebih dulu, kelas kosong dilipat.</p>
   <p class="mut" style="margin-top:14px">Versi ${VERSI}</p>`}
 };
@@ -1885,6 +1893,13 @@ function bindKor(){const V=$('#view');V.querySelectorAll('[data-kt]').forEach(b=
     q.onkeydown=e=>{if(e.key==='Escape'&&q.value){q.value='';q.oninput()}};if(matchMedia('(pointer:fine)').matches&&document.activeElement===document.body)q.focus()}
   korBindRows()}
 /* ===== /v1.56 */
+/* v1.63 Tahap 4: kartu Pengaturan dilipat lewat DOM setelah render (elemen dipindah, bukan dibuat ulang, jadi semua pengikat tombol tetap bekerja); status buka per perangkat (localStorage btqSetelanBuka), bawaan tertutup */
+const SG={get(){try{return JSON.parse(localStorage.getItem('btqSetelanBuka')||'{}')||{}}catch(_){return {}}},set(o){try{localStorage.setItem('btqSetelanBuka',JSON.stringify(o))}catch(_){}}};
+{const _bs=bindSetelan;bindSetelan=function(){_bs();const V=$('#view'),o=SG.get();
+  [...V.children].forEach(c=>{if(!c.classList.contains('card')||c.classList.contains('fold')||c.dataset.sg)return;const h=c.firstElementChild;if(!h||h.tagName!=='H3')return;
+    const k=h.textContent.trim(),d=document.createElement('details'),s=document.createElement('summary');d.className='stg';d.open=!!o[k];s.append(h);d.append(s);
+    while(c.firstChild)d.append(c.firstChild);c.append(d);c.dataset.sg='1';c.classList.add('stgc');
+    d.addEventListener('toggle',()=>{const q=SG.get();q[k]=d.open;SG.set(q)})})}}
 /* v1.60: teks status simpan/kirim juga jadi tooltip (di HP hanya titik yang terlihat) */
 try{const si=document.getElementById('saveInd');if(si){const pt=()=>{si.title=si.textContent.trim()};pt();new MutationObserver(pt).observe(si,{childList:true,subtree:true,characterData:true})}}catch(_){}
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
@@ -2419,6 +2434,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 12
 ## Ringkas
+- Catatan sesi 43: versi sebenarnya = const VERSI di file (v1.63). Lihat riwayat sesi 43.
 - Catatan sesi 42: versi sebenarnya = const VERSI di file (v1.62). Lihat riwayat sesi 42.
 - Catatan sesi 41: versi sebenarnya = const VERSI di file (v1.61). Lihat riwayat sesi 41.
 - Catatan sesi 40: versi sebenarnya = const VERSI di file (v1.60). Lihat riwayat sesi 40.
@@ -2566,6 +2582,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 43: v1.63 UI/UX Tahap 4 (docs/HANDOFF-UIUX.md): kartu Pengaturan bisa dilipat (DOM setelah render, status buka per perangkat di localStorage btqSetelanBuka, bawaan tertutup); perbaikan tag penutup Panduan singkat (dua paragraf terakhir bocor ke luar lipatan sejak v1.57). Bagian terlindungi tidak disentuh.
 - Sesi 42: v1.62 UI/UX Tahap 3 (docs/HANDOFF-UIUX.md): halaman depan menampilkan kelas berisi dulu (kelas kosong dilipat; bila belum ada siswa semua tampil), kartu Pengingat cadangan lebih ringan (tombol kecil, teks 14 px). Bagian terlindungi tidak disentuh.
 - Sesi 41: v1.61 UI/UX Tahap 2 (docs/HANDOFF-UIUX.md): Setoran di HP: filter kelompok satu baris geser, tombol Simpan setoran menempel di atas bilah bawah (CSS v160, <820 px). Bagian terlindungi tidak disentuh.
 - Sesi 40: v1.60 UI/UX Tahap 1 (lihat docs/HANDOFF-UIUX.md): chip/segmen tidak terpotong, target sentuh 44 px di HP, latar Angkasa 55% di HP, tooltip status simpan. Bagian terlindungi tidak disentuh.
