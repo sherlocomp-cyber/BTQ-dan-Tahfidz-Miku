@@ -2,14 +2,15 @@
 
 Aplikasi web satu file (PWA) untuk mencatat setoran harian, nilai, dan mencetak rapor **BTQ** dan **Tahfidz** di madrasah. Berjalan di browser HP maupun komputer, bisa dipakai tanpa internet, dan bisa dibungkus menjadi APK dengan Capacitor.
 
-Versi saat ini: **v1.56**
+Versi saat ini: **v1.57**
 
 ## Fitur
 
 - **Siswa & kelompok** — tambah satu per satu, tempel banyak nama, atau impor leger Excel. Satu kelas bisa dibagi 2 kelompok Tahfidz dan 2 kelompok BTQ.
 - **Setoran harian** — Tahfidz dan BTQ dengan isian serba dropdown (juz → surat → ayat). Urutan siswa otomatis dari yang paling lama belum setor, ada alasan tidak setor, catatan, mode cepat, dan ringkasan.
 - **Input nilai** — nilai surat, aspek, tahapan, dan pencapaian, per siswa atau per kolom.
-- **Koordinator tahfidz** — siswa dari semua kelas yang oleh guru tahfidz dicentang "Harus setor ke koordinator tahfidz" (Setoran satu per satu maupun per kelompok) muncul otomatis di halaman Koordinator untuk diberi nilai surat atau tahap; nilai masuk ke Input Nilai dan rapor. Aktifkan lewat Pengaturan › Mode koordinator (per perangkat).
+- **Halaman depan** — saat dibuka di sebuah perangkat, pilih kelas atau Koordinator Tahfidz. Pilihan tersimpan di perangkat itu dan berikutnya langsung masuk; ketuk logo di kiri atas (atau Pengaturan › Halaman awal) untuk mengganti. Kartu menunjukkan jumlah siswa yang menunggu nilai koordinator, total dan per kelas.
+- **Koordinator tahfidz** — siswa dari semua kelas yang oleh guru tahfidz dicentang "Harus setor ke koordinator tahfidz" (Setoran satu per satu maupun per kelompok) muncul otomatis untuk diberi nilai surat atau tahap. Ada kotak cari nama (sebagian nama, urutan bebas), saring per kelas dengan jumlahnya, dan kotak cari kosong lagi setelah menilai agar bisa langsung mencari siswa berikutnya. Nilai masuk ke Input Nilai dan rapor; siswa yang sudah dinilai satu koordinator hilang dari antrean koordinator lain.
 - **Rapor** — Juz 30 mengikuti format Excel asli; Juz 29–1 per paket 3 juz. Cetak atau simpan PDF untuk satu siswa, siswa terpilih, atau satu kelas.
 - **Rekap** — rekap bulanan, antarbulan, dan harian; ekspor Excel dan PDF.
 - **Leger Excel** — impor dan ekspor leger.
@@ -70,6 +71,7 @@ Catatan: kode aplikasi memanggil plugin native `PrintHelper` (dialog cetak Andro
 
 ## Riwayat singkat
 
+- **v1.57** — Halaman depan (pilih kelas atau Koordinator, pilihan tersimpan per perangkat, logo = Beranda). Koordinator: kotak cari nama, saring per kelas dengan jumlah, fokus kembali ke kotak cari setelah menilai. Kartu Koordinator dan kartu kelas menampilkan jumlah yang menunggu. Kartu "Mode koordinator" di Pengaturan diganti "Halaman awal perangkat ini".
 - **v1.56** — Halaman Koordinator Tahfidz: antrean otomatis lintas kelas dari centang "Harus setor ke koordinator tahfidz", input nilai surat/tahap dengan Urungkan, tab Sudah dinilai. Centang yang sama ditambahkan di Setoran Per kelompok. Mode koordinator di Pengaturan (per perangkat); menu muncul di bilah bawah.
 - **v1.54** — Tema Dunia: gaya kertas-potong bertema wisata dan pendidikan, dengan palet teal, navy, koral, dan kuning. Kontras teks tetap memenuhi WCAG AA. Tombol tema ke-5 di header.
 - **v1.37** — Pengaturan › Tampilan: mode Otomatis/HP/Desktop dan perbesar/perkecil tampilan (per perangkat).

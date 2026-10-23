@@ -565,6 +565,24 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 .kor-k{font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;border:1px solid var(--ln);color:var(--mu)}
 .kor-m{margin:3px 0 10px}
 .kor-r .seg button{min-height:46px}
+.kor-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.kor-q{display:block;margin:0 0 10px}
+.kor-q input{width:100%;min-height:48px;font-size:16px;background:var(--card2);border:1px solid var(--ln);border-radius:12px;padding:0 14px;color:var(--tx)}
+.kor-f{margin-bottom:12px}
+.kor-f button{flex:0 0 auto;min-width:56px;min-height:44px;padding:0 14px}
+.kor-c{font-weight:800;margin-left:2px}
+.kor-n{margin:0 0 8px}
+.pkk{display:grid;gap:8px;width:100%;margin:14px 0 0;padding:16px;border:0;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.pkk .pkh{display:flex;align-items:center;gap:8px}.pkk .pkh b{font-size:20px;line-height:1.2;color:var(--ac2)}
+[data-theme=gelap] .pkk .pkh b,html[data-theme=angkasa] .pkk .pkh b{color:var(--ac)}
+.pkk.on{outline:2px solid var(--ac2)}
+.pkk-t{font-size:16px}
+.pkk-k{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;color:var(--mu)}.pkk-k b{color:var(--tx)}
+.pkm{font-size:12px;font-weight:700;color:var(--ac2)}
+[data-theme=gelap] .pkm,html[data-theme=angkasa] .pkm{color:var(--ac)}
+.pks{margin:18px 0 0;font-size:16px}
+.brand[role=button]{cursor:pointer}
+.brand[role=button]:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:12px}
 .gc .gck{flex:1 1 100%}
 </style>
 </head>
@@ -640,7 +658,7 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 </script>
 <script>
 'use strict';
-const VERSI='v1.56';
+const VERSI='v1.57';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -755,7 +773,8 @@ const VIEWS={
   <p><b>Pencarian</b> – kotak Cari nama ada di Siswa, Setoran, Input Nilai, dan Rapor (ketik nama lalu pilih untuk langsung loncat, atau daftar tersaring). Sebelum cetak rapor, aplikasi memberi peringatan bila ada siswa yang nilainya belum lengkap (boleh tetap cetak). Dashboard menampilkan siswa yang belum setor 7 hari atau lebih dan pengingat cadangan bila sudah lebih dari 14 hari.</p>
   <p><b>Rekap › Rekap bulan</b> – tabel satu bulan per siswa: hafalan awal bulan, hafalan saat ini, tanggal, status (Bertambah / Setor ke Koordinator / Harus Setor / Belum Setor), jumlah setoran, target, keterangan. Pilih Tahfidz/BTQ, kelompok, dan bulan; Cetak / PDF (landscape A4) atau Unduh Excel. Kode kelas dan teks kaki halaman diatur di Pengaturan.</p>
   <p><b>Setor ke koordinator tahfidz</b> – pada Setoran Tahfidz, centang "Harus setor ke koordinator tahfidz" bila siswa sudah lulus dari guru tahfidz dan masih harus menyetor ke koordinator (bukan mengulang setoran). Tandanya tampil di Riwayat dan sebagai status "Setor ke Koordinator" di Rekap bulan. Centang yang sama ada di Setoran Per kelompok.</p>
-  <p><b>Halaman Koordinator</b> – aktifkan "Mode koordinator di perangkat ini" di Pengaturan. Siswa dari semua kelas yang bertanda setor ke koordinator muncul otomatis di tab Menunggu; ketuk nilai (A, A-, B, C, –, atau Mumtaz–Maqbul untuk setoran tahap) untuk menyimpan. Nilai masuk ke Input Nilai dan rapor, siswa pindah ke tab Sudah dinilai, dan nilainya masih bisa diganti atau diurungkan.</p>
+  <p><b>Halaman depan</b> – saat aplikasi dibuka di sebuah perangkat, pilih kelas atau Koordinator Tahfidz. Pilihan tersimpan di perangkat itu, jadi berikutnya langsung masuk. Ketuk logo di kiri atas untuk kembali ke halaman depan atau mengganti pilihan (bisa juga di Pengaturan › Halaman awal). Kartu Koordinator dan kartu kelas menunjukkan jumlah siswa yang menunggu nilai koordinator.</p>
+  <p><b>Halaman Koordinator</b> – siswa dari semua kelas yang bertanda setor ke koordinator muncul otomatis di tab Menunggu. Cari nama di kotak cari (cukup sebagian nama, urutan bebas) atau saring per kelas; angka di tombol kelas = jumlah yang menunggu. Ketuk nilai (A, A-, B, C, –, atau Mumtaz–Maqbul untuk setoran tahap) untuk menyimpan; kotak cari kosong lagi untuk siswa berikutnya. Nilai masuk ke Input Nilai dan rapor, siswa pindah ke tab Sudah dinilai, dan nilainya masih bisa diganti atau diurungkan. Siswa yang sudah dinilai satu koordinator otomatis hilang dari antrean koordinator lain.</p>
   <p><b>Tahap di Setoran</b> – pada Setoran Tahfidz pilih "Per tahap" untuk mencatat Tahap I–V (centang Selesai bila tuntas; nilai tahap opsional, masuk ke Input Nilai › Tahapan Juz 30). Posisi tahap tampil di Rekap, mis. "Tahap 4 (belum selesai)".</p>
   <p><b>Nilai surat di Setoran</b> – pada Setoran Tahfidz, setelah memilih surat muncul pilihan nilai A / A- / B / C / –. Nilai langsung masuk ke Input Nilai › Surat (Juz 30 atau juz yang dipilih) dan tampil di rapor; dibiarkan kosong berarti nilai lama tidak diubah. Nilai juga tercatat di Riwayat setoran.</p>
   <p><b>Kelompok</b> – satu kelas dibagi 2 kelompok tahfidz dan 2 kelompok BTQ (anggota boleh berbeda). Atur di Siswa › Kelompok Tahfidz & BTQ (bagi dua otomatis atau ketuk angka per siswa; nama kelompok bisa diubah). Halaman Setoran punya tombol pilihan kelompok sehingga antrean hanya berisi siswa kelompok itu. Impor dari Rekap Nilai mengisi kelompok dari daftar siswa tahfidz/BTQ di sana.</p>
@@ -945,19 +964,22 @@ function bindKelas(){const V=$('#view');
   return (mis?`<div class="card kcw2"><b>${mis} siswa belum punya nama guru untuk tanda tangan rapor.</b> Isi guru tahfidz kelas ${esc(S.set.kelasAktif)} di halaman Kelas.</div>`:'')+_r()}}
 /* ===== v1.38: LAYAR PILIH KELAS, KELAS DEFAULT PER PERANGKAT (localStorage, tidak disinkron), ATUR PEMBAGIAN A/B ===== */
 const kdGet=()=>{try{const v=localStorage.getItem('btqKelasDefault');return klsOk(v)?v:''}catch(_){return ''}};
-const kdSet=v=>{try{v?localStorage.setItem('btqKelasDefault',v):localStorage.removeItem('btqKelasDefault')}catch(_){}};
+const kdSet=v=>{try{v?localStorage.setItem('btqKelasDefault',v):localStorage.removeItem('btqKelasDefault')}catch(_){}korMode(false)};
 function gerbangTutup(){const e=$('#gerbang');if(e)e.remove();document.body.style.overflow=''}
-function gerbangPilih(k,ingat){if(ingat)kdSet(k);if(k!==S.set.kelasAktif)kelasPilih(k);gerbangTutup();render()}
-function gerbangBuka(){gerbangTutup();const n={};S.siswa.forEach(s=>n[s.kelas]=(n[s.kelas]||0)+1);const d=kdGet(),a=S.set.kelasAktif;
+function gerbangPilih(k,ingat){if(ingat)kdSet(k);if(k!==S.set.kelasAktif)kelasPilih(k);gerbangTutup();if(S.page==='koordinator')go('dashboard');else render()}
+function gerbangKoor(){kdSet('');korMode(true);gerbangTutup();go('koordinator')}
+/* v1.57: halaman depan = pilih kelas atau Koordinator Tahfidz; pilihan langsung disimpan di perangkat (kdSet / korMode) */
+function gerbangBuka(){gerbangTutup();const n={};S.siswa.forEach(s=>n[s.kelas]=(n[s.kelas]||0)+1);const d=kdGet(),a=S.set.kelasAktif,kr=korAktif(),A=korAntrean(S.siswa).p,kp=korPerKelas(A);
   const tile=k=>{const g=klsGuruT(k).filter(Boolean),w=String(klsData(k).guru||'').trim(),gur=(g.length?g:(w?[w]:[])).join(' / ');
-    return `<button class="card pkt${k===a?' on':''}${n[k]?'':' kosong'}" data-pk="${k}"><span class="pkh"><b>${k}</b>${k===d?'<span class="kcb">default</span>':''}</span><span class="mut">${n[k]?n[k]+' siswa':'Belum ada siswa'}</span>${gur?`<span class="mut pkg">${esc(gur)}</span>`:''}</button>`};
-  const e=document.createElement('div');e.id='gerbang';e.setAttribute('role','dialog');e.setAttribute('aria-modal','true');e.setAttribute('aria-label','Pilih kelas');
-  e.innerHTML=`<div class="pkw"><h1>Pilih kelas</h1><label class="ck pki"><input type="checkbox" id="pkIngat"${d?'':' checked'}> Buka kelas ini otomatis di perangkat ini</label><p class="mut">Disimpan di perangkat ini saja, jadi tiap guru bisa punya kelas sendiri. Bisa diubah di Pengaturan.</p><div class="pkg2">${KLS_ALL.map(tile).join('')}</div><div class="row"><button class="btn ghost" id="pkLanjut">Lanjut di Kelas ${a}</button></div></div>`;
+    return `<button class="card pkt${k===a&&!kr?' on':''}${n[k]?'':' kosong'}" data-pk="${k}"><span class="pkh"><b>${k}</b>${k===d?'<span class="kcb">dibuka otomatis</span>':''}</span><span class="mut">${n[k]?n[k]+' siswa':'Belum ada siswa'}</span>${kp[k]?`<span class="pkm">${kp[k]} menunggu koordinator</span>`:''}${gur?`<span class="mut pkg">${esc(gur)}</span>`:''}</button>`};
+  const kor=`<button class="card pkk${kr?' on':''}" data-pk="KOOR"><span class="pkh"><b>Koordinator Tahfidz</b>${kr?'<span class="kcb">dibuka otomatis</span>':''}</span><span class="pkk-t">${A.length?'<b>'+A.length+' siswa</b> menunggu nilai':'Belum ada siswa yang menunggu nilai'}</span>${A.length?`<span class="pkk-k">${KLS_ALL.filter(k=>kp[k]).map(k=>`<span><b>${k}</b> ${kp[k]}</span>`).join('')}</span>`:''}</button>`;
+  const e=document.createElement('div');e.id='gerbang';e.setAttribute('role','dialog');e.setAttribute('aria-modal','true');e.setAttribute('aria-label','Pilih kelas atau koordinator');
+  e.innerHTML=`<div class="pkw"><h1>Pilih kelas atau koordinator</h1><p class="mut">Pilihan disimpan di perangkat ini, jadi berikutnya langsung masuk. Untuk mengganti, ketuk logo di kiri atas.</p>${kor}<h2 class="pks">Kelas</h2><div class="pkg2">${KLS_ALL.map(tile).join('')}</div><div class="row"><button class="btn ghost" id="pkLanjut">Tutup</button></div></div>`;
   document.body.append(e);document.body.style.overflow='hidden';
-  e.onclick=ev=>{const b=ev.target.closest('[data-pk]');if(b)return gerbangPilih(b.dataset.pk,$('#pkIngat').checked);if(ev.target.closest('#pkLanjut'))gerbangTutup()};
+  e.onclick=ev=>{const b=ev.target.closest('[data-pk]');if(b)return b.dataset.pk==='KOOR'?gerbangKoor():gerbangPilih(b.dataset.pk,true);if(ev.target.closest('#pkLanjut'))gerbangTutup()};
   e.onkeydown=ev=>{if(ev.key==='Escape')gerbangTutup()};
-  const f=e.querySelector('.pkt.on')||e.querySelector('.pkt');if(f)f.focus()}
-function kdKartu(){const d=kdGet();return `<div class="card" style="margin-bottom:16px"><h3>Kelas default perangkat ini</h3><p class="mut" style="margin-bottom:10px">Aplikasi langsung membuka kelas ini setiap dibuka. Berlaku di perangkat ini saja, tidak ikut tersinkron ke guru lain.</p><select id="kdSel" aria-label="Kelas default"><option value="">Tanya setiap kali dibuka</option>${KLS_ALL.map(k=>`<option value="${k}"${k===d?' selected':''}>Kelas ${k}</option>`).join('')}</select><div class="row"><button class="sm" id="kdTampil">Tampilkan layar pilih kelas</button></div></div>`}
+  const f=e.querySelector('.pkt.on,.pkk.on')||e.querySelector('.pkk');if(f)f.focus()}
+function kdKartu(){const d=kdGet(),kr=korAktif();return `<div class="card" style="margin-bottom:16px"><h3>Halaman awal perangkat ini</h3><p class="mut" style="margin-bottom:10px">Aplikasi langsung membuka pilihan ini setiap dibuka. Berlaku di perangkat ini saja, tidak ikut tersinkron ke guru lain.</p><select id="kdSel" aria-label="Halaman awal"><option value="">Tanya setiap kali dibuka</option><option value="KOOR"${kr?' selected':''}>Koordinator tahfidz</option>${KLS_ALL.map(k=>`<option value="${k}"${k===d&&!kr?' selected':''}>Kelas ${k}</option>`).join('')}</select><div class="row"><button class="sm" id="kdTampil">Tampilkan halaman depan</button></div></div>`}
 const AB={t:0};
 const abTingkat=()=>AB.t>=1&&AB.t<=6?AB.t:(klsT(S.set.kelasAktif)||4);
 const abSis=t=>S.siswa.filter(s=>s.kelas===t+'A'||s.kelas===t+'B').sort((x,y)=>cmpNama(x.nama,y.nama));
@@ -975,7 +997,7 @@ function abAksi(b){const a=b.dataset.ab,t=abTingkat(),y=scrollY;
   persist();abRender(y);
   toast(a==='tukar'?'A dan B ditukar.':'Siswa dibagi rata secara acak.',()=>{const m=new Map(sn);S.siswa.forEach(s=>{if(m.has(s.id))s.kelas=m.get(s.id)});persist();abRender()})}
 {const _bk=bindKelas;bindKelas=function(){_bk();const V=$('#view'),oc=V.onclick;V.onclick=e=>{const b=e.target.closest('[data-ab]');if(b)return abAksi(b);if(oc)oc(e)}}}
-{const _bs=bindSetelan;bindSetelan=function(){_bs();const e=$('#kdSel');if(e)e.onchange=()=>{kdSet(e.value);toast(e.value?'Kelas default: '+e.value+'.':'Default dihapus; layar pilih kelas tampil saat dibuka.')};const t=$('#kdTampil');if(t)t.onclick=gerbangBuka}}
+{const _bs=bindSetelan;bindSetelan=function(){_bs();const e=$('#kdSel');if(e)e.onchange=()=>{const v=e.value;if(v==='KOOR'){kdSet('');korMode(true);toast('Perangkat ini langsung membuka halaman Koordinator.')}else{kdSet(v);toast(v?'Kelas default: '+v+'.':'Pilihan dihapus; halaman depan tampil saat dibuka.')}};const t=$('#kdTampil');if(t)t.onclick=gerbangBuka}}
 /* ===== v1.41: ORIENTASI LAYAR: Otomatis/Potret/Lanskap (per perangkat, ikut btqTampil). Screen Orientation API:
    Android Chrome mengunci tanpa layar penuh bila aplikasi terpasang (standalone); di tab biasa perlu layar penuh.
    iPhone/iPad (Safari) tidak mendukung kunci: hanya menampilkan petunjuk. ===== */
@@ -1768,7 +1790,7 @@ toast=function(m,undo){let box=document.getElementById('toastBox');
    Koordinator dari SEMUA kelas (data sudah sinkron lewat Firebase). Koordinator memilih nilai; nilai ditulis ke tempat yang sama dengan
    Input Nilai (nilaiSimpan / s.tahap, sama dengan nilaiTerap) dan setoran diberi e.kor={nilai,t}. Tanpa perubahan skema DB: e.kor hanya field
    tambahan pada objek setoran. Mode koordinator = localStorage btqKoor (per perangkat, tidak disinkronkan). */
-const KOR={tab:'antre'};
+const KOR={tab:'antre',k:'',q:''};
 const korAktif=()=>{try{return localStorage.getItem('btqKoor')==='1'}catch(_){return false}};
 function korPasang(){const i=PAGES.findIndex(p=>p[0]==='koordinator'),n=NAV_INTI.indexOf('koordinator'),a=korAktif();
   if(a&&i<0)PAGES.splice(PAGES.findIndex(p=>p[0]==='setelan'),0,['koordinator','Koordinator']);else if(!a&&i>=0)PAGES.splice(i,1);
@@ -1788,22 +1810,43 @@ function korNilai(s,e,v){if(!s||!e||!korNilaiOk(e,v)||!(e.tahap||(e.surat&&e.juz
 function korUrung(s,e,U){if(!U)return;
   if(e.tahap)(s.tahap||(s.tahap=['','','','','']))[+e.tahap-1]=U.nilai;else nilaiSimpan(s,e.juz,+e.surat,U.nilai);
   if(U.kor)e.kor=U.kor;else delete e.kor}
-function viewKor(){const {p,d}=korAntrean(S.siswa),A=KOR.tab!=='sudah',L=A?p:d.slice(0,60);
-  const tab=(k,t,n)=>`<button class="${(k==='antre')===A?'on':''}" data-kt="${k}">${t} (${n})</button>`;
-  const row=({s,e})=>{const pil=e.tahap?AO:SO,cur=e.kor?e.kor.nilai:'',gu=korGuru(s),bisa=!!(e.tahap||(e.surat&&e.juz));
-    const btn=bisa?`<div class="seg" role="group" aria-label="Nilai ${esc(s.nama)}">${pil.map(([v,l])=>`<button class="${cur===v?'on':''}" data-kn="${esc(s.id)}" data-ke="${esc(e.id)}" data-v="${esc(v)}">${l}</button>`).join('')}</div>`:'<p class="mut">Setoran ini tidak punya surat atau tahap, jadi belum bisa dinilai.</p>';
-    return `<li class="kor-r"><div class="kor-h"><b>${esc(s.nama)}</b><span class="kor-k">Kelas ${esc(s.kelas)}</span></div>
-      <p class="mut kor-m">${esc(e.pos||'')} • setor ${esc(tglF(e.tgl))}${gu?' • guru '+esc(gu):''}${!cur&&e.nilai?' • nilai dari guru: '+esc(e.nilai==='-'?'–':e.nilai):''}${cur&&e.kor.t?' • dinilai '+esc(new Date(e.kor.t).toLocaleDateString('id-ID',{day:'numeric',month:'short'})):''}</p>${btn}</li>`};
-  const kosong=A?'Belum ada siswa yang harus setor ke koordinator. Siswa muncul di sini otomatis setelah guru tahfidz mencentang “Harus setor ke koordinator tahfidz” di Setoran.':'Belum ada nilai dari koordinator.';
+/* v1.57: pencarian nama, saring per kelas (dengan jumlah), halaman depan. Antrean = semua kelas; 3 koordinator memakai antrean yang sama (siswa antri ke koordinator mana saja). */
+function korNorm(t){return String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/['’‘`´ʻʼ]/g,'').replace(/[^a-z0-9]+/g,' ').trim()}
+function korCocok(s,q){const w=korNorm(q).split(' ').filter(Boolean);if(!w.length)return true;const n=korNorm(s.nama);return w.every(x=>n.includes(x))}
+function korPerKelas(items){const o={};items.forEach(x=>{o[x.s.kelas]=(o[x.s.kelas]||0)+1});return o}
+/* hasil pencarian: nama yang kata-katanya DIAWALI ketikan didahulukan (ketik "ahm" -> Ahmad sebelum Rahma); urutan lain tetap stabil */
+function korSaring(items,k,q){const w=korNorm(q).split(' ').filter(Boolean),r=items.filter(x=>(!k||x.s.kelas===k)&&korCocok(x.s,q));if(!w.length)return r;
+  const sk=x=>{const a=korNorm(x.s.nama).split(' ');return w.every(y=>a.some(z=>z.startsWith(y)))?0:1};
+  return r.map((x,i)=>[sk(x),i,x]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]).map(a=>a[2])}
+/* mode koordinator per perangkat (btqKoor) mengikuti pilihan di halaman depan; menambah/menghapus tab Koordinator di navigasi */
+function korMode(on){const was=korAktif();try{localStorage.setItem('btqKoor',on?'1':'0')}catch(_){}korPasang();if(was!==on){buildNav();document.querySelectorAll('[data-p]').forEach(b=>b.classList.toggle('on',b.dataset.p===S.page))}}
+function korBrand(){const b=document.querySelector('.brand');if(!b||b.dataset.bb)return;b.dataset.bb='1';b.setAttribute('role','button');b.setAttribute('tabindex','0');b.setAttribute('aria-label','Beranda: pilih kelas atau koordinator');b.title='Beranda';
+  b.addEventListener('click',gerbangBuka);b.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();gerbangBuka()}})}
+function korRow({s,e}){const pil=e.tahap?AO:SO,cur=e.kor?e.kor.nilai:'',gu=korGuru(s),bisa=!!(e.tahap||(e.surat&&e.juz));
+  const btn=bisa?`<div class="seg" role="group" aria-label="Nilai ${esc(s.nama)}">${pil.map(([v,l])=>`<button class="${cur===v?'on':''}" data-kn="${esc(s.id)}" data-ke="${esc(e.id)}" data-v="${esc(v)}">${l}</button>`).join('')}</div>`:'<p class="mut">Setoran ini tidak punya surat atau tahap, jadi belum bisa dinilai.</p>';
+  return `<li class="kor-r"><div class="kor-h"><b>${esc(s.nama)}</b><span class="kor-k">Kelas ${esc(s.kelas)}</span></div>
+    <p class="mut kor-m">${esc(e.pos||'')} • setor ${esc(tglF(e.tgl))}${gu?' • guru '+esc(gu):''}${!cur&&e.nilai?' • nilai dari guru: '+esc(e.nilai==='-'?'–':e.nilai):''}${cur&&e.kor.t?' • dinilai '+esc(new Date(e.kor.t).toLocaleDateString('id-ID',{day:'numeric',month:'short'})):''}</p>${btn}</li>`}
+function korIsiList(){const {p,d}=korAntrean(S.siswa),A=KOR.tab!=='sudah',L=korSaring(A?p:d,KOR.k,KOR.q),lain=korSaring(A?d:p,KOR.k,KOR.q).length,q=KOR.q.trim(),sar=!!(q||KOR.k);
+  if(!L.length){const t=A?(sar?`Tidak ada siswa${q?' bernama “'+esc(q)+'”':''}${KOR.k?' di kelas '+KOR.k:''} yang menunggu nilai. Siswa muncul di sini setelah guru tahfidz mencentang “Harus setor ke koordinator tahfidz”.`:'Belum ada siswa yang harus setor ke koordinator. Siswa muncul di sini otomatis setelah guru tahfidz mencentang “Harus setor ke koordinator tahfidz” di Setoran.'):(sar?'Tidak ada yang cocok di daftar sudah dinilai.':'Belum ada nilai dari koordinator.');
+    return `<p class="mut">${t}${lain?` ${lain} siswa yang cocok ${A?'sudah dinilai (lihat tab Sudah dinilai)':'masih menunggu nilai (lihat tab Menunggu)'}.`:''}</p>`}
+  return `${sar?`<p class="mut kor-n">${L.length} siswa cocok</p>`:''}<ul class="kor-l">${L.slice(0,80).map(korRow).join('')}</ul>${L.length>80?'<p class="mut kor-n">Menampilkan 80 pertama. Ketik nama atau pilih kelas untuk mempersempit.</p>':''}`}
+function korChips(){const {p,d}=korAntrean(S.siswa),src=KOR.tab!=='sudah'?p:d,pk=korPerKelas(src),c=(k,t,n)=>`<button class="${KOR.k===k?'on':''}" data-kk="${k}" aria-pressed="${KOR.k===k}">${t} <span class="kor-c">${n}</span></button>`;
+  return c('','Semua',src.length)+KLS_ALL.filter(k=>pk[k]||k===KOR.k).map(k=>c(k,k,pk[k]||0)).join('')}
+function viewKor(){const {p,d}=korAntrean(S.siswa),A=KOR.tab!=='sudah',tab=(k,t,n)=>`<button class="${(k==='antre')===A?'on':''}" data-kt="${k}">${t} (${n})</button>`;
   return `<h1>Koordinator Tahfidz</h1><div class="seg" style="margin-bottom:12px">${tab('antre','Menunggu',p.length)}${tab('sudah','Sudah dinilai',d.length)}</div>
-    <div class="card">${L.length?`<ul class="kor-l">${L.map(row).join('')}</ul>`:`<p class="mut">${kosong}</p>`}</div>`}
+    <label class="kor-q"><span class="kor-sr">Cari nama siswa</span><input type="search" id="korQ" placeholder="Cari nama siswa…" autocomplete="off" enterkeyhint="search" value="${esc(KOR.q)}"></label>
+    <div class="seg kor-f" role="group" aria-label="Saring per kelas">${korChips()}</div>
+    <div class="card" id="korList">${korIsiList()}</div>`}
 VIEWS.koordinator=viewKor;
-function bindKor(){const V=$('#view');V.querySelectorAll('[data-kt]').forEach(b=>b.onclick=()=>{KOR.tab=b.dataset.kt;render()});
-  V.querySelectorAll('[data-kn]').forEach(b=>b.onclick=()=>{const s=S.siswa.find(x=>String(x.id)===b.dataset.kn),e=s&&(s.setoran||[]).find(x=>String(x.id)===b.dataset.ke),v=b.dataset.v;
+function korBindRows(){$('#korList').querySelectorAll('[data-kn]').forEach(b=>b.onclick=()=>{const s=S.siswa.find(x=>String(x.id)===b.dataset.kn),e=s&&(s.setoran||[]).find(x=>String(x.id)===b.dataset.ke),v=b.dataset.v,baru=!(e&&e.kor);
     const U=korNilai(s,e,v);if(!U)return toast('Nilai tidak bisa disimpan untuk setoran ini.');sv(s);
-    toast(`${s.nama.split(' ')[0]}: nilai ${v==='-'?'–':v} tersimpan`,()=>{korUrung(s,e,U);sv(s);render()});render()})}
-{const sa=VIEWS.setelan;VIEWS.setelan=function(){return sa()+`<div class="card" style="margin-top:14px"><h3>Koordinator tahfidz</h3><label class="ck"><input type="checkbox" id="korMode"${korAktif()?' checked':''}> Mode koordinator di perangkat ini</label><p class="mut" style="margin-top:8px">Menampilkan halaman Koordinator. Siswa dari semua kelas yang oleh guru tahfidz ditandai “Harus setor ke koordinator tahfidz” muncul otomatis di sana untuk diberi nilai surat. Pengaturan ini hanya berlaku di perangkat ini.</p></div>`}}
-{const bs=bindSetelan;bindSetelan=function(){bs();const c=$('#korMode');if(c)c.onchange=()=>{try{localStorage.setItem('btqKoor',c.checked?'1':'0')}catch(_){}korPasang();buildNav();go(S.page)}}}
+    toast(`${s.nama.split(' ')[0]}: nilai ${v==='-'?'–':v} tersimpan`,()=>{korUrung(s,e,U);sv(s);render()});
+    if(baru&&KOR.tab!=='sudah')KOR.q='';render();if(baru){const q=$('#korQ');if(q)q.focus()}})}/* setelah menilai, kotak cari dikosongkan dan aktif lagi untuk siswa berikutnya */
+function bindKor(){const V=$('#view');V.querySelectorAll('[data-kt]').forEach(b=>b.onclick=()=>{KOR.tab=b.dataset.kt;render()});
+  V.querySelectorAll('[data-kk]').forEach(b=>b.onclick=()=>{KOR.k=b.dataset.kk;render()});
+  const q=$('#korQ');if(q){q.oninput=()=>{KOR.q=q.value;$('#korList').innerHTML=korIsiList();korBindRows()};
+    q.onkeydown=e=>{if(e.key==='Escape'&&q.value){q.value='';q.oninput()}};if(matchMedia('(pointer:fine)').matches&&document.activeElement===document.body)q.focus()}
+  korBindRows()}
 /* ===== /v1.56 */
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
 const ALAB=['Tajwid','Makhroj','Murojaah','Kelancaran','Tajwid','Makhroj','Menulis','Membaca'];
@@ -2209,15 +2252,15 @@ function gSave(s,j,row,qt){const TT=qt?()=>{}:toast,r=gGet(s,j);if(r.tahap)retur
 
 /* ===== MULAI ===== */
 (async()=>{
-  tampilMuat();korPasang();buildNav();
+  tampilMuat();korPasang();buildNav();korBrand();
   document.querySelectorAll('#themes button').forEach(b=>b.onclick=()=>{theme(b.dataset.t);saved()});
   $('#themes').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!b.classList.contains('on')||!matchMedia('(max-width:480px)').matches)return;e.stopImmediatePropagation();const o=[...document.querySelectorAll('#themes button')],n=o[(o.indexOf(b)+1)%o.length];theme(n.dataset.t);saved()},true);
   try{await DB.open();const p=await DB.get('pengaturan');if(p)S.set={...DEFAULT,...p};S.cad=(await DB.get('cadanganTerakhir'))||'';S.siswa=await DB.all()}
   catch(_){toast('Penyimpanan perangkat tidak tersedia; data tidak akan tersimpan.')}
   migrasi();await kelasInit();{const t=S.siswa.map(s=>s.id+s.no).join();urutAZ();if(S.siswa.map(s=>s.id+s.no).join()!==t)DB.saveSiswa(S.siswa)}autoSet();theme(S.set.tema);{const d=kdGet();if(d&&d!==S.set.kelasAktif)kelasPilih(d)}
-  const h=location.hash.slice(1);go(PAGES.some(p=>p[0]===h)?h:'dashboard');
+  const h=location.hash.slice(1);go(PAGES.some(p=>p[0]===h)?h:(korAktif()?'koordinator':'dashboard'));
   Cloud.start();
-  if(!kdGet()&&new Set(S.siswa.map(s=>s.kelas).filter(klsOk)).size>1)gerbangBuka();
+  if(!kdGet()&&!korAktif())gerbangBuka();
   psBoot();
 })();
 </script>
@@ -2337,6 +2380,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 12
 ## Ringkas
+- Catatan sesi 37: versi sebenarnya = const VERSI di file (v1.57). Lihat riwayat sesi 37.
 - Catatan sesi 36: versi sebenarnya = const VERSI di file (v1.56). Lihat riwayat sesi 36.
 - Catatan sesi 35: versi sebenarnya = const VERSI di file (v1.55). Lihat riwayat sesi 35.
 - Catatan sesi 15: baris 'Versi aplikasi' di bawah tertinggal; versi sebenarnya = const VERSI di file (v1.31). Riwayat sesi 13–15 ada di bagian bawah.
@@ -2478,6 +2522,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 37: v1.57 Halaman depan + Koordinator yang mudah dipakai 3 orang (tanpa perubahan skema DB, bagian terlindungi tidak disentuh, sidik jari dan golden SAMA). Halaman depan = gerbangBuka() diperluas (overlay #gerbang yang sudah ada): kartu Koordinator Tahfidz (total siswa menunggu + rincian per kelas, dari korAntrean/korPerKelas) di atas 12 kartu kelas dengan lencana jumlah menunggu koordinator; pilihan LANGSUNG tersimpan: kelas -> kdSet(k) (btqKelasDefault) dan kdSet() kini selalu memanggil korMode(false); Koordinator -> gerbangKoor (kdSet('') + korMode(true), btqKoor=1). Kotak centang 'buka otomatis' dihapus. Boot: halaman depan tampil bila !kdGet()&&!korAktif() (dulu hanya bila >1 kelas berisi siswa); mode koordinator membuka halaman Koordinator sebagai halaman awal. Logo di header = tombol Beranda (korBrand; ikon header baru tidak muat di 360 px). Kartu Pengaturan 'Halaman awal perangkat ini' (kdKartu) kini punya pilihan Koordinator; kartu 'Mode koordinator' v1.56 dihapus (digantikan halaman depan). Koordinator: kotak cari (korNorm/korCocok: abaikan besar-kecil, aksen, apostrof, tanda hubung, urutan kata bebas, sebagian nama; korSaring mendahulukan kata yang DIAWALI ketikan), tombol saring kelas dengan jumlah (korChips), hasil kosong menjelaskan alasan dan menunjuk tab lain, setelah menilai kotak cari dikosongkan dan fokus kembali (korBindRows), antrean terbarui otomatis saat data tersinkron. Perlu cek manual: dua/tiga perangkat koordinator nyata sekaligus (siswa yang dinilai satu orang hilang di yang lain), tampilan ponsel nyata. Detektor desain: hanya 2 peringatan lama (font Plus Jakarta Sans, cahaya tema Angkasa), bukan dari perubahan ini.
 - Sesi 36: v1.56 Koordinator tahfidz (blok '/* ===== v1.56' sebelum EKSPOR LEGER; CSS style id=v156 setelah v155; tanpa perubahan skema DB, bagian terlindungi tidak disentuh, sidik jari dan golden SAMA): KOR, korAktif/korPasang (mode koordinator = localStorage btqKoor per perangkat; menambah halaman 'koordinator' ke PAGES dan NAV_INTI sehingga muncul di bilah bawah, BUKAN ikon header karena header 360 px hanya tersisa 3 px), korAntrean (siswa semua kelas yang setoran tahfidz TERAKHIR-nya e.harus dan belum e.kor; sama dengan status 'Setor ke Koordinator' di Rekap), korNilai/korUrung (nilai ke nilaiSimpan atau s.tahap seperti nilaiTerap; e.kor={nilai,t}; setoran tanpa surat/tahap tidak bisa dinilai), korGuru (guru kelompok tahfidz s.kel.t lalu guru kelas, dari S.set.kls[kelas]; kelas aktif dari S.set), viewKor/bindKor (tab Menunggu / Sudah dinilai, ketuk nilai = simpan + Urungkan), kartu Pengaturan 'Koordinator tahfidz'. Diubah di tempat: render (bindKor), boot (korPasang sebelum buildNav), Cloud.segarUI (+koordinator agar antrean terbarui otomatis saat data guru masuk), IC (+koordinator), Setoran Per kelompok: centang data-gf=harus (gRow, gUbah, gSave harus=r.harus untuk tahfidz), Panduan, VERSI. Perlu cek manual: sinkron antar dua perangkat nyata (guru centang, koordinator melihat), tampilan di ponsel nyata.
 - Sesi 35: v1.55 UI/UX/efisiensi (tanpa perubahan DB/skema; bagian terlindungi tidak disentuh): go() dibungkus (blok v1.55 sebelum EKSPOR LEGER): hashchange sehingga tombol Kembali/Maju pindah halaman (dulu hash berubah tetapi halaman tetap), scroll ke atas saat ganti halaman, aria-current di navigasi, judul dokumen per halaman. toast() diganti: satu wadah role=status/aria-live, menggantikan (bukan menumpuk), lebar sesuai isi (dulu menyempit setengah layar), durasi menurut panjang pesan, berhenti saat disentuh/fokus. render() dan nilaiSegar() dibungkus: fokus dikembalikan ke kontrol yang sama (kunci id atau data-*) setelah innerHTML/outerHTML diganti (Input Nilai memperbarui satu baris tanpa render()). saved() dipecah: flushSet() menulis pengaturan yang tertunda saat pagehide/visibilitychange (kelasSimpan dan sinkron cloud tetap lewat DB.set 'pengaturan', JANGAN dilewati saat tak berubah). Kartu Target di Setoran = details.tgd, terlipat di <1024 px (ST.tgBuka). Profil: render halaman 6-17 ms (Rapor 57 ms) pada CPU 4x lambat dengan 32 siswa x 70 setoran; saveSiswa penuh 68 ms (hanya dipanggil operasi massal) sehingga lapisan DB sengaja tidak diubah. CSS v155 (style id=v155, terakhir sebelum </head>).
 - Sesi 34: v1.53 Keterangan Rekap bulan = hanya ket TERBARU di bulan itu (rtHitung: kk terakhir, tanpa tanggal); Rekap Harian (rkKet) bila hari itu kosong memakai ket terakhir yang pernah diisi sampai tanggal itu, diberi tanggal. Hitungan 'Tidak setor: Sakit n×' (Sakit/Izin dst.) tidak diubah.
