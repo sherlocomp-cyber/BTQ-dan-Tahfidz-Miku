@@ -659,7 +659,7 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 </script>
 <script>
 'use strict';
-const VERSI='v1.58';
+const VERSI='v1.59';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -1018,8 +1018,11 @@ function tampilMq(){if(!TP_MQ.length)for(const sh of document.styleSheets){let r
 function tampilTerap(){const T=TAMPIL,h=document.documentElement,W=T.mode==='desktop'?1280:T.mode==='hp'?400:0;
   tampilMq().forEach(([r,o])=>{if(!W){r.media.mediaText=o;return}const mn=/min-width:\s*(\d+)/.exec(o),mx=/max-width:\s*(\d+)/.exec(o);
     r.media.mediaText=(!mn||W>=+mn[1])&&(!mx||W<=+mx[1])?'all':'not all'});
-  h.classList.toggle('fhp',T.mode==='hp'&&innerWidth>=700);h.style.setProperty('--zm',T.zoom/100);h.classList.toggle('zm',T.zoom!==100);
-  const v=document.querySelector('meta[name=viewport]');if(v)v.content=T.mode==='desktop'&&innerWidth<900&&matchMedia('(pointer:coarse)').matches?'width=1100,initial-scale=1':'width=device-width,initial-scale=1,viewport-fit=cover'}
+  const kasar=matchMedia('(pointer:coarse)').matches,lyr=kasar?Math.min(screen.width||innerWidth,screen.height||innerWidth):innerWidth;/* v1.59: pakai lebar layar fisik di perangkat sentuh; innerWidth masih angka lama tepat sesudah viewport diganti */
+  h.classList.toggle('fhp',T.mode==='hp'&&lyr>=700);h.style.setProperty('--zm',T.zoom/100);h.classList.toggle('zm',T.zoom!==100);
+  const vp=T.mode==='desktop'&&kasar&&lyr<900?'width=1100,initial-scale=1':'width=device-width,initial-scale=1'+(kasar?',minimum-scale=1':'')+',viewport-fit=cover',v=document.querySelector('meta[name=viewport]');
+  if(v&&v.content===vp)return;/* v1.59: meta diganti baru (bukan hanya isinya) supaya Chrome HP menghitung ulang tata letak setelah kembali dari mode Desktop */
+  const n=document.createElement('meta');n.name='viewport';n.content=vp;if(v)v.replaceWith(n);else document.head.append(n)}
 function tampilSet(o){Object.assign(TAMPIL,o);TAMPIL.zoom=Math.min(150,Math.max(70,Math.round(TAMPIL.zoom)));
   try{localStorage.setItem('btqTampil',JSON.stringify(TAMPIL))}catch(_){}tampilTerap();render()}
 function tampilMuat(){try{const o=JSON.parse(localStorage.getItem('btqTampil')||'{}');if(['auto','hp','desktop'].includes(o.mode))TAMPIL.mode=o.mode;if(+o.zoom>=70&&+o.zoom<=150)TAMPIL.zoom=Math.round(+o.zoom);if(['auto','potret','lanskap'].includes(o.ori))TAMPIL.ori=o.ori}catch(_){}tampilTerap();oriTerap(false)}
@@ -2395,6 +2398,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 12
 ## Ringkas
+- Catatan sesi 39: versi sebenarnya = const VERSI di file (v1.59). Lihat riwayat sesi 39.
 - Catatan sesi 38: versi sebenarnya = const VERSI di file (v1.58). Lihat riwayat sesi 38.
 - Catatan sesi 37: versi sebenarnya = const VERSI di file (v1.57). Lihat riwayat sesi 37.
 - Catatan sesi 36: versi sebenarnya = const VERSI di file (v1.56). Lihat riwayat sesi 36.
@@ -2538,6 +2542,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 39: v1.59 Tampilan HP: tampilTerap memakai lebar layar fisik (screen) di perangkat sentuh, bukan innerWidth yang basi; meta viewport diganti elemen baru (replaceWith) dan diberi minimum-scale=1 di HP/Otomatis agar tidak tetap mengecil setelah mode Desktop. Bagian terlindungi tidak disentuh. Perlu dicek manual oleh pengguna di HP.
 - Sesi 38: v1.58 Koordinator: (1) sakelar Aktif/Nonaktif per perangkat (localStorage btqKorOk, bawaan aktif; korOk/korOkSet/korKartu; korAktif ikut korOk; kartu Koordinator di gerbang, opsi KOOR di kdSel, dan tab hilang bila nonaktif; menonaktifkan memanggil korMode(false)); (2) Batalkan nilai di tab Sudah dinilai (korBatal/korBindBatal; e.kor kini {nilai,t,sb} dengan sb = nilai sebelum dinilai; pulih ke sb, data lama ke e.nilai atau kosong; Urungkan lewat korUrung). Tanpa perubahan skema DB; bagian terlindungi tidak disentuh. Cek tampilan di HP: perlu dicek manual oleh pengguna.
 - Sesi 37: v1.57 Halaman depan + Koordinator yang mudah dipakai 3 orang (tanpa perubahan skema DB, bagian terlindungi tidak disentuh, sidik jari dan golden SAMA). Halaman depan = gerbangBuka() diperluas (overlay #gerbang yang sudah ada): kartu Koordinator Tahfidz (total siswa menunggu + rincian per kelas, dari korAntrean/korPerKelas) di atas 12 kartu kelas dengan lencana jumlah menunggu koordinator; pilihan LANGSUNG tersimpan: kelas -> kdSet(k) (btqKelasDefault) dan kdSet() kini selalu memanggil korMode(false); Koordinator -> gerbangKoor (kdSet('') + korMode(true), btqKoor=1). Kotak centang 'buka otomatis' dihapus. Boot: halaman depan tampil bila !kdGet()&&!korAktif() (dulu hanya bila >1 kelas berisi siswa); mode koordinator membuka halaman Koordinator sebagai halaman awal. Logo di header = tombol Beranda (korBrand; ikon header baru tidak muat di 360 px). Kartu Pengaturan 'Halaman awal perangkat ini' (kdKartu) kini punya pilihan Koordinator; kartu 'Mode koordinator' v1.56 dihapus (digantikan halaman depan). Koordinator: kotak cari (korNorm/korCocok: abaikan besar-kecil, aksen, apostrof, tanda hubung, urutan kata bebas, sebagian nama; korSaring mendahulukan kata yang DIAWALI ketikan), tombol saring kelas dengan jumlah (korChips), hasil kosong menjelaskan alasan dan menunjuk tab lain, setelah menilai kotak cari dikosongkan dan fokus kembali (korBindRows), antrean terbarui otomatis saat data tersinkron. Perlu cek manual: dua/tiga perangkat koordinator nyata sekaligus (siswa yang dinilai satu orang hilang di yang lain), tampilan ponsel nyata. Detektor desain: hanya 2 peringatan lama (font Plus Jakarta Sans, cahaya tema Angkasa), bukan dari perubahan ini.
 - Sesi 36: v1.56 Koordinator tahfidz (blok '/* ===== v1.56' sebelum EKSPOR LEGER; CSS style id=v156 setelah v155; tanpa perubahan skema DB, bagian terlindungi tidak disentuh, sidik jari dan golden SAMA): KOR, korAktif/korPasang (mode koordinator = localStorage btqKoor per perangkat; menambah halaman 'koordinator' ke PAGES dan NAV_INTI sehingga muncul di bilah bawah, BUKAN ikon header karena header 360 px hanya tersisa 3 px), korAntrean (siswa semua kelas yang setoran tahfidz TERAKHIR-nya e.harus dan belum e.kor; sama dengan status 'Setor ke Koordinator' di Rekap), korNilai/korUrung (nilai ke nilaiSimpan atau s.tahap seperti nilaiTerap; e.kor={nilai,t}; setoran tanpa surat/tahap tidak bisa dinilai), korGuru (guru kelompok tahfidz s.kel.t lalu guru kelas, dari S.set.kls[kelas]; kelas aktif dari S.set), viewKor/bindKor (tab Menunggu / Sudah dinilai, ketuk nilai = simpan + Urungkan), kartu Pengaturan 'Koordinator tahfidz'. Diubah di tempat: render (bindKor), boot (korPasang sebelum buildNav), Cloud.segarUI (+koordinator agar antrean terbarui otomatis saat data guru masuk), IC (+koordinator), Setoran Per kelompok: centang data-gf=harus (gRow, gUbah, gSave harus=r.harus untuk tahfidz), Panduan, VERSI. Perlu cek manual: sinkron antar dua perangkat nyata (guru centang, koordinator melihat), tampilan di ponsel nyata.
