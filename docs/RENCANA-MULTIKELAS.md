@@ -34,6 +34,7 @@ Baca juga: blok `proyek-handoff` di dalam `index.html` (aturan proyek, fingerpri
 - [x] **Tahap 3 (v1.35)** guru tahfidz per kelompok + wali kelas per kelas langsung di kartu Kelas (`S.set.kls[k]`), peringatan bila guru kosong (kartu & halaman Rapor). Tanda tangan rapor = `guruRapor(s)`. **Cetak/PDF: perlu dicek manual oleh pengguna.**
 - [x] **Tahap 4 (v1.36)** pindah kelas (pilih Kelas di form siswa), salin guru/kelompok antarkelas (kartu Kelas), kenaikan kelas akhir tahun (`kelasNaik`; cadangan kv `cadanganSebelumNaikKelas`; kelas 6 → `LULUS`, disembunyikan tapi data tetap). **Belum**: kolom Kelas di ekspor leger, impor Excel banyak kelas sekaligus, mengembalikan alumni.
 - [x] **Tahap 5 (v1.36)** sinkron Firebase per kelas: kunci `kelas/<kode>`; blob `set` tidak lagi memuat `kls`; perangkat baru mengambil pengaturan kelas dari server (`terapKelas`); blob `set` lama dengan `kls` disemai (`klsTerap`). **Belum**: kode ruang/PIN, hanya mengunduh kelas tertentu.
+- [x] **Koordinator tahfidz (v1.56)** halaman Koordinator: antrean lintas kelas dari setoran tahfidz bertanda `harus` yang belum `kor`, input nilai surat/tahap, mode koordinator per perangkat (`localStorage btqKoor`). Rekap lintas kelas untuk kepala madrasah masih di Tahap 6.
 - [ ] **Tahap 6 (usulan)** rekap lintas kelas untuk koordinator tahfidz / kepala madrasah; pemisahan data siswa dari `index.html` (repo publik memuat nama/NIS siswa 4A!).
 
 ## Usulan detail tahap berikutnya (untuk akun lain)
