@@ -28,7 +28,7 @@ Aturan proyek tetap berlaku: lihat `docs/RENCANA-MULTIKELAS.md` dan blok `proyek
 |---|-------|--------|
 | 1 | Fondasi: chip tidak terpotong, target sentuh 44 px, fokus papan ketik, label ikon header, latar tidak mengganggu | SELESAI v1.60 |
 | 2 | Setoran di HP: kartu siswa lebih cepat terlihat | SELESAI v1.61 |
-| 3 | Halaman depan dan Dashboard: kelas kosong dilipat, pengingat lebih ringan | BELUM |
+| 3 | Halaman depan dan Dashboard: kelas kosong dilipat, pengingat lebih ringan | SELESAI v1.62 |
 | 4 | Pengaturan: kelompok yang bisa dilipat | BELUM |
 | 5 | Input Nilai dan Koordinator: nama siswa menempel, kemajuan terlihat | BELUM |
 | 6 | QA akhir: semua tema, 360/412/768/1280 px, fokus papan ketik, gerak dikurangi; hapus berkas ini | BELUM |
@@ -57,10 +57,15 @@ Catatan perubahan:
 Perlu dicek manual: di HP sungguhan tombol Simpan tidak menutup isian terakhir (Keterangan) saat papan ketik muncul.
 
 ## Tahap 3: Halaman depan dan Dashboard
-Status: BELUM
-Cek validasi: kelas berisi tampil dulu; kelas kosong ada di lipatan "Kelas belum berisi siswa"; pilihan kelas tetap tersimpan per perangkat; kartu pengingat cadangan tetap ada tetapi lebih kecil.
-Catatan perubahan: -
-Perlu dicek manual: -
+Status: SELESAI (v1.62)
+Cek validasi: buka halaman depan (logo kiri atas) dengan siswa hanya di 4A: tampil kartu Koordinator + kartu 4A, 11 kelas lain ada di lipatan "Kelas belum berisi siswa (11)" dan bisa dipilih dari dalam lipatan; tanpa siswa sama sekali semua 12 kelas tampil tanpa lipatan; Dashboard dengan cadangan >14 hari/belum pernah: kartu "Pengingat cadangan" lebih pendek, tombol `#bkNow` (kini `.sm`) tetap mengunduh; pilihan kelas default per perangkat tetap tersimpan.
+Catatan perubahan:
+- JS `gerbangBuka`: variabel `ada0/ada/kos` (kelas berisi atau aktif atau default dulu; bila `!KLS_ALL.some(k=>n[k])` semua tampil), `<details class="pkd">` untuk kelas kosong.
+- JS `kartuCad`: kelas `cad`, tombol `.btn` -> `.sm`, baris tombol tanpa margin inline.
+- CSS di `<style id="v160">` (blok "v1.62 Tahap 3"): `.pkd`, `.cad`.
+- Bug yang sempat ada: kelas aktif/default dihitung "berisi" sehingga instalasi kosong tetap melipat 11 kelas; diperbaiki dengan syarat `KLS_ALL.some(k=>n[k])`.
+- Tidak diubah: urutan kartu Dashboard, teks pengingat, kartu hero kelas (gambar planet tema Angkasa).
+Perlu dicek manual: tampilan lipatan di tema terang/biru/dunia.
 
 ## Tahap 4: Pengaturan
 Status: BELUM

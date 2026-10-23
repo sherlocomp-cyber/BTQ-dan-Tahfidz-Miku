@@ -594,6 +594,9 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 @media(pointer:coarse){.seg button{min-height:44px}}
 @media(max-width:819px){html[data-theme=angkasa] body::before{opacity:.55}}
 .save{cursor:default}
+/* v1.62 Tahap 3: halaman depan dan Dashboard */
+.pkd{margin:0 0 14px}.pkd>summary{min-height:44px;display:flex;align-items:center;cursor:pointer;color:var(--mu)}.pkd .pkg2{margin-top:6px}
+.cad{padding:14px 16px}.cad h3{margin:0 0 4px;font-size:15px}.cad p{margin:0;font-size:14px}.cad .row{margin-top:10px}
 /* v1.61 Tahap 2: Setoran di HP */
 @media(max-width:819px){
  .stw .klpsg{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.stw .klpsg::-webkit-scrollbar{display:none}
@@ -674,7 +677,7 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 </script>
 <script>
 'use strict';
-const VERSI='v1.61';
+const VERSI='v1.62';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -989,9 +992,10 @@ function gerbangKoor(){if(!korOk())return;kdSet('');korMode(true);gerbangTutup()
 function gerbangBuka(){gerbangTutup();const n={};S.siswa.forEach(s=>n[s.kelas]=(n[s.kelas]||0)+1);const d=kdGet(),a=S.set.kelasAktif,kr=korAktif(),A=korAntrean(S.siswa).p,kp=korPerKelas(A);
   const tile=k=>{const g=klsGuruT(k).filter(Boolean),w=String(klsData(k).guru||'').trim(),gur=(g.length?g:(w?[w]:[])).join(' / ');
     return `<button class="card pkt${k===a&&!kr?' on':''}${n[k]?'':' kosong'}" data-pk="${k}"><span class="pkh"><b>${k}</b>${k===d?'<span class="kcb">dibuka otomatis</span>':''}</span><span class="mut">${n[k]?n[k]+' siswa':'Belum ada siswa'}</span>${kp[k]?`<span class="pkm">${kp[k]} menunggu koordinator</span>`:''}${gur?`<span class="mut pkg">${esc(gur)}</span>`:''}</button>`};
+  const ada0=KLS_ALL.filter(k=>n[k]||k===a||k===d),ada=KLS_ALL.some(k=>n[k])?ada0:KLS_ALL,kos=KLS_ALL.filter(k=>!ada.includes(k));/* v1.62: kelas berisi dulu; bila belum ada siswa sama sekali, semua kelas tampil */
   const kor=!korOk()?'':`<button class="card pkk${kr?' on':''}" data-pk="KOOR"><span class="pkh"><b>Koordinator Tahfidz</b>${kr?'<span class="kcb">dibuka otomatis</span>':''}</span><span class="pkk-t">${A.length?'<b>'+A.length+' siswa</b> menunggu nilai':'Belum ada siswa yang menunggu nilai'}</span>${A.length?`<span class="pkk-k">${KLS_ALL.filter(k=>kp[k]).map(k=>`<span><b>${k}</b> ${kp[k]}</span>`).join('')}</span>`:''}</button>`;
   const e=document.createElement('div');e.id='gerbang';e.setAttribute('role','dialog');e.setAttribute('aria-modal','true');e.setAttribute('aria-label','Pilih kelas atau koordinator');
-  e.innerHTML=`<div class="pkw"><h1>Pilih kelas atau koordinator</h1><p class="mut">Pilihan disimpan di perangkat ini, jadi berikutnya langsung masuk. Untuk mengganti, ketuk logo di kiri atas.</p>${kor}<h2 class="pks">Kelas</h2><div class="pkg2">${KLS_ALL.map(tile).join('')}</div><div class="row"><button class="btn ghost" id="pkLanjut">Tutup</button></div></div>`;
+  e.innerHTML=`<div class="pkw"><h1>Pilih kelas atau koordinator</h1><p class="mut">Pilihan disimpan di perangkat ini, jadi berikutnya langsung masuk. Untuk mengganti, ketuk logo di kiri atas.</p>${kor}<h2 class="pks">Kelas</h2><div class="pkg2">${ada.map(tile).join('')}</div>${kos.length?`<details class="pkd"><summary>Kelas belum berisi siswa (${kos.length})</summary><div class="pkg2">${kos.map(tile).join('')}</div></details>`:''}<div class="row"><button class="btn ghost" id="pkLanjut">Tutup</button></div></div>`;
   document.body.append(e);document.body.style.overflow='hidden';
   e.onclick=ev=>{const b=ev.target.closest('[data-pk]');if(b)return b.dataset.pk==='KOOR'?gerbangKoor():gerbangPilih(b.dataset.pk,true);if(ev.target.closest('#pkLanjut'))gerbangTutup()};
   e.onkeydown=ev=>{if(ev.key==='Escape')gerbangTutup()};
@@ -1528,7 +1532,7 @@ function belumSetor(j,min,hr){hr=hr||hari();const u=ST.urut,t=ST.tgl;ST.urut='au
 function kartuSetor(){const bag=(j,t)=>{const L=belumSetor(j,7);return `<div class="tg"><b>${t}</b> <span class="mut">${L.length} siswa</span>${L.length?L.slice(0,5).map(x=>`<div class="att"><div><b>${x.s.no}. ${esc(x.s.nama)}</b><span class="mut">${x.a?x.h+' hari lalu ('+tglF(x.a)+')':'belum pernah setor'}</span></div></div>`).join('')+(L.length>5?`<p class="mut">dan ${L.length-5} lainnya.</p>`:''):'<p class="mut">Semua sudah setor dalam 7 hari terakhir. 👍</p>'}</div>`};
   return `<div class="card" style="margin-top:16px"><h3>Belum setor ≥ 7 hari</h3>${bag('tahfidz','Tahfidz')}<div style="height:10px"></div>${bag('btq','BTQ')}<div class="row" style="margin-top:10px"><button class="sm" data-go="setoran">Buka Setoran</button></div></div>`}
 function kartuCad(){if(!S.ks.length)return '';const c=S.cad,h=c?selHari(c.slice(0,10),hari()):null;if(c&&h<=14)return '';
-  return `<div class="card" style="margin-bottom:16px"><h3>Pengingat cadangan</h3><p>${c?`Cadangan terakhir ${h} hari lalu (${tglF(c.slice(0,10))}).`:'Data belum pernah dicadangkan.'} Unduh cadangan agar data aman bila perangkat bermasalah.</p><div class="row" style="margin-top:10px"><button class="btn" id="bkNow">Unduh cadangan</button></div></div>`}
+  return `<div class="card cad" style="margin-bottom:16px"><h3>Pengingat cadangan</h3><p>${c?`Cadangan terakhir ${h} hari lalu (${tglF(c.slice(0,10))}).`:'Data belum pernah dicadangkan.'} Unduh cadangan agar data aman bila perangkat bermasalah.</p><div class="row"><button class="sm" id="bkNow">Unduh cadangan</button></div></div>`}
 function cekLengkap(list,juz){const j0=S.in.juz,rs=[];
   try{const its=[];
     if(juz===30){S.in.juz=30;['tahfidz','tah','btq','pc','tahap'].forEach(k=>its.push(...itemsJuz(k)))}
@@ -2415,6 +2419,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 12
 ## Ringkas
+- Catatan sesi 42: versi sebenarnya = const VERSI di file (v1.62). Lihat riwayat sesi 42.
 - Catatan sesi 41: versi sebenarnya = const VERSI di file (v1.61). Lihat riwayat sesi 41.
 - Catatan sesi 40: versi sebenarnya = const VERSI di file (v1.60). Lihat riwayat sesi 40.
 - Catatan sesi 39: versi sebenarnya = const VERSI di file (v1.59). Lihat riwayat sesi 39.
@@ -2561,6 +2566,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 42: v1.62 UI/UX Tahap 3 (docs/HANDOFF-UIUX.md): halaman depan menampilkan kelas berisi dulu (kelas kosong dilipat; bila belum ada siswa semua tampil), kartu Pengingat cadangan lebih ringan (tombol kecil, teks 14 px). Bagian terlindungi tidak disentuh.
 - Sesi 41: v1.61 UI/UX Tahap 2 (docs/HANDOFF-UIUX.md): Setoran di HP: filter kelompok satu baris geser, tombol Simpan setoran menempel di atas bilah bawah (CSS v160, <820 px). Bagian terlindungi tidak disentuh.
 - Sesi 40: v1.60 UI/UX Tahap 1 (lihat docs/HANDOFF-UIUX.md): chip/segmen tidak terpotong, target sentuh 44 px di HP, latar Angkasa 55% di HP, tooltip status simpan. Bagian terlindungi tidak disentuh.
 - Sesi 39: v1.59 Tampilan HP: tampilTerap memakai lebar layar fisik (screen) di perangkat sentuh, bukan innerWidth yang basi; meta viewport diganti elemen baru (replaceWith) dan diberi minimum-scale=1 di HP/Otomatis agar tidak tetap mengecil setelah mode Desktop. Bagian terlindungi tidak disentuh. Perlu dicek manual oleh pengguna di HP.
