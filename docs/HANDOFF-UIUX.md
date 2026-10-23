@@ -27,7 +27,7 @@ Aturan proyek tetap berlaku: lihat `docs/RENCANA-MULTIKELAS.md` dan blok `proyek
 | # | Tahap | Status |
 |---|-------|--------|
 | 1 | Fondasi: chip tidak terpotong, target sentuh 44 px, fokus papan ketik, label ikon header, latar tidak mengganggu | SELESAI v1.60 |
-| 2 | Setoran di HP: kartu siswa lebih cepat terlihat | BELUM |
+| 2 | Setoran di HP: kartu siswa lebih cepat terlihat | SELESAI v1.61 |
 | 3 | Halaman depan dan Dashboard: kelas kosong dilipat, pengingat lebih ringan | BELUM |
 | 4 | Pengaturan: kelompok yang bisa dilipat | BELUM |
 | 5 | Input Nilai dan Koordinator: nama siswa menempel, kemajuan terlihat | BELUM |
@@ -48,10 +48,13 @@ Catatan perubahan:
 Perlu dicek manual: tampilan 3 tema (terang, biru, dunia) pada tombol segmen; latar Angkasa di HP sungguhan.
 
 ## Tahap 2: Setoran di HP
-Status: BELUM
-Cek validasi: di 360x740 nama siswa dan tombol simpan terlihat tanpa menggulir banyak; semua fungsi lama (cari, kelompok, urutan, target) tetap bisa dipakai.
-Catatan perubahan: -
-Perlu dicek manual: -
+Status: SELESAI (v1.61)
+Cek validasi: di 360x740 kartu siswa mulai di y<=430 (`.stC`), `.stw .klpsg` satu baris (tinggi <=48 px) dan bisa digeser; setelah digulir 500 px tombol `#stSave` tampak tepat di atas bilah bawah (`position:sticky`); mode Per kelompok dan desktop tidak berubah; semua fungsi lama (cari, kelompok, urutan, target, simpan) tetap bekerja.
+Catatan perubahan:
+- CSS di `<style id="v160">` (blok "v1.61 Tahap 2"), hanya `@media(max-width:819px)`: `.stw .klpsg` nowrap + gulir mendatar tanpa scrollbar; `.stw #stSave` sticky `bottom:84px+safe-area`, bayangan agar terpisah dari isian di bawahnya.
+- Hasil ukur: kartu siswa y=473 -> 425; filter kelompok 94 px -> 46 px.
+- Tidak diubah: teks tombol "Urutan: ..." (dua baris di HP), isi form, urutan isian.
+Perlu dicek manual: di HP sungguhan tombol Simpan tidak menutup isian terakhir (Keterangan) saat papan ketik muncul.
 
 ## Tahap 3: Halaman depan dan Dashboard
 Status: BELUM

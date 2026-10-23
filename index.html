@@ -594,6 +594,12 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 @media(pointer:coarse){.seg button{min-height:44px}}
 @media(max-width:819px){html[data-theme=angkasa] body::before{opacity:.55}}
 .save{cursor:default}
+/* v1.61 Tahap 2: Setoran di HP */
+@media(max-width:819px){
+ .stw .klpsg{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.stw .klpsg::-webkit-scrollbar{display:none}
+ .stw .klpsg button{flex:0 0 auto}
+ .stw #stSave{position:sticky;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:6;box-shadow:0 -10px 14px -6px var(--bg),0 6px 16px rgba(0,0,0,.35)}
+}
 </style>
 </head>
 <body>
@@ -668,7 +674,7 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 </script>
 <script>
 'use strict';
-const VERSI='v1.60';
+const VERSI='v1.61';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -2409,6 +2415,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 12
 ## Ringkas
+- Catatan sesi 41: versi sebenarnya = const VERSI di file (v1.61). Lihat riwayat sesi 41.
 - Catatan sesi 40: versi sebenarnya = const VERSI di file (v1.60). Lihat riwayat sesi 40.
 - Catatan sesi 39: versi sebenarnya = const VERSI di file (v1.59). Lihat riwayat sesi 39.
 - Catatan sesi 38: versi sebenarnya = const VERSI di file (v1.58). Lihat riwayat sesi 38.
@@ -2554,6 +2561,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 41: v1.61 UI/UX Tahap 2 (docs/HANDOFF-UIUX.md): Setoran di HP: filter kelompok satu baris geser, tombol Simpan setoran menempel di atas bilah bawah (CSS v160, <820 px). Bagian terlindungi tidak disentuh.
 - Sesi 40: v1.60 UI/UX Tahap 1 (lihat docs/HANDOFF-UIUX.md): chip/segmen tidak terpotong, target sentuh 44 px di HP, latar Angkasa 55% di HP, tooltip status simpan. Bagian terlindungi tidak disentuh.
 - Sesi 39: v1.59 Tampilan HP: tampilTerap memakai lebar layar fisik (screen) di perangkat sentuh, bukan innerWidth yang basi; meta viewport diganti elemen baru (replaceWith) dan diberi minimum-scale=1 di HP/Otomatis agar tidak tetap mengecil setelah mode Desktop. Bagian terlindungi tidak disentuh. Perlu dicek manual oleh pengguna di HP.
 - Sesi 38: v1.58 Koordinator: (1) sakelar Aktif/Nonaktif per perangkat (localStorage btqKorOk, bawaan aktif; korOk/korOkSet/korKartu; korAktif ikut korOk; kartu Koordinator di gerbang, opsi KOOR di kdSel, dan tab hilang bila nonaktif; menonaktifkan memanggil korMode(false)); (2) Batalkan nilai di tab Sudah dinilai (korBatal/korBindBatal; e.kor kini {nilai,t,sb} dengan sb = nilai sebelum dinilai; pulih ke sb, data lama ke e.nilai atau kosong; Urungkan lewat korUrung). Tanpa perubahan skema DB; bagian terlindungi tidak disentuh. Cek tampilan di HP: perlu dicek manual oleh pengguna.

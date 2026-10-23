@@ -2,7 +2,7 @@
 
 Aplikasi web satu file (PWA) untuk mencatat setoran harian, nilai, dan mencetak rapor **BTQ** dan **Tahfidz** di madrasah. Berjalan di browser HP maupun komputer, bisa dipakai tanpa internet, dan bisa dibungkus menjadi APK dengan Capacitor.
 
-Versi saat ini: **v1.60**
+Versi saat ini: **v1.61**
 
 ## Fitur
 
@@ -71,6 +71,7 @@ Catatan: kode aplikasi memanggil plugin native `PrintHelper` (dialog cetak Andro
 
 ## Riwayat singkat
 
+- **v1.61** — UI/UX Tahap 2: di HP, filter kelompok Setoran satu baris yang bisa digeser dan tombol Simpan setoran selalu terlihat di atas bilah bawah.
 - **v1.60** — UI/UX Tahap 1: chip tidak terpotong, tombol kecil jadi 44 px di HP, latar Angkasa lebih redup di HP, status simpan punya tooltip.
 - **v1.59** — Perbaikan tampilan HP: tidak lagi tetap mengecil setelah memakai mode Desktop (viewport dihitung ulang).
 - **v1.58** — Koordinator: sakelar Aktif/Nonaktif per perangkat (Pengaturan › Pilihan Koordinator tahfidz) agar guru kelas tidak masuk ke Koordinator; tombol Batalkan nilai di tab Sudah dinilai (nilai kembali seperti sebelumnya, siswa kembali ke antrean Menunggu).
