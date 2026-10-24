@@ -685,7 +685,7 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 </script>
 <script>
 'use strict';
-const VERSI='v1.64';
+const VERSI='v1.65';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -808,7 +808,7 @@ const VIEWS={
   <p><b>Kelompok</b> – satu kelas dibagi 2 kelompok tahfidz dan 2 kelompok BTQ (anggota boleh berbeda). Atur di Siswa › Kelompok Tahfidz & BTQ (bagi dua otomatis atau ketuk angka per siswa; nama kelompok bisa diubah). Halaman Setoran punya tombol pilihan kelompok sehingga antrean hanya berisi siswa kelompok itu. Impor dari Rekap Nilai mengisi kelompok dari daftar siswa tahfidz/BTQ di sana.</p>
   <p><b>5. Cadangan</b> – unduh cadangan JSON berkala; pulihkan bila ganti perangkat. Ekspor leger Excel ada di halaman Siswa › menu ⋯. Di Pengaturan › Cadangan data ada status perlindungan penyimpanan; ketuk Lindungi penyimpanan agar browser tidak menghapus data otomatis saat memori penuh (cadangan tetap perlu).</p>
   <p><b>6. Tampilan</b> – pilih tema di pojok atas: ☀️ terang, 🌤️ biru, 🌙 gelap, atau 🪐 Angkasa (latar kertas berlapis dan planet). Tema hanya mengubah tampilan di layar; cetak rapor tidak terpengaruh.</p>
-  <p><b>Pilih kelas & default</b> – bila ada lebih dari satu kelas berisi siswa dan belum ada default, layar Pilih kelas tampil saat aplikasi dibuka. Centang “Buka kelas ini otomatis” agar lain kali langsung masuk ke kelas itu. Default tersimpan per perangkat dan bisa diubah di Pengaturan.</p>
+  <p><b>Pilih kelas & default</b> – bila perangkat belum punya pilihan, layar Pilih kelas atau koordinator tampil saat aplikasi dibuka. Ketuk satu kelas (atau Koordinator) dan pilihan itu tersimpan di perangkat tersebut, jadi berikutnya langsung masuk. Untuk mengganti, ketuk logo di kiri atas atau ubah di Pengaturan › Halaman awal perangkat ini.</p>
   <p><b>Kenaikan kelas & pembagian A/B</b> – di halaman Kelas, setelah Naikkan semua kelas, atur siapa masuk A atau B per tingkat: ketuk A/B pada siswa, Tukar seluruh A ↔ B, atau Bagi rata (acak). Tukar dan Bagi rata bisa diurungkan.</p>
   <p><b>Tampilan HP</b> – nama kelas aktif tampil di header; ketuk tombol tema untuk berganti tema. Halaman Kelas menampilkan kelas berisi siswa lebih dulu, kelas kosong dilipat.</p>
   <p class="mut" style="margin-top:14px">Versi ${VERSI}</p></div></details></div>`}
@@ -2434,6 +2434,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 12
 ## Ringkas
+- Catatan sesi 45: versi sebenarnya = const VERSI di file (v1.65). Lihat riwayat sesi 45.
 - Catatan sesi 44: versi sebenarnya = const VERSI di file (v1.64). Lihat riwayat sesi 44.
 - Catatan sesi 43: versi sebenarnya = const VERSI di file (v1.63). Lihat riwayat sesi 43.
 - Catatan sesi 42: versi sebenarnya = const VERSI di file (v1.62). Lihat riwayat sesi 42.
@@ -2583,6 +2584,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 45: v1.65 teks Panduan singkat Pilih kelas & default ditulis ulang sesuai halaman depan (kotak Buka kelas ini otomatis sudah tidak ada). Hanya teks; bagian terlindungi tidak disentuh.
 - Sesi 44: v1.64 UI/UX Tahap 6 (QA akhir; berkas docs/HANDOFF-UIUX.md SUDAH DIHAPUS, rujukan ke berkas itu di sesi 40-43 tidak berlaku lagi): diuji 5 tema x 360/412/768/1280 px x semua halaman: tanpa gulir mendatar; fokus papan ketik terlihat (outline 2 px); gerak dikurangi dihormati. Perbaikan: paragraf Tampilan HP dan baris Versi di Panduan singkat ikut masuk lipatan (bocor sejak v1.57). Bagian terlindungi tidak disentuh (fingerprint SAMA, golden a998dc93b6deea07 30206). Belum diubah, menunggu keputusan pengguna: paragraf Panduan Pilih kelas & default masih menyebut kotak Buka kelas ini otomatis yang sudah dihapus.
 - Sesi 43: v1.63 UI/UX Tahap 4 (docs/HANDOFF-UIUX.md): kartu Pengaturan bisa dilipat (DOM setelah render, status buka per perangkat di localStorage btqSetelanBuka, bawaan tertutup); perbaikan tag penutup Panduan singkat (dua paragraf terakhir bocor ke luar lipatan sejak v1.57). Bagian terlindungi tidak disentuh.
 - Sesi 42: v1.62 UI/UX Tahap 3 (docs/HANDOFF-UIUX.md): halaman depan menampilkan kelas berisi dulu (kelas kosong dilipat; bila belum ada siswa semua tampil), kartu Pengingat cadangan lebih ringan (tombol kecil, teks 14 px). Bagian terlindungi tidak disentuh.
