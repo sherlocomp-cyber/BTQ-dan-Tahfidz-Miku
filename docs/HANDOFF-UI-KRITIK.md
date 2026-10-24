@@ -1,80 +1,49 @@
-# HANDOFF — Perbaikan layout hasil kritik UI (sesi 46, v1.66)
+# HANDOFF — Perbaikan layout hasil kritik UI (sesi 47, v1.71)
 
 Pelengkap blok `proyek-handoff` di index.html. Tidak berisi base64 atau data siswa.
 Aturan proyek tetap: lihat blok `proyek-instruksi` (bagian terlindungi tidak boleh berubah; CSS baru hanya di `<style id="v166">`; JS baru hanya setelah `cetak` atau sebelum `/* ===== EKSPOR LEGER`).
 
 ## Status
-- File hasil: `aplikasi-btq-tahfidz-s46.html` (master + blok proyek, VERSI v1.66). index.html di repo mungkin masih v1.65 sampai file ini di-commit oleh pengguna.
+- File hasil: `aplikasi-btq-tahfidz-s47.html` (master + blok proyek, VERSI v1.71). index.html di repo masih v1.65 sampai file ini di-commit oleh pengguna.
 - Validasi tiap tahap: `fingerprint.py` SAMA, `golden.py` = `a998dc93b6deea07 30206`, `node --check` lulus, patch idempoten (jalan 2x = hasil sama), ukuran/overflow diukur dengan Playwright (Chromium).
+- Sapuan akhir: 8 halaman (dashboard, kelas, siswa, setoran, nilai, rapor, rekap, setelan) x lebar 360/390/768/1280 = overflow 0 di semua 32 kombinasi, tanpa galat JS.
 
-| Tahap | Isi | Status |
-|---|---|---|
-| A | Tabel Siswa tidak meluber di desktop 1024–1439 px; kartu Kelompok terlipat bawaan | SELESAI (meluber 0 px di 1024/1100/1280/1439/1440/1600; sebelumnya sampai 406 px) |
-| B | Header HP: ikon Pengaturan beda dari ikon tema, area sentuh 44 px, title status simpan | SELESAI (tanpa overflow di 360/390/430/768) |
-| C | Setoran HP: baris status diringkas | SEBAGIAN (kolom Tanggal naik 24 px, tetapi masih tertutup tombol Simpan di layar pertama) |
-| D | Chevron seragam di Pengaturan, tab Rekap satu baris, baris Input Nilai desktop merapat | SELESAI (jarak nama→tombol 449→304 px) |
-| E | Dekorasi tema Angkasa di HP; pratinjau Rapor HP; kartu kosong Dashboard; pemilih tema ganda | BELUM |
+| Tahap | Versi | Isi | Status |
+|---|---|---|---|
+| A | v1.66 | Tabel Siswa tidak meluber di desktop 1024–1439 px; kartu Kelompok terlipat bawaan | SELESAI |
+| B | v1.66 | Header HP: ikon Pengaturan beda dari ikon tema, area sentuh 44 px, title status simpan | SELESAI |
+| C | v1.67 | Setoran HP: tiga baris status digabung jadi satu baris (`.stS`); kolom Tanggal 680→606 px, tombol Simpan mulai di 666 px (360/390) | SELESAI |
+| D | v1.66 | Chevron seragam di Pengaturan, tab Rekap satu baris, baris Input Nilai desktop merapat | SELESAI |
+| E2 | v1.68 | Angkasa di HP: dekorasi planet diredam (opacity .55→.16) hanya di Setoran dan Nilai; dok bawah 64→60 px | SELESAI |
+| E3 | v1.69 | Rapor HP: tombol "Lihat penuh" dan ketuk pratinjau membuka lapisan layar penuh dengan zoom (bawaan 80%) | SELESAI |
+| E4 | v1.70 | Dashboard: Radar aspek dan Capaian target jadi satu kalimat saat belum ada data; tinggi halaman HP 3247→2881 px | SELESAI |
+| E5 | v1.71 | Header HP: tombol tema menyebut nama tema saat berputar; label kecil Dasbor/Kelas/Atur di bawah ikon | SELESAI |
+| E6 | – | Utang teknis: CSS tersebar di 10 blok `<style>` dengan override per tema | BELUM (opsional, butuh keputusan) |
 
-## Patch yang diterapkan (urut, idempoten; cek jumlah kemunculan sebelum ganti)
-1. VERSI: `const VERSI='v1.65'` → `'v1.66'`.
-2. `klpCard`: ganti `<details id="klpD"${klpOpen||DESK()?' open':''}>` menjadi `<details id="klpD"${klpOpen?' open':''}>`.
-3. `IC.setelan` → `'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>'`.
-4. Header: `<div class="save" id="saveInd">` → tambah `title="Status penyimpanan"`.
-5. viewSetoran: dua `<p class="mut" style="text-align:center;margin-bottom:10px">` (awalan "Sudah setor ${tglF(ST.tgl)}" dan "Terakhir setor:") diberi class `mut stI`.
-6. Sisipkan `<style id="v166">…</style>` tepat setelah `</style>` terakhir (v160), sebelum `</head>`:
+## Keputusan dan temuan sesi 47
+- Tahap C: kolom pilihan pengguna di prompt masih `[isi pilihan]`, jadi dipakai default dokumen ini (gabung baris status).
+- E2: tema bawaan tetap Angkasa (tidak diganti ke Terang).
+- E5: catatan lama menyebut pemilih tema ganda di header dan Pengaturan > Tampilan. Di file, Pengaturan > Tampilan TIDAK punya pemilih tema (hanya mode, orientasi, zoom), jadi tidak ada duplikat yang dihapus. Yang dikerjakan: umpan balik nama tema + label ikon header.
+- Panduan singkat diperbarui (kalimat Lihat penuh di Rapor dan nama tema).
 
-```css
-/* v1.66 Tahap A */
-@media(min-width:1024px) and (max-width:1439px){
- .md{grid-template-columns:minmax(0,1fr) 320px}
- .sw,.swh{grid-template-columns:40px minmax(160px,1fr) minmax(96px,.8fr) minmax(96px,.8fr) 20px}
- .swh>span:nth-child(3),.swh>span:nth-child(4),.sw>.dk:nth-child(3),.sw>.dk:nth-child(4){display:none}
- .sw .nm .mob{display:block}
-}
-@media(min-width:1024px) and (max-width:1199px){
- .md{grid-template-columns:minmax(0,1fr) 280px}
- .sw,.swh{grid-template-columns:36px minmax(140px,1fr) minmax(72px,.6fr) minmax(72px,.6fr) 16px}
-}
-/* v1.66 Tahap B */
-.hb{position:relative}
-.hb::after{content:"";position:absolute;top:-3px;right:-3px;bottom:-3px;left:-3px}
-@media(max-width:480px){
- header{gap:8px;padding-left:14px;padding-right:14px}
- .hnav{gap:4px}.hb{width:38px;height:38px}
- .ksw select{min-height:44px}
-}
-/* v1.66 Tahap C */
-@media(max-width:819px){
- .stw .stI{font-size:12px;line-height:1.35;margin-bottom:6px!important}
- .stw .stC .row[style*="justify-content:center"]{margin-bottom:6px!important}
- .stw .last{padding:8px 12px;margin-bottom:8px}
- .stw{padding-bottom:12px}
-}
-/* v1.66 Tahap D */
-body[data-pg=setelan] .card>details:not(.stg)>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;font-size:14px;font-weight:600;color:var(--mu)}
-body[data-pg=setelan] .card>details:not(.stg)>summary::-webkit-details-marker{display:none}
-body[data-pg=setelan] .card>details:not(.stg)>summary::after{content:"";flex:none;width:9px;height:9px;margin-right:4px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg)}
-body[data-pg=setelan] .card>details[open]:not(.stg)>summary::after{transform:rotate(-135deg)}
-body[data-pg=rekap] .seg button{white-space:nowrap;padding-left:8px;padding-right:8px}
-@media(min-width:1024px){body[data-pg=nilai] .it{grid-template-columns:minmax(180px,280px) minmax(0,380px);column-gap:24px}}
-```
+## Patch sesi 47 (urut, idempoten)
+1. v1.67 (C): di `viewSetoran` tiga elemen status (`<p class="mut stI">` sudah setor, `<div class="row">` tombol urutan, `<p class="mut stI">` terakhir setor) diganti satu `<div class="stS">` berisi satu `<p class="mut stI">` dan `<button class="sm" id="stUrut">` berlabel pendek ("Urut: terlama" / "Urut: absen"; penjelasan penuh di `title`). CSS 'v1.66 Tahap C2': `.stS` flex, di HP `.fl` margin-top 8, `.stB .seg` dan `.stA .card` margin-bottom 8.
+2. v1.68 (E2): CSS 'v1.66 Tahap E2' (hanya <=819 px): `html[data-theme=angkasa] body[data-pg=setoran|nilai]::before{opacity:.16}`, `.tabbar` bottom 6 px dan padding vertikal 6 px, `.stw #stSave` bottom 76 px.
+3. v1.69 (E3): tombol `#prFull` (class `rfOnly`) di `viewRapor`; pengait di `bindRapor` (tombol dan klik `#pvw` bila lebar <820); fungsi `rpFull`/`rpFullTutup` di blok JS sebelum EKSPOR LEGER (memakai `rapJ` dan `fitText` apa adanya); CSS 'v1.66 Tahap E3' (`#rpFull`, `.rfb`, `.rfs`, `.rfw`, `body.rfo`, tersembunyi saat cetak).
+4. v1.70 (E4): `viewDashboard`: kartu Capaian target dan Radar aspek menampilkan kalimat bila `pcTah/pcBTQ` semua kosong / `av` semua `null`; keterangan "T = Tahfidz · B = BTQ" ikut disembunyikan.
+5. v1.71 (E5): `MutationObserver` pada atribut `data-theme` yang memunculkan `toast('Tema: …')` hanya dalam 600 ms setelah klik di `#themes`; CSS 'v1.66 Tahap E5' (`#navHdr .hb::before` label, <=480 px, posisi absolut).
 
 ## Sisa pekerjaan (urut prioritas)
-1. Tahap C lanjutan (butuh keputusan pengguna): kolom Tanggal dan Per surat/Per tahap masih di bawah tombol Simpan sticky di layar pertama HP. Opsi: gabung tiga baris status jadi satu; pindahkan pencarian dan Mode ke menu; atau tombol Simpan tidak sticky sampai form terlihat.
-2. Tema Angkasa (bawaan) di HP: planet dekoratif menyembul di antara kartu, dok bawah memakan ±70 px. Opsi: turunkan dekorasi di halaman kerja (Setoran/Nilai), atau ubah bawaan ke Terang (keputusan pengguna; DEFAULT.tema='angkasa' sejak v1.32).
-3. Pratinjau Rapor di HP terlalu kecil (A4 diskala ke 358 px): tambah tombol "Lihat penuh"/zoom TANPA menyentuh bagian terlindungi.
-4. Dashboard: kartu "Distribusi predikat" dan radar kosong terlalu besar saat belum ada nilai.
-5. Pemilih tema ada di header dan di Pengaturan > Tampilan (duplikat); ikon Dashboard/Kelas/Pengaturan di header HP tanpa label.
-6. Utang teknis: CSS tersebar di 10 blok `<style>` dengan override per tema (5 tema).
-7. Cek manual di perangkat nyata (APK/iQOO 15R): semua tahap diuji hanya di Chromium desktop dengan data 12 siswa tanpa setoran/nilai.
+1. Cek manual di perangkat nyata (APK/iQOO 15R): semua tahap diuji hanya di Chromium desktop, tinggi layar 800 px, data bawaan 23 siswa kelas 4A tanpa setoran/nilai. Khusus: gulir dan pinch-zoom di lapisan Lihat penuh, toast tema di atas dok, kolom Tanggal Setoran di layar yang lebih pendek (bisa kembali tertutup tombol Simpan).
+2. E6 (opsional): rapikan CSS tanpa menyentuh bagian terlindungi.
+3. Opsional, keputusan pengguna: ubah tema bawaan ke Terang (DEFAULT.tema='angkasa' sejak v1.32).
+4. Bila pengguna puas: tawarkan 'rilis bersih'.
 
 ## Cara validasi tiap tahap (ulangi sebelum lanjut)
 ```
-python3 fingerprint.py FILE.html   # harus SAMA dengan baku
-python3 golden.py FILE.html        # harus a998dc93b6deea07 30206
-node --check pada tiap <script> utama (bukan type="text/plain")
+python3 alat/validasi.py FILE.html   # fingerprint SAMA, golden a998dc93b6deea07 30206, node --check OK
 ```
-Lalu ukur dengan Playwright pada lebar 360/390/768/1024/1280/1440: tidak ada overflow horizontal, tidak ada galat JS, tampilan awal (gerbang kelas) mengharuskan klik kelas 4A lalu `go('<halaman>')`.
+Lalu ukur dengan Playwright pada lebar 360/390/768/1280 (tambah 1024/1440 bila menyentuh layout desktop): tidak ada overflow horizontal, tidak ada galat JS. Gerbang kelas: klik `[data-pk="4A"]`; kelas 4A awalnya kosong, muat data uji lewat `impRekap(REKAP_BAWAAN,'uji')` (hanya di browser uji), lalu `go('<halaman>')`.
 
 ## Prompt untuk sesi berikutnya (akun mana pun)
-Lanjutkan proyek BTQ–Tahfidz sesuai instruksi di dalam file. Unggah `aplikasi-btq-tahfidz-s46.html` (atau ambil index.html dari repo sherlocomp-cyber/BTQ-dan-Tahfidz-Miku bila sudah di-commit v1.66) dan baca `docs/HANDOFF-UI-KRITIK.md`. Jalankan protokol sesi (ekstrak blok proyek, cek fingerprint.py dan golden.py harus SAMA). Lanjutkan Tahap C (keputusan: gabung baris status Setoran HP) lalu Tahap E nomor 2–5, satu tahap per langkah. Setiap tahap: patch kecil idempoten, CSS hanya di `<style id="v166">`, validasi (fingerprint, golden, node --check, ukur overflow di 360/390/768/1280), baru lanjut. Naikkan VERSI per tahap, tulis riwayat sesi 47 di blok handoff dan perbarui dokumen ini, serahkan satu file `aplikasi-btq-tahfidz-s47.html`. Hemat kuota: jangan cetak base64, jangan render ulang halaman yang tidak berubah.
+Lanjutkan proyek BTQ–Tahfidz sesuai instruksi di dalam file. Unggah `aplikasi-btq-tahfidz-s47.html` (atau ambil index.html dari repo sherlocomp-cyber/BTQ-dan-Tahfidz-Miku bila sudah di-commit v1.71) dan baca `docs/HANDOFF-UI-KRITIK.md`. Jalankan protokol sesi (ekstrak blok proyek, fingerprint.py dan golden.py harus SAMA). Tindak lanjuti hasil cek manual di perangkat nyata: [tulis temuan], lalu E6 bila saya setuju: [ya/tidak]. Satu tahap per langkah, patch kecil idempoten, CSS hanya di `<style id="v166">`, validasi tiap tahap, naikkan VERSI, tulis riwayat sesi 48 di blok handoff dan perbarui dokumen ini, serahkan satu file `aplikasi-btq-tahfidz-s48.html`. Hemat kuota: jangan cetak base64.
