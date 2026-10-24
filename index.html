@@ -763,7 +763,7 @@ body.rfo{overflow:hidden}
 </script>
 <script>
 'use strict';
-const VERSI='v1.73';
+const VERSI='v1.74';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -1110,13 +1110,13 @@ function abAksi(b){const a=b.dataset.ab,t=abTingkat(),y=scrollY;
 /* ===== v1.41: ORIENTASI LAYAR: Otomatis/Potret/Lanskap (per perangkat, ikut btqTampil). Screen Orientation API:
    Android Chrome mengunci tanpa layar penuh bila aplikasi terpasang (standalone); di tab biasa perlu layar penuh.
    iPhone/iPad (Safari) tidak mendukung kunci: hanya menampilkan petunjuk. ===== */
-let ORI_MSG='',ORI_FS=false;const ORI_T={potret:'portrait',lanskap:'landscape'};
+let ORI_MSG='',ORI_FS=false,ORI_LOCK=false;const ORI_T={potret:'portrait',lanskap:'landscape'};
 function oriNote(m){ORI_MSG=m||'';const e=document.getElementById('oriNote');if(e)e.textContent=ORI_MSG}
-async function oriTerap(gest){const o=TAMPIL.ori,so=window.screen&&screen.orientation,md=ORI_T[o];
+async function oriTerap(gest){const o=TAMPIL.ori,so=window.screen&&screen.orientation,md=ORI_T[o];ORI_LOCK=false;
   if(!md){if(!gest)return;if(so&&so.unlock){try{so.unlock()}catch(_){}}if(ORI_FS&&document.fullscreenElement){try{await document.exitFullscreen()}catch(_){}}ORI_FS=false;oriNote('');return}
   if(!so||!so.lock){if(gest)oriNote('Peramban ini tidak mendukung kunci orientasi (mis. iPhone/iPad). Putar perangkat secara manual.');return}
-  try{await so.lock(md);if(gest)oriNote('Orientasi terkunci: '+o+'.')}
-  catch(_){if(gest&&!document.fullscreenElement&&document.documentElement.requestFullscreen){try{await document.documentElement.requestFullscreen();await so.lock(md);ORI_FS=true;oriNote('Orientasi terkunci: '+o+' (layar penuh, karena peramban mewajibkannya). Pasang aplikasi ke layar utama agar tidak perlu layar penuh.');return}catch(_){try{if(document.fullscreenElement)await document.exitFullscreen()}catch(_){}}}
+  try{await so.lock(md);ORI_LOCK=true;if(gest)oriNote('Orientasi terkunci: '+o+'.')}
+  catch(_){if(gest&&!document.fullscreenElement&&document.documentElement.requestFullscreen){try{await document.documentElement.requestFullscreen();await so.lock(md);ORI_LOCK=true;ORI_FS=true;oriNote('Orientasi terkunci: '+o+' (layar penuh, karena peramban mewajibkannya). Pasang aplikasi ke layar utama agar tidak perlu layar penuh.');return}catch(_){try{if(document.fullscreenElement)await document.exitFullscreen()}catch(_){}}}
     if(gest)oriNote('Orientasi tidak bisa dikunci di sini. Pasang aplikasi ke layar utama lalu coba lagi, atau putar perangkat secara manual.')}}
 /* ===== v1.37: TAMPILAN: mode Otomatis/HP/Desktop + perbesar/perkecil (per perangkat, disimpan di localStorage) ===== */
 const TP_MQ=[];
@@ -2044,6 +2044,17 @@ async function lkExcel(){try{await loadX()}catch(_){return toast('Pustaka Excel 
   const D=lkData(),U=XLSX.utils,rows=[...D.rows.map((c,i)=>lkSel(c,i,0)),lkSel(D.tot,0,1)],ws=U.aoa_to_sheet([[lkJudul(D)],[rtDicetak()],[],LK_H,...rows]);
   ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:12}},{s:{r:1,c:0},e:{r:1,c:12}}];ws['!cols']=[{wch:5},{wch:8},{wch:30},...Array(10).fill({wch:13})];
   const wb=U.book_new();U.book_append_sheet(wb,ws,'Semua kelas');XLSX.writeFile(wb,`rekap-semua-kelas-${D.j}-${D.ym}.xlsx`);toast('Rekap diekspor.')}
+/* ===== v1.74: ORIENTASI diterapkan ulang saat aplikasi dibuka / kembali ke depan =====
+   Kunci orientasi (dan layar penuh cadangannya) hilang setiap aplikasi ditutup atau halaman dimuat ulang, padahal pilihan Potret/Lanskap tersimpan.
+   Sebelumnya oriTerap hanya jalan saat tombol di Pengaturan diketuk. Kini: coba kunci saat dibuka; bila peramban menolak tanpa sentuhan, ketukan pertama
+   menerapkannya (layar penuh cadangan butuh gestur). Tanpa perubahan DB. Perlu dicek manual di perangkat nyata (APK/iQOO 15R). */
+let ORI_ARM=false;
+function oriPasang(){if(!ORI_T[TAMPIL.ori]||ORI_LOCK||ORI_ARM)return;ORI_ARM=true;
+  const f=()=>{removeEventListener('pointerup',f,true);ORI_ARM=false;if(ORI_T[TAMPIL.ori]&&!ORI_LOCK)oriTerap(true)};addEventListener('pointerup',f,true)}
+async function oriBuka(){if(!ORI_T[TAMPIL.ori])return;await oriTerap(false);oriPasang()}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')oriBuka()});
+addEventListener('pageshow',e=>{if(e.persisted)oriBuka()});
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&ORI_FS){ORI_FS=false;ORI_LOCK=false}});
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
 const ALAB=['Tajwid','Makhroj','Murojaah','Kelancaran','Tajwid','Makhroj','Menulis','Membaca'];
 async function ekspor(){if(!S.ks.length)return toast('Belum ada siswa untuk diekspor.');
@@ -2448,7 +2459,7 @@ function gSave(s,j,row,qt){const TT=qt?()=>{}:toast,r=gGet(s,j);if(r.tahap)retur
 
 /* ===== MULAI ===== */
 (async()=>{
-  tampilMuat();korPasang();buildNav();korBrand();
+  tampilMuat();oriBuka();korPasang();buildNav();korBrand();
   document.querySelectorAll('#themes button').forEach(b=>b.onclick=()=>{theme(b.dataset.t);saved()});
   $('#themes').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!b.classList.contains('on')||!matchMedia('(max-width:480px)').matches)return;e.stopImmediatePropagation();const o=[...document.querySelectorAll('#themes button')],n=o[(o.indexOf(b)+1)%o.length];theme(n.dataset.t);saved()},true);
   try{await DB.open();const p=await DB.get('pengaturan');if(p)S.set={...DEFAULT,...p};S.cad=(await DB.get('cadanganTerakhir'))||'';S.siswa=await DB.all()}
@@ -2733,6 +2744,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 48 (lanjutan 2): v1.74 perbaikan orientasi: oriTerap hanya dipanggil dari tombol Pengaturan, jadi kunci hilang setelah aplikasi ditutup/dibuka; kini oriBuka() dipanggil di init (setelah tampilMuat), visibilitychange, pageshow; bila lock ditolak tanpa gestur, oriPasang() menunggu ketukan pertama (ORI_LOCK/ORI_ARM). Diuji Chromium dengan stub; perlu dicek manual di perangkat nyata.
 - Sesi 48 (lanjutan): v1.73 tombol − surat / + surat di Setoran Tahfidz (data-sr di quranFields, handler di onclick Setoran; tanpa CSS/DB baru; diuji Chromium).
 - Sesi 48: v1.72 Tahap 6a: Rekap › Semua kelas (LK, lkData/viewRekapLk/lkCetak/lkExcel sebelum EKSPOR LEGER; rtTarget/rtHitung menerima nomor kelas opsional). Tanpa perubahan DB/CSS baru (memakai .rt-*/.rkt-*); fingerprint SAMA, golden a998dc93b6deea07 30206, node --check lulus, patch idempoten, diuji Chromium 360/1280 tanpa galat JS. Cetak/PDF dan Excel perlu dicek manual oleh pengguna.
 - Sesi 47: v1.67–v1.71 (tanpa perubahan DB; bagian terlindungi tidak disentuh; fingerprint SAMA, golden a998dc93b6deea07 30206, node --check lulus tiap tahap; tiap patch idempoten, dijalankan dua kali = hasil sama). CSS baru di <style id="v166"> (komentar 'v1.66 Tahap C2/E2/E3/E5'), JS baru sebelum EKSPOR LEGER. Keputusan Tahap C = default handoff (pengguna belum mengisi pilihan): gabung status. v1.67 Tahap C: tiga baris status Setoran (sudah setor, urutan, terakhir setor) jadi satu baris .stS (teks .stI + tombol #stUrut berlabel pendek 'Urut: terlama/absen', judul penuh di title); spasi HP dirapatkan; kolom Tanggal 680→606 px (tombol Simpan mulai 666) di 360/390. v1.68 E2: Angkasa di HP: body::before opacity .16 hanya di Setoran/Nilai (tadi .55), dok bawah 64→60 px (bottom 6, padding 6) dan #stSave bottom 76 px; desktop dan Dashboard tidak berubah. v1.69 E3: Rapor HP: tombol 'Lihat penuh' (.rfOnly, #prFull) dan ketuk pratinjau membuka lapisan #rpFull (rpFull/rpFullTutup; zoom −/+/Pas lebar, bawaan 80%, Tutup/Esc/hashchange; hidden saat cetak). v1.70 E4: Dashboard: kartu Radar aspek dan Capaian target jadi satu kalimat bila belum ada data (kembali normal bila terisi; diuji dua keadaan); tinggi halaman HP 3247→2881 px. v1.71 E5: toast 'Tema: <nama>' saat tombol tema HP berputar (MutationObserver data-theme, hanya 600 ms setelah klik) dan label kecil Dasbor/Kelas/Atur di bawah ikon header HP (CSS ::before, tanpa menambah lebar). Panduan singkat: kalimat Lihat penuh (Rapor) dan nama tema. Sapuan 8 halaman x 360/390/768/1280: overflow 0, tanpa galat JS. Perlu cek manual di perangkat nyata.
