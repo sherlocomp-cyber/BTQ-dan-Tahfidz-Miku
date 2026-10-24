@@ -612,6 +612,46 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
  .stw #stSave{position:sticky;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:6;box-shadow:0 -10px 14px -6px var(--bg),0 6px 16px rgba(0,0,0,.35)}
 }
 </style>
+<style id="v166">
+/* v1.66 Tahap A (kritik layout): tabel Siswa tidak meluber di desktop sempit */
+@media(min-width:1024px) and (max-width:1439px){
+ .md{grid-template-columns:minmax(0,1fr) 320px}
+ .sw,.swh{grid-template-columns:40px minmax(160px,1fr) minmax(96px,.8fr) minmax(96px,.8fr) 20px}
+ .swh>span:nth-child(3),.swh>span:nth-child(4),.sw>.dk:nth-child(3),.sw>.dk:nth-child(4){display:none}
+ .sw .nm .mob{display:block}
+}
+@media(min-width:1024px) and (max-width:1199px){
+ .md{grid-template-columns:minmax(0,1fr) 280px}
+ .sw,.swh{grid-template-columns:36px minmax(140px,1fr) minmax(72px,.6fr) minmax(72px,.6fr) 16px}
+}
+/* v1.66 Tahap B */
+/* header HP: area sentuh 44px tanpa melebarkan header */
+.hb{position:relative}
+.hb::after{content:"";position:absolute;top:-3px;right:-3px;bottom:-3px;left:-3px}
+@media(max-width:480px){
+ header{gap:8px;padding-left:14px;padding-right:14px}
+ .hnav{gap:4px}.hb{width:38px;height:38px}
+ .ksw select{min-height:44px}
+}
+/* v1.66 Tahap C */
+/* Setoran HP: baris status lebih ringkas supaya kolom isian naik ke layar pertama */
+@media(max-width:819px){
+ .stw .stI{font-size:12px;line-height:1.35;margin-bottom:6px!important}
+ .stw .stC .row[style*="justify-content:center"]{margin-bottom:6px!important}
+ .stw .last{padding:8px 12px;margin-bottom:8px}
+ .stw{padding-bottom:12px}
+}
+/* v1.66 Tahap D */
+/* Pengaturan: semua kartu lipat memakai chevron yang sama */
+body[data-pg=setelan] .card>details:not(.stg)>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;font-size:14px;font-weight:600;color:var(--mu)}
+body[data-pg=setelan] .card>details:not(.stg)>summary::-webkit-details-marker{display:none}
+body[data-pg=setelan] .card>details:not(.stg)>summary::after{content:"";flex:none;width:9px;height:9px;margin-right:4px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg)}
+body[data-pg=setelan] .card>details[open]:not(.stg)>summary::after{transform:rotate(-135deg)}
+/* Rekap: label tab tidak pecah dua baris */
+body[data-pg=rekap] .seg button{white-space:nowrap;padding-left:8px;padding-right:8px}
+/* Input Nilai desktop: nama dan tombol nilai berdekatan agar mata mudah mengikuti baris */
+@media(min-width:1024px){body[data-pg=nilai] .it{grid-template-columns:minmax(180px,280px) minmax(0,380px);column-gap:24px}}
+</style>
 </head>
 <body>
 <header>
@@ -620,7 +660,7 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
   <div class="ksw"><select id="kelasSel" aria-label="Kelas aktif"></select></div>
   <div class="gs"><input type="search" id="gsIn" list="gsDl" placeholder="Cari siswa…" aria-label="Cari siswa" autocomplete="off"><datalist id="gsDl"></datalist></div>
   <div class="sp"></div>
-  <div class="save" id="saveInd"><i></i><span>Tersimpan</span></div>
+  <div class="save" id="saveInd" title="Status penyimpanan"><i></i><span>Tersimpan</span></div>
   <div class="hnav" id="navHdr"></div>
   <div class="themes" id="themes">
     <button data-t="terang" title="Terang" aria-label="Tema terang"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7"/></svg></button>
@@ -685,7 +725,7 @@ html[data-theme=dunia] dialog::backdrop{background:rgba(5,45,56,.58)}
 </script>
 <script>
 'use strict';
-const VERSI='v1.65';
+const VERSI='v1.66';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -730,7 +770,7 @@ const IC={koordinator:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-4 3-6 
  nilai:'<path d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4"/>',
  setoran:'<path d="M5 4h10a3 3 0 013 3v13H8a3 3 0 01-3-3zM8 8h6M8 12h6"/>',
  rapor:'<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/>',
- setelan:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>'};
+ setelan:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>'};
 let TAMPIL={mode:'auto',zoom:100,ori:'auto'};const DESK=()=>TAMPIL.mode==='desktop'||(TAMPIL.mode!=='hp'&&matchMedia('(min-width:1024px)').matches);let SELS='';
 const NAV_INTI=['siswa','setoran','nilai','rapor','rekap'];
 const PAGES=[['dashboard','Dashboard'],['kelas','Kelas'],['siswa','Siswa'],['setoran','Setoran'],['nilai','Input Nilai'],['rapor','Rapor'],['rekap','Rekap'],['setelan','Pengaturan']];
@@ -1253,9 +1293,9 @@ function viewSetoran(){const N=S.ks.length;
    :`<div class="card" style="margin-bottom:12px"><p class="mut">Target belum dikenali. Pastikan Kelas dan Semester di Pengaturan diawali angka Romawi, mis. "IV (Empat)" dan "II (Dua)".</p></div>`;
   return `<h1>Setoran Harian</h1><div class="stw"><div class="stA">${tgc}</div><div class="stB"><div class="seg" style="margin-bottom:12px">${sw('tahfidz','Tahfidz')}${sw('btq','BTQ')}</div>${klpSeg('kg',ST.j,ST.kg[ST.j])}</div><div class="stQ">${stQueue()}</div><div class="stC">
   <div class="card"><div class="nav"><button class="sm" data-snav="-1" aria-label="Sebelumnya">‹</button><div class="mid"><select id="stsel">${urutSetor(ST.j).map(k=>{const x=S.ks[k];return `<option value="${k}"${k===ST.i?' selected':''}>${sdHari(x,ST.j)?'✓ ':stAda(x,ST.j)?'✗ ':mdr(x,ST.j)?'⏭ ':''}${x.no}. ${esc(x.nama)}</option>`}).join('')}</select></div><button class="sm" data-snav="1" aria-label="Berikutnya">›</button></div>
-   <p class="mut" style="text-align:center;margin-bottom:10px">Sudah setor ${tglF(ST.tgl)}: ${sudah} dari ${Ng} siswa${tdk?` • tidak setor ${tdk}`:''} • sisa antrean ${Ng-sudah-tdk}</p>
+   <p class="mut stI" style="text-align:center;margin-bottom:10px">Sudah setor ${tglF(ST.tgl)}: ${sudah} dari ${Ng} siswa${tdk?` • tidak setor ${tdk}`:''} • sisa antrean ${Ng-sudah-tdk}</p>
    <div class="row" style="justify-content:center;margin:0 0 10px"><button class="sm" id="stUrut">${ST.urut==='auto'?'Urutan: terlama belum setor · ganti ke nomor absen':'Urutan: nomor absen · ganti ke otomatis'}</button></div>
-   <p class="mut" style="text-align:center;margin-bottom:10px">Terakhir setor: ${tglAkhir(s,ST.j)?tglF(tglAkhir(s,ST.j)):'belum pernah'}</p>
+   <p class="mut stI" style="text-align:center;margin-bottom:10px">Terakhir setor: ${tglAkhir(s,ST.j)?tglF(tglAkhir(s,ST.j)):'belum pernah'}</p>
    <div class="last">${last?`Posisi terakhir: <b>${esc(last.pos)}</b> • ${tglF(last.tgl)}`:'Belum ada setoran.'}${pc.status?`<br>Di rapor: <b>${esc(pcText(pc))}</b>`:''}</div>
    <div class="fl" style="margin-top:14px"><label>Tanggal<input type="date" data-f="tgl" value="${ST.tgl}"></label>${f}
     <label class="ck"><input type="checkbox" data-f="harus"${ST.harus?' checked':''}>${ST.j==='tahfidz'?' Harus setor ke koordinator tahfidz (sudah lulus dari guru tahfidz)':' Harus setor lagi (belum lancar)'}</label>
@@ -1574,7 +1614,7 @@ function klpCard(){const N=S.ks.length;if(!N)return '';const ct=klpHitung('tahfi
   ni=(k,i,l)=>`<label>${l}<input type="text" data-kn="${k}${i}" value="${esc(Nm[k][i])}" maxlength="30" autocomplete="off"></label>`,
   sg=(s,j)=>[1,2].map(g=>`<button class="${klpAda(s,j)===g?'on':''}" data-ks="${s.id}" data-kj="${j}" data-kv="${g}" aria-label="${j==='btq'?'BTQ':'Tahfidz'} kelompok ${g}">${g}</button>`).join(''),
   rs=(j,c)=>`<b>${j==='btq'?'BTQ':'Tahfidz'}</b>: ${esc(klpNamaOf(j,1))} ${c[1]} · ${esc(klpNamaOf(j,2))} ${c[2]}${c.x?` · belum diatur ${c.x}`:''}`;
-  return `<div class="card fold"><details id="klpD"${klpOpen||DESK()?' open':''}><summary>Kelompok Tahfidz & BTQ</summary>
+  return `<div class="card fold"><details id="klpD"${klpOpen?' open':''}><summary>Kelompok Tahfidz & BTQ</summary>
   <p class="mut" style="margin:8px 0">Satu kelas dibagi menjadi 2 kelompok tahfidz dan 2 kelompok BTQ (anggotanya boleh berbeda). Kelompok dipakai di Setoran dan Rekap.</p>
   <p class="mut">${rs('tahfidz',ct)}<br>${rs('btq',cb)}</p>
   <p class="mut" style="margin:10px 0 4px">Nama kelompok (boleh diubah):</p><div class="form" style="grid-template-columns:1fr 1fr;margin:0 0 10px">${ni('t',0,'Tahfidz 1')}${ni('t',1,'Tahfidz 2')}${ni('b',0,'BTQ 1')}${ni('b',1,'BTQ 2')}</div>
@@ -2434,6 +2474,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 12
 ## Ringkas
+- Catatan sesi 46: versi sebenarnya = const VERSI di file (v1.66). Perbaikan layout hasil kritik UI, Tahap A–D; rincian di riwayat sesi 46 dan docs/HANDOFF-UI-KRITIK.md di repo.
 - Catatan sesi 45: versi sebenarnya = const VERSI di file (v1.65). Lihat riwayat sesi 45.
 - Catatan sesi 44: versi sebenarnya = const VERSI di file (v1.64). Lihat riwayat sesi 44.
 - Catatan sesi 43: versi sebenarnya = const VERSI di file (v1.63). Lihat riwayat sesi 43.
@@ -2584,6 +2625,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 46: v1.66 perbaikan layout dari kritik UI (tanpa perubahan DB; bagian terlindungi tidak disentuh; sidik jari dan golden SAMA; node --check lulus). Semua CSS baru di <style id="v166"> tepat setelah v160, tiap blok diberi komentar 'v1.66 Tahap X'. Tahap A SELESAI: tabel Siswa tidak meluber di 1024–1439 px (kolom NIS/NISN disembunyikan, NIS/NISN tampil di bawah nama via .mob; panel kanan 320 px, 280 px di <1200) dan kartu Kelompok (klpCard) terlipat bawaan di desktop (hanya klpOpen). Diukur: meluber 0 px di 1024/1100/1280/1439/1440/1600 (sebelumnya sampai 406 px). Tahap B SELESAI: IC.setelan diganti ikon sliders (dulu mirip ikon tema Terang), area sentuh ikon header 44 px (::after), header HP gap 8 px, title pada #saveInd; tanpa overflow di 360/390/430/768. Tahap C SEBAGIAN: baris status Setoran HP diringkas (class stI pada dua <p>, jarak dikurangi); kolom Tanggal naik 24 px tetapi masih tertutup tombol Simpan di layar pertama; perlu keputusan desain (mis. gabung status jadi satu baris atau Mode/pencarian dipindah ke menu). Tahap D SELESAI: chevron seragam kartu lipat Pengaturan, label tab Rekap satu baris, baris Input Nilai desktop merapat (jarak nama-tombol 449→304 px). BELUM: #5 dekorasi tema Angkasa (bawaan) di HP, #8 pratinjau rapor HP terlalu kecil (jangan sentuh bagian terlindungi), sisa #7 kartu kosong Dashboard, pemilih tema ganda di header vs Pengaturan>Tampilan (keputusan pengguna), CSS menumpuk di 10 blok style. Perlu cek manual di perangkat nyata (APK/iQOO).
 - Sesi 45: v1.65 teks Panduan singkat Pilih kelas & default ditulis ulang sesuai halaman depan (kotak Buka kelas ini otomatis sudah tidak ada). Hanya teks; bagian terlindungi tidak disentuh.
 - Sesi 44: v1.64 UI/UX Tahap 6 (QA akhir; berkas docs/HANDOFF-UIUX.md SUDAH DIHAPUS, rujukan ke berkas itu di sesi 40-43 tidak berlaku lagi): diuji 5 tema x 360/412/768/1280 px x semua halaman: tanpa gulir mendatar; fokus papan ketik terlihat (outline 2 px); gerak dikurangi dihormati. Perbaikan: paragraf Tampilan HP dan baris Versi di Panduan singkat ikut masuk lipatan (bocor sejak v1.57). Bagian terlindungi tidak disentuh (fingerprint SAMA, golden a998dc93b6deea07 30206). Belum diubah, menunggu keputusan pengguna: paragraf Panduan Pilih kelas & default masih menyebut kotak Buka kelas ini otomatis yang sudah dihapus.
 - Sesi 43: v1.63 UI/UX Tahap 4 (docs/HANDOFF-UIUX.md): kartu Pengaturan bisa dilipat (DOM setelah render, status buka per perangkat di localStorage btqSetelanBuka, bawaan tertutup); perbaikan tag penutup Panduan singkat (dua paragraf terakhir bocor ke luar lipatan sejak v1.57). Bagian terlindungi tidak disentuh.
