@@ -763,7 +763,7 @@ body.rfo{overflow:hidden}
 </script>
 <script>
 'use strict';
-const VERSI='v1.71';
+const VERSI='v1.72';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -877,6 +877,7 @@ const VIEWS={
   <p><b>Rekap › Antarbulan</b> – rekap bulanan Tahfidz/BTQ per siswa (posisi awal bulan dan terbaru, plus posisi terbaru saat ini); bawaan tahun pelajaran Juli–Juni, bisa diubah. Unduh Excel (butuh internet sekali) atau Cetak / PDF (pilih Simpan sebagai PDF).</p>
   <p><b>Pencarian</b> – kotak Cari nama ada di Siswa, Setoran, Input Nilai, dan Rapor (ketik nama lalu pilih untuk langsung loncat, atau daftar tersaring). Sebelum cetak rapor, aplikasi memberi peringatan bila ada siswa yang nilainya belum lengkap (boleh tetap cetak). Dashboard menampilkan siswa yang belum setor 7 hari atau lebih dan pengingat cadangan bila sudah lebih dari 14 hari.</p>
   <p><b>Rekap › Rekap bulan</b> – tabel satu bulan per siswa: hafalan awal bulan, hafalan saat ini, tanggal, status (Bertambah / Setor ke Koordinator / Harus Setor / Belum Setor), jumlah setoran, target, keterangan. Pilih Tahfidz/BTQ, kelompok, dan bulan; Cetak / PDF (landscape A4) atau Unduh Excel. Kode kelas dan teks kaki halaman diatur di Pengaturan.</p>
+  <p><b>Rekap › Semua kelas</b> – ringkasan satu bulan untuk koordinator dan kepala madrasah: per kelas jumlah siswa, sudah/belum setor, yang harus ke koordinator, total setoran, dan sebaran target (Melampaui / Tercapai / Proses / Tertinggal). Tombol Buka membuka kelas itu di Rekap bulan; Cetak / PDF landscape A4 atau Unduh Excel. Hanya kelas yang berisi siswa di perangkat ini yang tampil.</p>
   <p><b>Setor ke koordinator tahfidz</b> – pada Setoran Tahfidz, centang "Harus setor ke koordinator tahfidz" bila siswa sudah lulus dari guru tahfidz dan masih harus menyetor ke koordinator (bukan mengulang setoran). Tandanya tampil di Riwayat dan sebagai status "Setor ke Koordinator" di Rekap bulan. Centang yang sama ada di Setoran Per kelompok.</p>
   <p><b>Halaman depan</b> – saat aplikasi dibuka di sebuah perangkat, pilih kelas atau Koordinator Tahfidz. Pilihan tersimpan di perangkat itu, jadi berikutnya langsung masuk. Ketuk logo di kiri atas untuk kembali ke halaman depan atau mengganti pilihan (bisa juga di Pengaturan › Halaman awal). Kartu Koordinator dan kartu kelas menunjukkan jumlah siswa yang menunggu nilai koordinator.</p>
   <p><b>Aktif/Nonaktif Koordinator</b> – di Pengaturan › Pilihan Koordinator tahfidz, pilihan Koordinator bisa dinonaktifkan per perangkat (kartu di halaman depan, opsi halaman awal, dan tab hilang) agar guru kelas tidak masuk ke Koordinator. Di Koordinator, tab Sudah dinilai punya tombol Batalkan nilai: nilai kembali seperti sebelumnya dan siswa kembali ke antrean Menunggu.</p>
@@ -1706,7 +1707,7 @@ function rtOpsi(){const st=new Set(rekTp(S.set.tp));st.add(hari().slice(0,7));
   S.ks.forEach(s=>(s.setoran||[]).forEach(e=>{if(/^\d{4}-\d{2}/.test(e.tgl||''))st.add(rekYm(e.tgl))}));return [...st].sort()}
 /* Target menurut kelas & semester (semester dari bulan: Juli–Desember = 1, Januari–Juni = 2), memakai tabel TGT yang sama dengan Setoran.
    Tahfidz berjalan naik dari An-Naba (78) ke An-Nas (114); di bawah 78 = sudah melewati Juz 30. */
-function rtTarget(j,e,ym){if(!e)return '–';const T=TGT[kelasNo()],sm=bulanSmt(ym);if(!T)return '–';
+function rtTarget(j,e,ym,kn){if(!e)return '–';const T=TGT[kn||kelasNo()],sm=bulanSmt(ym);if(!T)return '–';
   if(j==='tahfidz'){if(e.tahap||e.surat<78)return 'Melampaui Target';
     const t1=T[1],t2=T[2];if(!t1||!t2||!t1.tah||!t2.tah)return '–';
     const a=(sm===1?t1:t2).tah[0],b=(sm===1?t1:t2).tah[1];
@@ -1725,7 +1726,7 @@ function rtPos(e){if(!e)return '–';
   return e.pos||posTeks(e)}
 const rtHead=j=>j==='btq'?['Posisi Awal Bulan','Tgl Awal','Posisi Saat Ini','Tgl Terbaru','Status','Jumlah Setoran','Target BTQ','Keterangan']
   :['Hafalan Awal Bulan','Tgl Awal','Hafalan Saat Ini','Tgl Terbaru','Status','Jumlah Setoran','Target Tahfidz','Keterangan'];
-function rtHitung(j,ym,sis){const a=ym+'-01',z=ym+'-31',
+function rtHitung(j,ym,sis,kn){const a=ym+'-01',z=ym+'-31',
   srt=(x,y)=>x.tgl<y.tgl?-1:x.tgl>y.tgl?1:(x.t||0)-(y.t||0);
   return (sis||S.ks).map((s,i)=>{
     const all=(s.setoran||[]).filter(e=>e.j===j&&/^\d{4}-\d{2}-\d{2}$/.test(e.tgl||'')).sort(srt),
@@ -1734,7 +1735,7 @@ function rtHitung(j,ym,sis){const a=ym+'-01',z=ym+'-31',
       now=pos.length?pos[pos.length-1]:null,awal=pr.length?pr[pr.length-1]:(pb[0]||null),
       kk=bln.filter(e=>e.ket),kt=kk.length?kk[kk.length-1].ket:'';/* v1.53: hanya keterangan TERBARU yang pernah diisi di bulan itu (tanpa tanggal) */
     let st='Belum Setor';if(pb.length){const l=pb[pb.length-1];st=l.koor?'Setor ke Koordinator':l.harus?(j==='tahfidz'?'Setor ke Koordinator':'Harus Setor'):(l.status||'Bertambah')}else if(bln.length)st='Murojaah';
-    return {s,urut:i+1,no:s.no,nama:s.nama,awal,now,n:bln.length,status:st,target:rtTarget(j,now,ym),ket:kt}})}
+    return {s,urut:i+1,no:s.no,nama:s.nama,awal,now,n:bln.length,status:st,target:rtTarget(j,now,ym,kn),ket:kt}})}
 function rtData(){const j=RT.j,sis=sisKlp(j,RT.k),rows=rtHitung(j,RT.ym,sis);
   return {j,ym:RT.ym,rows,grp:RT.k>0?klpNamaOf(j,RT.k):RT.k===-1?'Belum dikelompokkan':''}}
 const rtJudul=D=>`Rekap ${D.j==='btq'?'BTQ':'Tahfidz'} - Kelas ${kodeKelas()}${D.grp?' - '+D.grp:''} - ${D.ym}`;
@@ -1778,8 +1779,8 @@ async function rtExcel(){try{await loadX()}catch(_){return toast('Pustaka Excel 
   ws['!cols']=[{wch:5},{wch:30},{wch:28},{wch:13},{wch:28},{wch:13},{wch:14},{wch:10},{wch:24},{wch:60}];
   const wb=U.book_new();U.book_append_sheet(wb,ws,'Rekap '+(D.j==='btq'?'BTQ':'Tahfidz'));
   XLSX.writeFile(wb,`rekap-${D.j}-${kodeKelas()}-${D.ym}.xlsx`);toast('Rekap diekspor.')}
-function viewRekapMode(){const lama=REK.m==='lama';let h=lama?viewRekap():viewRekapT();
-  const sw=`<div class="seg" style="margin-bottom:12px"><button class="${lama?'':'on'}" data-rm="tabel">Rekap bulan</button><button class="${lama?'on':''}" data-rm="lama">Antarbulan</button></div>`;
+function viewRekapMode(){const lama=REK.m==='lama';let h=REK.m==='lk'?viewRekapLk():lama?viewRekap():viewRekapT();
+  const sw=`<div class="seg" style="margin-bottom:12px"><button class="${lama?'':'on'}" data-rm="tabel">Rekap bulan</button><button class="${lama?'on':''}" data-rm="lama">Antarbulan</button><button class="${REK.m==='lk'?'on':''}" data-rm="lk">Semua kelas</button></div>`;
   if(lama)h=h.replace('<div class="grid" style="margin-top:12px;gap:10px">',()=>klpSeg('rkg',REK.j==='btq'?'btq':'tahfidz',REK.kg||0)+'<div class="grid" style="margin-top:12px;gap:10px">');
   return h.replace('</h1>',()=>'</h1>'+sw)}
 function bindRekapT(){if(!S.ks.length)return;const re=()=>{const y=scrollY;render();scrollTo(0,y)};
@@ -1789,7 +1790,7 @@ function bindRekapT(){if(!S.ks.length)return;const re=()=>{const y=scrollY;rende
 function bindRekapAll(){const re=()=>{const y=scrollY;render();scrollTo(0,y)};
   document.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{REK.m=b.dataset.rm;re()});
   if(REK.m==='lama'){bindRekapBln();document.querySelectorAll('[data-rkg]').forEach(b=>b.onclick=()=>{REK.kg=+b.dataset.rkg;re()})}
-  else bindRekapT()}
+  else if(REK.m==='lk')bindRekapLk();else bindRekapT()}
 VIEWS.rekap=viewRekapMode;
 /* ===== v1.15: ISIAN TAHAP DI SETORAN TAHFIDZ (Tahap I–V, selesai, nilai tahap) ===== */
 /* Setoran tahap: e.tahap='1'..'5', e.selesai; tanpa juz/surat. Nilai tahap (opsional) -> s.tahap[tahap-1] (MUMTAZ…MAQBUL), sama dengan Input Nilai › Tahapan Juz 30. */
@@ -1995,6 +1996,49 @@ if(!window.__rpfBind){window.__rpfBind=1;document.addEventListener('keydown',e=>
 try{const th=document.getElementById('themes');if(th&&!th.dataset.tn){th.dataset.tn='1';let tk=0;
   th.addEventListener('click',()=>{tk=Date.now()},true);
   new MutationObserver(()=>{if(Date.now()-tk>600)return;const b=th.querySelector('button.on');toast('Tema: '+(b&&b.title?b.title:document.documentElement.dataset.theme))}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']})}}catch(_){}
+/* ===== v1.72: REKAP SEMUA KELAS (Tahap 6a, untuk koordinator / kepala madrasah) =====
+   Ringkasan per kelas dari S.siswa (semua kelas di perangkat ini; kelas tanpa siswa tidak ditampilkan). Memakai rtHitung/rtTarget yang sama
+   dengan Rekap bulan (target menurut nomor kelas), jadi angkanya identik. Tanpa perubahan skema DB. */
+const LK={j:'tahfidz',ym:''};
+const LK_H=['No','Kelas','Guru','Siswa','Sudah setor','Belum setor','Ke koordinator','Total setoran','Melampaui','Tercapai','Proses','Tertinggal','Tanpa data'],LK_W=[8,14,46,14,18,18,22,20,22,22,22,22,25];
+function lkOpsi(){const st=new Set([hari().slice(0,7)]);S.siswa.forEach(s=>(s.setoran||[]).forEach(e=>{if(/^\d{4}-\d{2}/.test(e.tgl||''))st.add(rekYm(e.tgl))}));return [...st].sort()}
+function lkGuru(k){const o=k===S.set.kelasAktif?S.set:((S.set.kls||{})[k]||{});return [...new Set([o.guru,...(o.guruT||[])].map(x=>String(x||'').trim()).filter(Boolean))].join(', ')}
+function lkData(){const j=LK.j,ym=LK.ym,rows=[],T={n:0,sudah:0,belum:0,kor:0,tot:0,mel:0,ter:0,pro:0,tg:0,tan:0};
+  KLS_ALL.forEach(k=>{const sis=S.siswa.filter(x=>x.kelas===k);if(!sis.length)return;
+    const R=rtHitung(j,ym,sis,klsT(k)),c={k,guru:lkGuru(k),n:R.length,belum:0,kor:0,tot:0,mel:0,ter:0,pro:0,tg:0,tan:0};
+    R.forEach(r=>{if(r.status==='Belum Setor')c.belum++;if(r.status==='Harus Setor'||r.status==='Setor ke Koordinator')c.kor++;c.tot+=r.n;
+      const t=r.target;if(t==='Melampaui Target')c.mel++;else if(t==='Tercapai')c.ter++;else if(/^Belum Tercapai/.test(t))c.pro++;else if(/^Prioritas/.test(t))c.tg++;else c.tan++});
+    c.sudah=c.n-c.belum;rows.push(c);Object.keys(T).forEach(x=>T[x]+=c[x])});
+  return {j,ym,rows,tot:T}}
+const lkJudul=D=>`Rekap Semua Kelas - ${D.j==='btq'?'BTQ':'Tahfidz'} - ${D.ym}`;
+const lkSel=(c,i,tot)=>[tot?'':i+1,tot?'Total':c.k,tot?'':c.guru,c.n,c.sudah,c.belum,c.kor,c.tot,c.mel,c.ter,c.pro,c.tg,c.tan];
+function lkBaris(c,i,tot){const v=lkSel(c,i,tot);return `<tr${tot?' style="font-weight:700"':''}>${v.map((x,n)=>`<td class="${n===2?'':'c'}${n===1?' nm':''}">${esc(String(x))}</td>`).join('')}${tot?'':''}</tr>`}
+function viewRekapLk(){const j=LK.j,op=lkOpsi();if(!LK.ym||!op.includes(LK.ym))LK.ym=hari().slice(0,7);
+  const D=lkData(),sw=(k,t)=>`<button class="${j===k?'on':''}" data-lkj="${k}">${t}</button>`;
+  if(!D.rows.length)return `<h1>Rekap Bulan</h1><div class="card"><p class="mut">Belum ada siswa di kelas mana pun di perangkat ini.</p></div>`;
+  return `<h1>Rekap Bulan</h1><div class="card"><div class="seg" style="margin-bottom:12px">${sw('tahfidz','Tahfidz')}${sw('btq','BTQ')}</div>
+  <label>Bulan<select id="lkB">${op.map(k=>`<option value="${k}"${k===LK.ym?' selected':''}>${rekLab(k)}</option>`).join('')}</select></label>
+  <div class="row" style="margin-top:12px"><button class="btn" id="lkP">Cetak / PDF</button><button class="btn ghost" id="lkX">Unduh Excel</button></div>
+  <p class="mut" style="margin-top:10px">Ringkasan semua kelas untuk koordinator dan kepala madrasah. PDF dicetak landscape A4. Kelas yang belum punya siswa di perangkat ini tidak ditampilkan.</p></div>
+  <div class="card" style="margin-top:14px"><h3>${esc(lkJudul(D))}</h3><p class="mut" style="margin-bottom:6px">${D.rows.length} kelas · ${D.tot.n} siswa · ${D.tot.tot} setoran bulan ini · ${D.tot.belum} belum setor</p>
+  <div class="rt-w"><table class="rt-t"><thead><tr>${LK_H.map(h=>`<th>${esc(h)}</th>`).join('')}<th>Rincian</th></tr></thead><tbody>${D.rows.map((c,i)=>lkBaris(c,i).replace('</tr>',`<td class="c"><button class="sm" data-lkb="${c.k}">Buka</button></td></tr>`)).join('')}${lkBaris(D.tot,0,1).replace('</tr>','<td></td></tr>')}</tbody></table></div>
+  <details style="margin-top:12px"><summary>Cara membaca</summary><div class="mut" style="margin-top:8px"><p>Angka dihitung sama dengan Rekap bulan tiap kelas. <b>Ke koordinator</b> = siswa yang setoran terakhir bulan itu bertanda harus setor ke koordinator (tahfidz) atau harus setor lagi (BTQ). <b>Melampaui / Tercapai / Proses / Tertinggal</b> = status target menurut kelas dan semester; <b>Tanpa data</b> = belum ada setoran sampai akhir bulan itu. Tombol Buka membuka kelas tersebut di Rekap bulan.</p></div></details></div>`}
+function bindRekapLk(){const re=()=>{const y=scrollY;render();scrollTo(0,y)};
+  document.querySelectorAll('[data-lkj]').forEach(b=>b.onclick=()=>{LK.j=b.dataset.lkj;re()});
+  const B=$('#lkB');if(!B)return;B.onchange=e=>{LK.ym=e.target.value;re()};$('#lkP').onclick=lkCetak;$('#lkX').onclick=lkExcel;
+  document.querySelectorAll('[data-lkb]').forEach(b=>b.onclick=()=>{kelasPilih(b.dataset.lkb);kelasUI();RT.j=LK.j;RT.ym=LK.ym;RT.k=0;REK.m='tabel';render();scrollTo(0,0)})}
+function lkHal(D){const E=esc,lg=S.set.logo||LOGO_DEF,ft=E(S.set.footer||'');
+  return `<div class="rkt-pg"><div class="rkt-top"><div class="rkt-dt">${E(rtDicetak())}</div><img class="rkt-lg" alt="" src="${lg}"><div class="rkt-ti">${E(lkJudul(D))}</div></div><div class="rkt-ln"></div><table class="rkt-tb"><colgroup>${LK_W.map(w=>`<col style="width:${w}mm">`).join('')}</colgroup><thead><tr>${LK_H.map(h=>`<th>${E(h)}</th>`).join('')}</tr></thead><tbody>${D.rows.map((c,i)=>lkBaris(c,i)).join('')}${lkBaris(D.tot,0,1)}</tbody></table><div class="rkt-ft"><span>${ft}</span><span>Halaman 1 dari 1</span></div></div>`}
+function lkCetak(){const D=lkData();if(!D.rows.length)return toast('Belum ada siswa.');
+  const pa=$('#printArea');pa.innerHTML=lkHal(D);
+  const old=document.getElementById('rtLand');if(old)old.remove();
+  const st=document.createElement('style');st.id='rtLand';st.textContent='@page{size:A4 landscape;margin:0}';document.head.append(st);
+  const t0=document.title;document.title='Rekap-Semua-Kelas-'+(D.j==='btq'?'BTQ':'Tahfidz')+'-'+D.ym;
+  window.onafterprint=()=>{document.title=t0;pa.innerHTML='';st.remove()};setTimeout(()=>print(),60)}
+async function lkExcel(){try{await loadX()}catch(_){return toast('Pustaka Excel gagal dimuat. Sambungkan internet sekali, lalu coba lagi.')}
+  const D=lkData(),U=XLSX.utils,rows=[...D.rows.map((c,i)=>lkSel(c,i,0)),lkSel(D.tot,0,1)],ws=U.aoa_to_sheet([[lkJudul(D)],[rtDicetak()],[],LK_H,...rows]);
+  ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:12}},{s:{r:1,c:0},e:{r:1,c:12}}];ws['!cols']=[{wch:5},{wch:8},{wch:30},...Array(10).fill({wch:13})];
+  const wb=U.book_new();U.book_append_sheet(wb,ws,'Semua kelas');XLSX.writeFile(wb,`rekap-semua-kelas-${D.j}-${D.ym}.xlsx`);toast('Rekap diekspor.')}
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
 const ALAB=['Tajwid','Makhroj','Murojaah','Kelancaran','Tajwid','Makhroj','Menulis','Membaca'];
 async function ekspor(){if(!S.ks.length)return toast('Belum ada siswa untuk diekspor.');
@@ -2527,6 +2571,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 47
 ## Ringkas
+- Catatan sesi 48: versi sebenarnya = const VERSI di file (v1.72). Tahap 6a (Rekap › Semua kelas, rekap lintas kelas) SELESAI di kode; cetak/PDF dan Excel perlu dicek manual oleh pengguna. Tahap 6b (data bawaan 4A REKAP_BAWAAN di repo publik) menunggu keputusan pengguna.
 - Catatan sesi 47: versi sebenarnya = const VERSI di file (v1.71). File: aplikasi-btq-tahfidz-s47.html. Tahap C dan E2–E5 (perbaikan layout hasil kritik UI) SELESAI; sisa hanya utang teknis CSS (E6) dan cek manual di perangkat nyata. Rincian di riwayat sesi 47 dan docs/HANDOFF-UI-KRITIK.md.
 - Catatan sesi 46: versi sebenarnya = const VERSI di file (v1.66). Perbaikan layout hasil kritik UI, Tahap A–D; rincian di riwayat sesi 46 dan docs/HANDOFF-UI-KRITIK.md di repo.
 - Catatan sesi 45: versi sebenarnya = const VERSI di file (v1.65). Lihat riwayat sesi 45.
@@ -2683,6 +2728,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 48: v1.72 Tahap 6a: Rekap › Semua kelas (LK, lkData/viewRekapLk/lkCetak/lkExcel sebelum EKSPOR LEGER; rtTarget/rtHitung menerima nomor kelas opsional). Tanpa perubahan DB/CSS baru (memakai .rt-*/.rkt-*); fingerprint SAMA, golden a998dc93b6deea07 30206, node --check lulus, patch idempoten, diuji Chromium 360/1280 tanpa galat JS. Cetak/PDF dan Excel perlu dicek manual oleh pengguna.
 - Sesi 47: v1.67–v1.71 (tanpa perubahan DB; bagian terlindungi tidak disentuh; fingerprint SAMA, golden a998dc93b6deea07 30206, node --check lulus tiap tahap; tiap patch idempoten, dijalankan dua kali = hasil sama). CSS baru di <style id="v166"> (komentar 'v1.66 Tahap C2/E2/E3/E5'), JS baru sebelum EKSPOR LEGER. Keputusan Tahap C = default handoff (pengguna belum mengisi pilihan): gabung status. v1.67 Tahap C: tiga baris status Setoran (sudah setor, urutan, terakhir setor) jadi satu baris .stS (teks .stI + tombol #stUrut berlabel pendek 'Urut: terlama/absen', judul penuh di title); spasi HP dirapatkan; kolom Tanggal 680→606 px (tombol Simpan mulai 666) di 360/390. v1.68 E2: Angkasa di HP: body::before opacity .16 hanya di Setoran/Nilai (tadi .55), dok bawah 64→60 px (bottom 6, padding 6) dan #stSave bottom 76 px; desktop dan Dashboard tidak berubah. v1.69 E3: Rapor HP: tombol 'Lihat penuh' (.rfOnly, #prFull) dan ketuk pratinjau membuka lapisan #rpFull (rpFull/rpFullTutup; zoom −/+/Pas lebar, bawaan 80%, Tutup/Esc/hashchange; hidden saat cetak). v1.70 E4: Dashboard: kartu Radar aspek dan Capaian target jadi satu kalimat bila belum ada data (kembali normal bila terisi; diuji dua keadaan); tinggi halaman HP 3247→2881 px. v1.71 E5: toast 'Tema: <nama>' saat tombol tema HP berputar (MutationObserver data-theme, hanya 600 ms setelah klik) dan label kecil Dasbor/Kelas/Atur di bawah ikon header HP (CSS ::before, tanpa menambah lebar). Panduan singkat: kalimat Lihat penuh (Rapor) dan nama tema. Sapuan 8 halaman x 360/390/768/1280: overflow 0, tanpa galat JS. Perlu cek manual di perangkat nyata.
 - Sesi 46: v1.66 perbaikan layout dari kritik UI (tanpa perubahan DB; bagian terlindungi tidak disentuh; sidik jari dan golden SAMA; node --check lulus). Semua CSS baru di <style id="v166"> tepat setelah v160, tiap blok diberi komentar 'v1.66 Tahap X'. Tahap A SELESAI: tabel Siswa tidak meluber di 1024–1439 px (kolom NIS/NISN disembunyikan, NIS/NISN tampil di bawah nama via .mob; panel kanan 320 px, 280 px di <1200) dan kartu Kelompok (klpCard) terlipat bawaan di desktop (hanya klpOpen). Diukur: meluber 0 px di 1024/1100/1280/1439/1440/1600 (sebelumnya sampai 406 px). Tahap B SELESAI: IC.setelan diganti ikon sliders (dulu mirip ikon tema Terang), area sentuh ikon header 44 px (::after), header HP gap 8 px, title pada #saveInd; tanpa overflow di 360/390/430/768. Tahap C SEBAGIAN: baris status Setoran HP diringkas (class stI pada dua <p>, jarak dikurangi); kolom Tanggal naik 24 px tetapi masih tertutup tombol Simpan di layar pertama; perlu keputusan desain (mis. gabung status jadi satu baris atau Mode/pencarian dipindah ke menu). Tahap D SELESAI: chevron seragam kartu lipat Pengaturan, label tab Rekap satu baris, baris Input Nilai desktop merapat (jarak nama-tombol 449→304 px). BELUM: #5 dekorasi tema Angkasa (bawaan) di HP, #8 pratinjau rapor HP terlalu kecil (jangan sentuh bagian terlindungi), sisa #7 kartu kosong Dashboard, pemilih tema ganda di header vs Pengaturan>Tampilan (keputusan pengguna), CSS menumpuk di 10 blok style. Perlu cek manual di perangkat nyata (APK/iQOO).
 - Sesi 45: v1.65 teks Panduan singkat Pilih kelas & default ditulis ulang sesuai halaman depan (kotak Buka kelas ini otomatis sudah tidak ada). Hanya teks; bagian terlindungi tidak disentuh.
