@@ -651,6 +651,44 @@ body[data-pg=setelan] .card>details[open]:not(.stg)>summary::after{transform:rot
 body[data-pg=rekap] .seg button{white-space:nowrap;padding-left:8px;padding-right:8px}
 /* Input Nilai desktop: nama dan tombol nilai berdekatan agar mata mudah mengikuti baris */
 @media(min-width:1024px){body[data-pg=nilai] .it{grid-template-columns:minmax(180px,280px) minmax(0,380px);column-gap:24px}}
+/* v1.66 Tahap C2 */
+/* Setoran: tiga baris status (sudah setor, urutan, terakhir setor) digabung jadi satu baris */
+.stw .stS{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}
+.stw .stS .stI{flex:1;min-width:0;margin:0!important;text-align:left}
+.stw .stS #stUrut{flex:none;white-space:nowrap}
+@media(max-width:819px){
+ .stw .stC .fl{margin-top:8px!important}
+ .stw .stB .seg{margin-bottom:8px!important}
+ .stw .stA .card{margin-bottom:8px!important}
+}
+/* v1.66 Tahap E2 */
+/* Angkasa di HP: dekorasi planet diredam di halaman kerja (Setoran, Nilai) dan dok bawah dirapatkan */
+@media(max-width:819px){
+ html[data-theme=angkasa] body[data-pg=setoran]::before,
+ html[data-theme=angkasa] body[data-pg=nilai]::before{opacity:.16}
+ html[data-theme=angkasa] .tabbar{bottom:calc(6px + env(safe-area-inset-bottom));padding-top:6px;padding-bottom:6px}
+ html[data-theme=angkasa] .stw #stSave{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+}
+/* v1.66 Tahap E3 */
+/* Rapor di HP: tombol Lihat penuh + lapisan pratinjau penuh */
+.rfOnly{display:none}
+@media(max-width:819px){.rfOnly{display:inline-flex;justify-content:center}.pvw{cursor:zoom-in}}
+body.rfo{overflow:hidden}
+#rpFull{position:fixed;top:0;right:0;bottom:0;left:0;z-index:60;display:flex;flex-direction:column;background:var(--bg)}
+#rpFull .rfb{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:8px 12px;background:var(--card);box-shadow:var(--sh)}
+#rpFull .rfb b{flex:1 1 140px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#rpFull .rfg{display:flex;gap:6px}
+#rpFull .rfs{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom;padding:8px;background:#6b7280}
+#rpFull .rfw{background:#fff;box-shadow:0 4px 18px rgba(0,0,0,.4);overflow:hidden;margin:0 auto}
+@media print{#rpFull{display:none!important}}
+/* v1.66 Tahap E5 */
+/* Header HP: ikon Dashboard/Kelas/Pengaturan diberi label kecil di bawahnya (tanpa menambah lebar header) */
+@media(max-width:480px){
+ #navHdr .hb::before{position:absolute;left:50%;top:100%;transform:translateX(-50%);margin-top:1px;font-size:10px;line-height:11px;font-weight:600;color:var(--mu);white-space:nowrap;pointer-events:none}
+ #navHdr .hb[data-p=dashboard]::before{content:"Dasbor"}
+ #navHdr .hb[data-p=kelas]::before{content:"Kelas"}
+ #navHdr .hb[data-p=setelan]::before{content:"Atur"}
+}
 </style>
 </head>
 <body>
@@ -725,7 +763,7 @@ body[data-pg=rekap] .seg button{white-space:nowrap;padding-left:8px;padding-righ
 </script>
 <script>
 'use strict';
-const VERSI='v1.66';
+const VERSI='v1.71';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -835,7 +873,7 @@ const VIEWS={
   <p><b>Mundurkan &amp; halaman</b> – di Setoran satu per satu, tombol "Mundurkan (belum siap)" memindahkan siswa ke belakang antrean (tandanya ⏭; ketuk "Batal mundur" atau Urungkan untuk mengembalikan). Di BTQ Iqra, tombol − dan + di bawah Halaman (1–32) menggeser satu halaman; di bawah Baris ada +2, +4 (maksimal 8) dan Selesai (baris 1–8). Untuk menurunkan baris, pilih dari dropdown.</p>
   <p><b>Setoran harian</b> – siswa tampil berurutan otomatis (belum pernah setor dulu, lalu yang terlama belum setor; yang sudah setor hari itu paling akhir; tombol Urutan untuk kembali ke nomor absen). Pilih Tahfidz/BTQ, isi juz lalu surat dan ayat muncul otomatis. Simpan, dan posisi terakhir langsung masuk kolom Pencapaian di rapor. Salah simpan? Ketuk Urungkan di notifikasi yang muncul sekitar 7 detik. Siswa yang tidak setor dicatat lewat pilihan “Tidak setor…” di bawah tombol Simpan (Sakit, Izin, dll.): ditandai ✗ di daftar dan dilewati di antrean; menyimpan setoran membatalkan catatannya.</p>
    <p><b>3. Input Nilai</b> – mode Per siswa (geser kiri/kanan) atau Per kolom; ketuk nilai lagi untuk mengosongkan. Otomatis tersimpan. Surat yang sudah selesai di Setoran tetapi belum ada nilainya diberi tanda “belum dinilai” (bisa difilter). “Mode cepat” menampilkan satu item per layar dan langsung maju ke berikutnya. Isi massal/Salin bisa diurungkan lewat tombol Urungkan. Mode Per kolom menampilkan ringkasan kelas.</p>
-  <p><b>4. Rapor</b> – pilih Juz (30 = format asli; juz lain berpasangan 3-3: 29-28-27, 26-1-2, 3-4-5, 6-7-8, … sampai 24-25, satu halaman per paket), pilih siswa, cek pratinjau, lalu Cetak atau Simpan sebagai PDF (satu siswa, terpilih, atau satu kelas).</p>
+  <p><b>4. Rapor</b> – pilih Juz (30 = format asli; juz lain berpasangan 3-3: 29-28-27, 26-1-2, 3-4-5, 6-7-8, … sampai 24-25, satu halaman per paket), pilih siswa, cek pratinjau, lalu Cetak atau Simpan sebagai PDF (satu siswa, terpilih, atau satu kelas). Di HP, ketuk pratinjau atau tombol "Lihat penuh" untuk melihat rapor lebih besar (tombol −/+ memperbesar, Tutup untuk kembali).</p>
   <p><b>Rekap › Antarbulan</b> – rekap bulanan Tahfidz/BTQ per siswa (posisi awal bulan dan terbaru, plus posisi terbaru saat ini); bawaan tahun pelajaran Juli–Juni, bisa diubah. Unduh Excel (butuh internet sekali) atau Cetak / PDF (pilih Simpan sebagai PDF).</p>
   <p><b>Pencarian</b> – kotak Cari nama ada di Siswa, Setoran, Input Nilai, dan Rapor (ketik nama lalu pilih untuk langsung loncat, atau daftar tersaring). Sebelum cetak rapor, aplikasi memberi peringatan bila ada siswa yang nilainya belum lengkap (boleh tetap cetak). Dashboard menampilkan siswa yang belum setor 7 hari atau lebih dan pengingat cadangan bila sudah lebih dari 14 hari.</p>
   <p><b>Rekap › Rekap bulan</b> – tabel satu bulan per siswa: hafalan awal bulan, hafalan saat ini, tanggal, status (Bertambah / Setor ke Koordinator / Harus Setor / Belum Setor), jumlah setoran, target, keterangan. Pilih Tahfidz/BTQ, kelompok, dan bulan; Cetak / PDF (landscape A4) atau Unduh Excel. Kode kelas dan teks kaki halaman diatur di Pengaturan.</p>
@@ -850,7 +888,7 @@ const VIEWS={
   <p><b>6. Tampilan</b> – pilih tema di pojok atas: ☀️ terang, 🌤️ biru, 🌙 gelap, atau 🪐 Angkasa (latar kertas berlapis dan planet). Tema hanya mengubah tampilan di layar; cetak rapor tidak terpengaruh.</p>
   <p><b>Pilih kelas & default</b> – bila perangkat belum punya pilihan, layar Pilih kelas atau koordinator tampil saat aplikasi dibuka. Ketuk satu kelas (atau Koordinator) dan pilihan itu tersimpan di perangkat tersebut, jadi berikutnya langsung masuk. Untuk mengganti, ketuk logo di kiri atas atau ubah di Pengaturan › Halaman awal perangkat ini.</p>
   <p><b>Kenaikan kelas & pembagian A/B</b> – di halaman Kelas, setelah Naikkan semua kelas, atur siapa masuk A atau B per tingkat: ketuk A/B pada siswa, Tukar seluruh A ↔ B, atau Bagi rata (acak). Tukar dan Bagi rata bisa diurungkan.</p>
-  <p><b>Tampilan HP</b> – nama kelas aktif tampil di header; ketuk tombol tema untuk berganti tema. Halaman Kelas menampilkan kelas berisi siswa lebih dulu, kelas kosong dilipat.</p>
+  <p><b>Tampilan HP</b> – nama kelas aktif tampil di header; ketuk tombol tema untuk berganti tema (nama tema muncul sebentar). Halaman Kelas menampilkan kelas berisi siswa lebih dulu, kelas kosong dilipat.</p>
   <p class="mut" style="margin-top:14px">Versi ${VERSI}</p></div></details></div>`}
 };
 function render(){ksBuat();kelasUI();autoSet();if(S.page==='setoran'&&!ST.mulai&&S.ks.length){ST.mulai=1;const q=urutSetor(ST.j);if(q.length){ST.i=q[0];prefillSt()}}$('#view').innerHTML=VIEWS[S.page]();if(S.page==='setelan')bindSetelan();if(S.page==='siswa')bindSiswa();if(S.page==='kelas')bindKelas();if(S.page==='nilai')bindNilai();if(S.page==='setoran')bindSetoran();if(S.page==='rapor')bindRapor();if(S.page==='rekap')bindRekapAll();if(S.page==='dashboard')bindDash();if(S.page==='koordinator')bindKor();pasangCari();gsIsi()}
@@ -1293,9 +1331,7 @@ function viewSetoran(){const N=S.ks.length;
    :`<div class="card" style="margin-bottom:12px"><p class="mut">Target belum dikenali. Pastikan Kelas dan Semester di Pengaturan diawali angka Romawi, mis. "IV (Empat)" dan "II (Dua)".</p></div>`;
   return `<h1>Setoran Harian</h1><div class="stw"><div class="stA">${tgc}</div><div class="stB"><div class="seg" style="margin-bottom:12px">${sw('tahfidz','Tahfidz')}${sw('btq','BTQ')}</div>${klpSeg('kg',ST.j,ST.kg[ST.j])}</div><div class="stQ">${stQueue()}</div><div class="stC">
   <div class="card"><div class="nav"><button class="sm" data-snav="-1" aria-label="Sebelumnya">‹</button><div class="mid"><select id="stsel">${urutSetor(ST.j).map(k=>{const x=S.ks[k];return `<option value="${k}"${k===ST.i?' selected':''}>${sdHari(x,ST.j)?'✓ ':stAda(x,ST.j)?'✗ ':mdr(x,ST.j)?'⏭ ':''}${x.no}. ${esc(x.nama)}</option>`}).join('')}</select></div><button class="sm" data-snav="1" aria-label="Berikutnya">›</button></div>
-   <p class="mut stI" style="text-align:center;margin-bottom:10px">Sudah setor ${tglF(ST.tgl)}: ${sudah} dari ${Ng} siswa${tdk?` • tidak setor ${tdk}`:''} • sisa antrean ${Ng-sudah-tdk}</p>
-   <div class="row" style="justify-content:center;margin:0 0 10px"><button class="sm" id="stUrut">${ST.urut==='auto'?'Urutan: terlama belum setor · ganti ke nomor absen':'Urutan: nomor absen · ganti ke otomatis'}</button></div>
-   <p class="mut stI" style="text-align:center;margin-bottom:10px">Terakhir setor: ${tglAkhir(s,ST.j)?tglF(tglAkhir(s,ST.j)):'belum pernah'}</p>
+   <div class="stS"><p class="mut stI">Sudah setor ${tglF(ST.tgl)}: ${sudah} dari ${Ng}${tdk?` • tidak setor ${tdk}`:''} • sisa ${Ng-sudah-tdk} • terakhir setor: ${tglAkhir(s,ST.j)?tglF(tglAkhir(s,ST.j)):'belum pernah'}</p><button class="sm" id="stUrut" title="${ST.urut==='auto'?'Urutan: terlama belum setor. Ketuk untuk ganti ke nomor absen':'Urutan: nomor absen. Ketuk untuk ganti ke otomatis'}">${ST.urut==='auto'?'Urut: terlama':'Urut: absen'}</button></div>
    <div class="last">${last?`Posisi terakhir: <b>${esc(last.pos)}</b> • ${tglF(last.tgl)}`:'Belum ada setoran.'}${pc.status?`<br>Di rapor: <b>${esc(pcText(pc))}</b>`:''}</div>
    <div class="fl" style="margin-top:14px"><label>Tanggal<input type="date" data-f="tgl" value="${ST.tgl}"></label>${f}
     <label class="ck"><input type="checkbox" data-f="harus"${ST.harus?' checked':''}>${ST.j==='tahfidz'?' Harus setor ke koordinator tahfidz (sudah lulus dari guru tahfidz)':' Harus setor lagi (belum lancar)'}</label>
@@ -1429,7 +1465,7 @@ function viewRapor(){const N=S.ks.length;
   if(!N)return `<h1>Rapor</h1><div class="card"><p class="mut">Belum ada siswa. Tambahkan atau impor dulu di halaman Siswa.</p></div>`;
   S.rp=Math.min(S.rp,N-1);
   return `<h1>Rapor</h1><div class="card"><label>Juz rapor<select id="rjz">${rjOpsi().map(j=>`<option value="${j}"${j===juzLead(S.rjuz||30)?' selected':''}>Juz ${juzLbl(j)}${j===30?' (format asli)':''}</option>`).join('')}</select></label><div class="nav" style="margin-top:12px"><button class="sm" data-rn="-1" aria-label="Sebelumnya">‹</button><div class="mid"><select id="rsel">${S.ks.map((s,i)=>`<option value="${i}"${i===S.rp?' selected':''}>${s.no}. ${esc(s.nama)}</option>`).join('')}</select></div><button class="sm" data-rn="1" aria-label="Berikutnya">›</button></div>
-  <div class="row"><button class="btn" id="pr">Cetak</button><button class="btn ghost" id="pdf">Unduh PDF</button></div><p class="mut" style="margin-top:10px">Di jendela cetak: kertas A4, margin "Tidak ada", skala 100%.</p></div><div class="pvw" id="pvw"><div id="pv"></div></div>
+  <div class="row"><button class="btn" id="pr">Cetak</button><button class="btn ghost" id="pdf">Unduh PDF</button><button class="btn ghost rfOnly" id="prFull">Lihat penuh</button></div><p class="mut" style="margin-top:10px">Di jendela cetak: kertas A4, margin "Tidak ada", skala 100%.</p></div><div class="pvw" id="pvw"><div id="pv"></div></div>
   <div class="card" style="margin-top:14px"><details><summary>Cetak banyak siswa / satu kelas</summary><div class="row"><button class="btn" id="prAll">Cetak satu kelas (${N})</button></div><p class="mut" style="margin:12px 0 6px">Atau pilih siswa tertentu (urutan sesuai nomor absen):</p><div class="row" style="margin:0 0 6px"><button class="sm" id="ckAll">Pilih semua</button><button class="sm" id="ckNone">Kosongkan</button></div><div id="cklist">${S.ks.map(s=>`<label class="ckr"><input type="checkbox" class="ck" value="${s.id}"${S.sel.has(s.id)?' checked':''}> ${s.no}. ${esc(s.nama)}</label>`).join('')}</div><button class="btn" id="prSel">Cetak terpilih (<span id="nsel">0</span>)</button><p class="mut" style="margin-top:10px">Di jendela cetak, pilih "Simpan sebagai PDF" untuk mendapat satu file berisi semua halaman.</p></details></div>`}
 function bindRapor(){if(!S.ks.length)return;
   const sh=()=>{const s=S.ks[S.rp],pv=$('#pv');if(!s||!pv)return;pv.innerHTML=rapJ(s,S.rjuz||30);fitText(pv);
@@ -1437,6 +1473,7 @@ function bindRapor(){if(!S.ks.length)return;
     const w=$('#pvw');w.style.width=793.7*k+'px';w.style.height=1122.5*k+'px'};
   sh();$('#rsel').onchange=e=>{S.rp=+e.target.value;sh()};$('#rjz').onchange=e=>{S.rjuz=+e.target.value;sh()};
   document.querySelectorAll('[data-rn]').forEach(b=>b.onclick=()=>{const N=S.ks.length;S.rp=(S.rp+ +b.dataset.rn+N)%N;render()});
+  {const pf=$('#prFull');if(pf)pf.onclick=rpFull;const pw=$('#pvw');if(pw)pw.onclick=()=>{if(innerWidth<820)rpFull()}}
   $('#pr').onclick=()=>cetak();$('#pdf').onclick=()=>{cetak();toast('Di jendela cetak, pilih "Simpan sebagai PDF".')};
   const selL=()=>S.ks.filter(s=>S.sel.has(s.id)),ns=()=>{$('#nsel').textContent=selL().length};ns();
   $('#cklist').onchange=e=>{const t=e.target;if(!t.classList.contains('ck'))return;t.checked?S.sel.add(t.value):S.sel.delete(t.value);ns()};
@@ -1942,6 +1979,22 @@ const SG={get(){try{return JSON.parse(localStorage.getItem('btqSetelanBuka')||'{
     d.addEventListener('toggle',()=>{const q=SG.get();q[k]=d.open;SG.set(q)})})}}
 /* v1.60: teks status simpan/kirim juga jadi tooltip (di HP hanya titik yang terlihat) */
 try{const si=document.getElementById('saveInd');if(si){const pt=()=>{si.title=si.textContent.trim()};pt();new MutationObserver(pt).observe(si,{childList:true,subtree:true,characterData:true})}}catch(_){}
+/* ===== v1.69: Rapor di HP: "Lihat penuh" (lapisan layar penuh, bisa digulir dan diperbesar; tidak menyentuh rapor/cetak) ===== */
+function rpFullTutup(){const d=$('#rpFull');if(d)d.remove();document.body.classList.remove('rfo')}
+function rpFull(){const s=S.ks[S.rp];if(!s)return;rpFullTutup();
+  const d=document.createElement('div');d.id='rpFull';d.setAttribute('role','dialog');d.setAttribute('aria-label','Pratinjau rapor penuh');
+  d.innerHTML=`<div class="rfb"><b>${esc(s.nama)}</b><span class="rfg"><button class="sm" data-z="-1" aria-label="Perkecil">−</button><button class="sm" data-z="1" aria-label="Perbesar">+</button><button class="sm" data-z="0">Pas lebar</button><button class="sm" id="rfx">Tutup</button></span></div><div class="rfs"><div class="rfw" id="rfw"><div id="rfp"></div></div></div>`;
+  document.body.append(d);document.body.classList.add('rfo');
+  const p=$('#rfp'),w=$('#rfw'),fit=Math.max(.3,Math.min(1,(innerWidth-16)/793.7)),Z=[fit,.6,.8,1,1.25,1.5].filter((x,i,a)=>i===0||x>a[0]+.05).sort((a,b)=>a-b);let zi=Z.findIndex(x=>x>=.8);if(zi<0)zi=Z.length-1;
+  p.innerHTML=rapJ(s,S.rjuz||30);fitText(p);
+  const ap=()=>{const k=Z[zi];p.style.cssText=`transform:scale(${k});transform-origin:0 0;width:793.7px`;w.style.width=793.7*k+'px';w.style.height=1122.5*k+'px'};ap();
+  d.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='rfx')return rpFullTutup();if(b.dataset.z===undefined)return;const z=+b.dataset.z;zi=z===0?0:Math.max(0,Math.min(Z.length-1,zi+z));ap()};
+  const x=$('#rfx');if(x)x.focus()}
+if(!window.__rpfBind){window.__rpfBind=1;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#rpFull'))rpFullTutup()});window.addEventListener('hashchange',rpFullTutup)}
+/* ===== v1.71: tombol tema di header HP berputar satu-satu; sebut nama tema yang dipilih (tidak menyentuh data) ===== */
+try{const th=document.getElementById('themes');if(th&&!th.dataset.tn){th.dataset.tn='1';let tk=0;
+  th.addEventListener('click',()=>{tk=Date.now()},true);
+  new MutationObserver(()=>{if(Date.now()-tk>600)return;const b=th.querySelector('button.on');toast('Tema: '+(b&&b.title?b.title:document.documentElement.dataset.theme))}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']})}}catch(_){}
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
 const ALAB=['Tajwid','Makhroj','Murojaah','Kelancaran','Tajwid','Makhroj','Menulis','Membaca'];
 async function ekspor(){if(!S.ks.length)return toast('Belum ada siswa untuk diekspor.');
@@ -1990,8 +2043,8 @@ function viewDash(){const N=S.ks.length,kls=esc(S.set.kelas);
   <div class="card"><h3>Progres input leger</h3><div class="big">${prog}%</div><div class="pg"><span style="width:${prog}%"></span></div><p class="mut" style="margin-top:6px">Item yang tampil di rapor (surat 1–37, aspek, pencapaian, tahapan).</p></div></div>
   <div class="grid" style="margin-top:16px">
   <div class="card"><h3>Distribusi predikat</h3>${donut(BW.map(([l,c])=>[l,cnt[l],c]))}</div>
-  <div class="card"><h3>Capaian target</h3>${targetBar('Target tahfidz','pcTah')}${targetBar('Target BTQ','pcBTQ')}</div>
-  <div class="card"><h3>Radar aspek (rata-rata kelas, skala 50–100)</h3>${radar(av.map(v=>v===null?50:v),['Tajwid (T)','Makhroj (T)','Murojaah','Kelancaran','Tajwid (B)','Makhroj (B)','Menulis','Membaca'])}<p class="mut" style="text-align:center">T = Tahfidz · B = BTQ</p></div></div>
+  <div class="card"><h3>Capaian target</h3>${S.ks.every(s=>!(s.pcTah&&s.pcTah.status)&&!(s.pcBTQ&&s.pcBTQ.status))?'<p class="mut">Belum ada data pencapaian. Terisi otomatis dari Setoran, atau isi di Input Nilai › Pencapaian.</p>':targetBar('Target tahfidz','pcTah')+targetBar('Target BTQ','pcBTQ')}</div>
+  <div class="card"><h3>Radar aspek (rata-rata kelas, skala 50–100)</h3>${av.every(v=>v===null)?'<p class="mut">Belum ada nilai aspek. Radar muncul setelah nilai aspek (Tajwid, Makhroj, dst.) diisi.</p>':radar(av.map(v=>v===null?50:v),['Tajwid (T)','Makhroj (T)','Murojaah','Kelancaran','Tajwid (B)','Makhroj (B)','Menulis','Membaca'])}${av.every(v=>v===null)?'':'<p class="mut" style="text-align:center">T = Tahfidz · B = BTQ</p>'}</div></div>
   ${kartuSetor()}
   <div class="card" style="margin-top:16px"><h3>Perlu perhatian (${perlu.length})</h3>${perlu.length?perlu.slice(0,8).map(a=>`<div class="att"><div><b>${a.s.no}. ${esc(a.s.nama)}</b><span class="mut">${a.r.join(' · ')}</span></div><button class="sm" data-fix="${a.s.id}">Isi</button></div>`).join('')+(perlu.length>8?`<p class="mut" style="margin-top:8px">dan ${perlu.length-8} siswa lainnya.</p>`:''):'<p class="mut">Semua siswa lengkap dan tanpa catatan. 👍</p>'}</div>
   <div class="card" style="margin-top:16px"><details><summary>Peringkat 5 teratas (opsional)</summary><div style="margin-top:8px">${top.length?top.map((a,i)=>`<div class="rk"><b>${i+1}</b><span>${esc(a.s.nama)}</span><span>${a.m.toFixed(1)}</span></div>`).join(''):'<p class="mut">Belum ada nilai.</p>'}</div></details></div>`}
@@ -2472,8 +2525,9 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 - Catat bahwa isi blok hanya instruksi dan status proyek, bukan data pengguna.
 </script>
 <script type="text/plain" id="proyek-handoff">
-# HANDOFF — sesi 12
+# HANDOFF — sesi 47
 ## Ringkas
+- Catatan sesi 47: versi sebenarnya = const VERSI di file (v1.71). File: aplikasi-btq-tahfidz-s47.html. Tahap C dan E2–E5 (perbaikan layout hasil kritik UI) SELESAI; sisa hanya utang teknis CSS (E6) dan cek manual di perangkat nyata. Rincian di riwayat sesi 47 dan docs/HANDOFF-UI-KRITIK.md.
 - Catatan sesi 46: versi sebenarnya = const VERSI di file (v1.66). Perbaikan layout hasil kritik UI, Tahap A–D; rincian di riwayat sesi 46 dan docs/HANDOFF-UI-KRITIK.md di repo.
 - Catatan sesi 45: versi sebenarnya = const VERSI di file (v1.65). Lihat riwayat sesi 45.
 - Catatan sesi 44: versi sebenarnya = const VERSI di file (v1.64). Lihat riwayat sesi 44.
@@ -2491,6 +2545,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 - Sesi 11 = Tahap 13–15 (permintaan tambahan pengguna: target Juz 30 otomatis/dropdown, pencapaian rapor Juz 29–1, guru tanda tangan per kelompok tahfidz).
 - Sesi 7 = Tahap 7–9; sesi 9 = Tahap 11 (juz berpasangan 3-3); sesi 8 menangani permintaan tambahan "tambah isian tahap di setoran" = Tahap 10.
 ## Status tahap
+- UI-kritik sesi 46–47 (docs/HANDOFF-UI-KRITIK.md): A, B, C (v1.67), D, E2 (v1.68), E3 (v1.69), E4 (v1.70), E5 (v1.71) SELESAI. Belum: E6 (CSS tersebar di 10 blok style) dan cek manual di perangkat nyata (APK/iQOO 15R).
 - Tahap 1–6 (v1.6–v1.11): SELESAI (lihat riwayat).
 - Tahap 7 (v1.12) Kelompok Tahfidz 2 + BTQ 2 dalam satu kelas: SELESAI (s.kel, S.set.klpNama, kartu Kelompok di Siswa, chip kelompok di Setoran, tanda harus setor, impor Rekap Nilai membawa harusSetor + kelompok).
 - Tahap 8 (v1.13) Isi nilai surat di halaman Setoran: SELESAI (fldNilai, nilaiAmbil/nilaiSimpan/nilaiTerap; masuk ke s.surat atau s.nj).
@@ -2550,6 +2605,9 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 - Lulus: fingerprint SAMA; golden a998dc93b6deea07 30206 (tiap tahap dan akhir); node --check; Chromium 360 px: impor bawaan (23 siswa, kelompok 12/11, 26 harus setor, 126+39 setoran; 1 setoran tahfidz kembar di sumber, sama dengan v1.11), impor ulang idempoten, migrasi dua kali sama, cadangan lama termigrasi, filter kelompok Setoran, kelompok kosong, harus setor, nilai surat Juz 30 dan Juz 29 (Input Nilai dan rapor membaca), BTQ tanpa nilai, rekap 12 baris identik dengan gambar (status, jumlah, target, format teks), semester 2, Murojaah, Belum Setor, BTQ, Antarbulan + filter kelompok, PDF landscape 1 halaman dan 53 siswa multi halaman tanpa melewati batas, pembersihan setelah cetak, cadangan-pulihkan, data bertahan setelah muat ulang, rapor Juz 30..1, tanpa overflow 360 px di 7 halaman, tanpa galat JS.
 - Perlu cek manual oleh pengguna: cetak kertas/PDF sungguhan dari dialog cetak ponsel (landscape lewat gaya sementara), ekspor Excel rekap (butuh internet), tampilan chip kelompok di ponsel nyata, alur nyata mencatat nilai surat berturut-turut.
 ## Masalah diketahui dan utang teknis
+- Sesi 47: catatan handoff sesi 46 menyebut pemilih tema ganda di header dan Pengaturan > Tampilan; di file TIDAK ada pemilih tema di Pengaturan (hanya mode, orientasi, zoom), jadi tidak ada yang dihapus. Header HP: satu tombol tema yang berputar (kini menyebut nama tema).
+- Sesi 47: semua ukuran dengan Chromium desktop (Playwright), data bawaan 23 siswa kelas 4A tanpa setoran/nilai; layar sentuh, pinch-zoom, dan toast di bawah dok perlu dicek di HP nyata. Tinggi layar uji 800 px; di layar lebih pendek kolom Tanggal Setoran bisa kembali tertutup tombol Simpan.
+- Sesi 47: Lihat penuh (rpFull) memakai rapJ + fitText apa adanya; cetak tidak berubah. Perlu cek manual: gulir/zoom jari di lapisan itu.
 - Aturan Target meniru gambar tetapi bukan aturan asli aplikasi Rekap Nilai; konfirmasi pengguna bila ada selisih.
 - Kelas 5–6: target tahfidz '–' (tabel TGT tanpa rentang surat).
 - Kelompok kini dipakai rapor hanya untuk nama guru tahfidz di tanda tangan (kelompok BTQ tidak). Ekspor leger sheet per juz dan filter Rekap per nama belum dikerjakan (opsional). Kolom Tulisan/Menulis pada tabel Target BTQ belum ditampilkan di aplikasi.
@@ -2607,10 +2665,10 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 [x] Rekap bulan format gambar (layar, PDF landscape, Excel).
 [ ] Cetak kertas/PDF sungguhan dan Excel nyata dicek pengguna (perlu cek manual).
 ## Instruksi tepat untuk sesi berikutnya
-1. Ikuti protokol bagian 0 pada aplikasi-btq-tahfidz-s12.html.
-2. Tanyakan hasil cek manual (PDF rekap landscape, Excel, kelompok di ponsel) dan apakah aturan Target di rekap sesuai aplikasi Rekap Nilai; perbaiki temuan; tawarkan 'rilis bersih'.
-3. Permintaan tambahan dicatat sebagai tahap baru (bagian 6). Jalankan cek nama ganda di skrip utama sebelum menyerahkan.
-4. Tulis handoff_baru.md (sesi 13), tanam, simpan sebagai aplikasi-btq-tahfidz-s13.html, ulangi uji, serahkan satu file.
+1. Ikuti protokol bagian 0 pada aplikasi-btq-tahfidz-s47.html (fingerprint.py dan golden.py harus SAMA; baku di atas).
+2. Tanyakan hasil cek manual di HP nyata (Setoran: kolom Tanggal di atas tombol Simpan; Rapor: Lihat penuh; header: label ikon dan toast tema; dok bawah) dan perbaiki temuan.
+3. Opsional (butuh keputusan pengguna): E6 rapikan CSS (10 blok style, override per tema) tanpa menyentuh bagian terlindungi; atau ubah tema bawaan ke Terang (DEFAULT.tema='angkasa' sejak v1.32).
+4. Tawarkan 'rilis bersih' bila pengguna puas. Tulis handoff_baru.md (sesi 48), tanam, simpan sebagai aplikasi-btq-tahfidz-s48.html, ulangi uji, serahkan satu file.
 ## Riwayat sesi
 - Sesi 0: mempelajari file v1.5, menyusun rencana 6 tahap, menghitung sidik jari rapor Juz 30, menanam blok proyek.
 - Sesi 1: Tahap 1 (v1.6) selesai: migrasi idempoten, tanggal rapor via kalender, semester/tahun dropdown, tempat diturunkan otomatis; sidik jari dan golden tetap SAMA.
@@ -2625,6 +2683,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 47: v1.67–v1.71 (tanpa perubahan DB; bagian terlindungi tidak disentuh; fingerprint SAMA, golden a998dc93b6deea07 30206, node --check lulus tiap tahap; tiap patch idempoten, dijalankan dua kali = hasil sama). CSS baru di <style id="v166"> (komentar 'v1.66 Tahap C2/E2/E3/E5'), JS baru sebelum EKSPOR LEGER. Keputusan Tahap C = default handoff (pengguna belum mengisi pilihan): gabung status. v1.67 Tahap C: tiga baris status Setoran (sudah setor, urutan, terakhir setor) jadi satu baris .stS (teks .stI + tombol #stUrut berlabel pendek 'Urut: terlama/absen', judul penuh di title); spasi HP dirapatkan; kolom Tanggal 680→606 px (tombol Simpan mulai 666) di 360/390. v1.68 E2: Angkasa di HP: body::before opacity .16 hanya di Setoran/Nilai (tadi .55), dok bawah 64→60 px (bottom 6, padding 6) dan #stSave bottom 76 px; desktop dan Dashboard tidak berubah. v1.69 E3: Rapor HP: tombol 'Lihat penuh' (.rfOnly, #prFull) dan ketuk pratinjau membuka lapisan #rpFull (rpFull/rpFullTutup; zoom −/+/Pas lebar, bawaan 80%, Tutup/Esc/hashchange; hidden saat cetak). v1.70 E4: Dashboard: kartu Radar aspek dan Capaian target jadi satu kalimat bila belum ada data (kembali normal bila terisi; diuji dua keadaan); tinggi halaman HP 3247→2881 px. v1.71 E5: toast 'Tema: <nama>' saat tombol tema HP berputar (MutationObserver data-theme, hanya 600 ms setelah klik) dan label kecil Dasbor/Kelas/Atur di bawah ikon header HP (CSS ::before, tanpa menambah lebar). Panduan singkat: kalimat Lihat penuh (Rapor) dan nama tema. Sapuan 8 halaman x 360/390/768/1280: overflow 0, tanpa galat JS. Perlu cek manual di perangkat nyata.
 - Sesi 46: v1.66 perbaikan layout dari kritik UI (tanpa perubahan DB; bagian terlindungi tidak disentuh; sidik jari dan golden SAMA; node --check lulus). Semua CSS baru di <style id="v166"> tepat setelah v160, tiap blok diberi komentar 'v1.66 Tahap X'. Tahap A SELESAI: tabel Siswa tidak meluber di 1024–1439 px (kolom NIS/NISN disembunyikan, NIS/NISN tampil di bawah nama via .mob; panel kanan 320 px, 280 px di <1200) dan kartu Kelompok (klpCard) terlipat bawaan di desktop (hanya klpOpen). Diukur: meluber 0 px di 1024/1100/1280/1439/1440/1600 (sebelumnya sampai 406 px). Tahap B SELESAI: IC.setelan diganti ikon sliders (dulu mirip ikon tema Terang), area sentuh ikon header 44 px (::after), header HP gap 8 px, title pada #saveInd; tanpa overflow di 360/390/430/768. Tahap C SEBAGIAN: baris status Setoran HP diringkas (class stI pada dua <p>, jarak dikurangi); kolom Tanggal naik 24 px tetapi masih tertutup tombol Simpan di layar pertama; perlu keputusan desain (mis. gabung status jadi satu baris atau Mode/pencarian dipindah ke menu). Tahap D SELESAI: chevron seragam kartu lipat Pengaturan, label tab Rekap satu baris, baris Input Nilai desktop merapat (jarak nama-tombol 449→304 px). BELUM: #5 dekorasi tema Angkasa (bawaan) di HP, #8 pratinjau rapor HP terlalu kecil (jangan sentuh bagian terlindungi), sisa #7 kartu kosong Dashboard, pemilih tema ganda di header vs Pengaturan>Tampilan (keputusan pengguna), CSS menumpuk di 10 blok style. Perlu cek manual di perangkat nyata (APK/iQOO).
 - Sesi 45: v1.65 teks Panduan singkat Pilih kelas & default ditulis ulang sesuai halaman depan (kotak Buka kelas ini otomatis sudah tidak ada). Hanya teks; bagian terlindungi tidak disentuh.
 - Sesi 44: v1.64 UI/UX Tahap 6 (QA akhir; berkas docs/HANDOFF-UIUX.md SUDAH DIHAPUS, rujukan ke berkas itu di sesi 40-43 tidak berlaku lagi): diuji 5 tema x 360/412/768/1280 px x semua halaman: tanpa gulir mendatar; fokus papan ketik terlihat (outline 2 px); gerak dikurangi dihormati. Perbaikan: paragraf Tampilan HP dan baris Versi di Panduan singkat ikut masuk lipatan (bocor sejak v1.57). Bagian terlindungi tidak disentuh (fingerprint SAMA, golden a998dc93b6deea07 30206). Belum diubah, menunggu keputusan pengguna: paragraf Panduan Pilih kelas & default masih menyebut kotak Buka kelas ini otomatis yang sudah dihapus.
