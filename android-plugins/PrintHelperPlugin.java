@@ -1,6 +1,7 @@
 package com.sherlocomp.btqtahfidz;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
@@ -18,6 +19,23 @@ import com.getcapacitor.annotation.CapacitorPlugin;
  */
 @CapacitorPlugin(name = "PrintHelper")
 public class PrintHelperPlugin extends Plugin {
+
+    /** mode: "portrait" | "landscape" | "auto". Mengunci orientasi layar tanpa perlu ketukan. */
+    @PluginMethod
+    public void setOrientation(final PluginCall call) {
+        final String mode = call.getString("mode", "auto");
+        getActivity().runOnUiThread(() -> {
+            try {
+                int o = "portrait".equals(mode) ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+                      : "landscape".equals(mode) ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                      : ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+                getActivity().setRequestedOrientation(o);
+                call.resolve();
+            } catch (Exception ex) {
+                call.reject(String.valueOf(ex.getMessage()));
+            }
+        });
+    }
 
     @PluginMethod
     public void print(final PluginCall call) {

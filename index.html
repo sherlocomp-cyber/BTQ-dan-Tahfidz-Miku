@@ -719,6 +719,8 @@ body.rfo{overflow:hidden}
   var C=window.Capacitor;
   if(!C||!C.isNativePlatform||!C.isNativePlatform())return;
   var FS=C.registerPlugin('Filesystem'),SH=C.registerPlugin('Share'),PH=C.registerPlugin('PrintHelper');
+  /* v1.76: kunci orientasi native (portrait/landscape/auto); ditolak bila APK belum punya metode setOrientation */
+  window.oriNatif=function(m){return PH.setOrientation({mode:m})};
   /* SheetJS lokal (ikut di dalam APK) -> ekspor Excel jalan tanpa internet */
   var s=document.createElement('script');s.src='xlsx.full.min.js';document.head.appendChild(s);
   function bersih(n){return String(n||'berkas').replace(/[\\\/:*?"<>|]+/g,'_')}
@@ -1113,6 +1115,8 @@ function abAksi(b){const a=b.dataset.ab,t=abTingkat(),y=scrollY;
 let ORI_MSG='',ORI_FS=false,ORI_LOCK=false;const ORI_T={potret:'portrait',lanskap:'landscape'};
 function oriNote(m){ORI_MSG=m||'';const e=document.getElementById('oriNote');if(e)e.textContent=ORI_MSG}
 async function oriTerap(gest){const o=TAMPIL.ori,so=window.screen&&screen.orientation,md=ORI_T[o];ORI_LOCK=false;
+  /* v1.76: di APK kunci dipasang oleh Android langsung (PrintHelper.setOrientation), tanpa ketukan/layar penuh. APK lama tanpa metode ini jatuh ke jalur web di bawah. */
+  if(window.oriNatif&&(md||gest)){try{await window.oriNatif(md||'auto');if(md){ORI_LOCK=true;if(gest)oriNote('Orientasi terkunci: '+o+'.')}else if(gest)oriNote('');return}catch(_){}}
   if(!md){if(!gest)return;if(so&&so.unlock){try{so.unlock()}catch(_){}}if(ORI_FS&&document.fullscreenElement){try{await document.exitFullscreen()}catch(_){}}ORI_FS=false;oriNote('');return}
   if(!so||!so.lock){if(gest)oriNote('Peramban ini tidak mendukung kunci orientasi (mis. iPhone/iPad). Putar perangkat secara manual.');return}
   try{await so.lock(md);ORI_LOCK=true;if(gest)oriNote('Orientasi terkunci: '+o+'.')}

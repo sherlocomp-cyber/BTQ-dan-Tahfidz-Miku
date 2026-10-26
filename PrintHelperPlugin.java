@@ -1,6 +1,7 @@
 package __PACKAGE__;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.ParcelFileDescriptor;
@@ -15,9 +16,26 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
-/** Membuat window.print() berfungsi di WebView Android (dialog cetak / Simpan sebagai PDF). */
+/** Membuat window.print() berfungsi di WebView Android (dialog cetak / Simpan sebagai PDF), dan mengunci orientasi layar tanpa ketukan. */
 @CapacitorPlugin(name = "PrintHelper")
 public class PrintHelperPlugin extends Plugin {
+
+    /** mode: "portrait" | "landscape" | "auto". Dipanggil dari index.html (oriTerap) saat aplikasi dibuka. */
+    @PluginMethod
+    public void setOrientation(final PluginCall call) {
+        final String mode = call.getString("mode", "auto");
+        getActivity().runOnUiThread(() -> {
+            try {
+                int o = "portrait".equals(mode) ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+                      : "landscape".equals(mode) ? ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                      : ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+                getActivity().setRequestedOrientation(o);
+                call.resolve();
+            } catch (Exception ex) {
+                call.reject(String.valueOf(ex.getMessage()));
+            }
+        });
+    }
 
     @PluginMethod
     public void print(final PluginCall call) {
