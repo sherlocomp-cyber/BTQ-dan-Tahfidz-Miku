@@ -2,7 +2,7 @@
 
 Aplikasi web satu file (PWA) untuk mencatat setoran harian, nilai, dan mencetak rapor **BTQ** dan **Tahfidz** di madrasah. Berjalan di browser HP maupun komputer, bisa dipakai tanpa internet, dan bisa dibungkus menjadi APK dengan Capacitor.
 
-Versi saat ini: **v1.80**
+Versi saat ini: **v1.81**
 
 ## Fitur
 
@@ -71,6 +71,7 @@ Catatan: kode aplikasi memanggil plugin native `PrintHelper` (dialog cetak Andro
 
 ## Riwayat singkat
 
+- **v1.81** — Impor data kelas lama juga memuat aspek, pencapaian, tahap, dan nilai paket Juz 26-1-2 (hanya sel kosong yang diisi).
 - **v1.80** — Impor data kelas lama juga memuat nilai surat Juz 29–27 (hanya sel kosong yang diisi).
 - **v1.79** — Impor data kelas lama (halaman Kelas): memuat file .json siswa tahun lalu yang sudah dibagi per kelas baru; siswa yang sudah ada tidak dipindah/ditimpa (hanya melengkapi NIS, NISN, nilai yang kosong), aman diulang, cadangan otomatis. Kelas 6 menjadi alumni dengan tahun lulus (halaman Alumni dikelompokkan per tahun; Kenaikan kelas menanyakan tahun kelulusan). Data siswa tidak disimpan di repo ini.
 - **v1.78** — Halaman Alumni (hanya baca): tombol “Lihat alumni” di halaman Kelas (muncul bila ada siswa berstatus lulus) membuka daftar alumni dengan kotak cari nama, jumlah setoran, capaian terakhir Tahfidz dan BTQ, serta enam setoran terakhir.

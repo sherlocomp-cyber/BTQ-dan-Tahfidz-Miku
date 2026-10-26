@@ -770,7 +770,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.80';
+const VERSI='v1.81';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -1085,6 +1085,10 @@ function klIsi(s,x){let n=0;
   ['pcBTQ','pcTah'].forEach(f=>{const a=s[f]||(s[f]={status:'',pos:'',raw:''}),b=x[f];if(b&&(b.raw||b.status)&&!(a.raw||a.status)){Object.assign(a,{status:b.status||'',pos:b.pos||'',raw:b.raw||''});n++}});
   const th=s.tahap||(s.tahap=['','','','','']);(x.tahap||[]).forEach((v,i)=>{if(v&&!th[i]){th[i]=v;n++}});
   const nj=s.nj||(s.nj={});Object.keys(x.nj||{}).forEach(j=>{const o=nj[j]||(nj[j]={}),w=x.nj[j]||{};Object.keys(w).forEach(k=>{if(!o[k]&&w[k]){o[k]=w[k];n++}})});
+  Object.keys(x.rj||{}).forEach(j=>{const r=rjGet(s,j),w=x.rj[j]||{};
+    Object.keys(w.aspek||{}).forEach(k=>{if(!r.aspek[k]&&w.aspek[k]){r.aspek[k]=w.aspek[k];n++}});
+    ['pcBTQ','pcTah'].forEach(f=>{const b=w[f],a=r[f];if(b&&(b.raw||b.status)&&!(a.raw||a.status)){Object.assign(a,{status:b.status||'',pos:b.pos||'',raw:b.raw||''});n++}});
+    (w.tahap||[]).forEach((v,i)=>{if(v&&!r.tahap[i]){r.tahap[i]=v;n++}})});
   if(x.kelasLama&&!s.kelasLama)s.kelasLama=x.kelasLama;return n}
 function klRencana(d,siswa){const idx=new Map();siswa.forEach(s=>idx.set(nm(s.nama),s));
   const baru=[],ada=[],lewat=[];
@@ -1096,7 +1100,7 @@ async function klImpor(e){const f=e.target.files[0];e.target.value='';if(!f)retu
   const R=klRencana(d,S.siswa);if(!R.baru.length&&!R.ada.length)return toast('Tidak ada siswa yang bisa diimpor dari file ini.');
   const per={};R.baru.forEach(x=>{const k=x.kelas==='LULUS'?'Alumni '+(x.lulus||''):'Kelas '+x.kelas;per[k]=(per[k]||0)+1});
   const rin=Object.keys(per).sort().map(k=>'• '+k+': '+per[k]+' siswa baru').join('\n');
-  if(!confirm(`Impor data kelas lama dari "${f.name}"?\n\n${rin||'• tidak ada siswa baru'}\n• ${R.ada.length} siswa sudah ada di aplikasi: tidak dipindah, hanya melengkapi isian yang masih kosong (NIS, NISN, nilai Juz 30 dan nilai surat Juz 29–27).\n\nSiswa yang sudah ada tidak dihapus atau ditimpa. Cadangan otomatis dibuat dulu.`))return;
+  if(!confirm(`Impor data kelas lama dari "${f.name}"?\n\n${rin||'• tidak ada siswa baru'}\n• ${R.ada.length} siswa sudah ada di aplikasi: tidak dipindah, hanya melengkapi isian yang masih kosong (NIS, NISN, nilai Juz 30, nilai surat Juz 29–27 dan paket Juz 26-1-2, aspek, pencapaian).\n\nSiswa yang sudah ada tidak dihapus atau ditimpa. Cadangan otomatis dibuat dulu.`))return;
   try{await DB.set('cadanganSebelumImporKelasLama',{tgl:new Date().toISOString(),siswa:klsKlon(S.siswa)})}catch(_){return toast('Cadangan gagal dibuat; impor dibatalkan.')}
   const idx=new Map();S.siswa.forEach(s=>idx.set(nm(s.nama),s));let nb=0,nl=0,ni=0;
   (d.siswa||[]).forEach(x=>{if(!x||!nm(x.nama)||!(klsOk(x.kelas)||x.kelas==='LULUS'))return;const k=nm(x.nama);let s=idx.get(k);
@@ -2921,6 +2925,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 51c: v1.81 klIsi juga mengisi s.rj (aspek, pcBTQ/pcTah, tahap) dan nilai Juz 26/1/2 dari sheet 'ledger 26'/'ledger 26 -1'; aspek/pencapaian 'ledger 29' hanya yang kolomnya valid (tata letak beberapa berkas bergeser, 63 sel dibuang).
 - Sesi 51b: v1.80 klIsi juga mengisi s.nj (nilai surat Juz 29/28/27 dari sheet 'ledger 29' lama, hanya sel kosong; kolom aspek/pencapaian/tahapan sheet itu TIDAK diimpor karena tata letaknya tidak konsisten antar berkas). Bagian terlindungi tidak disentuh.
 - Sesi 51: v1.79 Impor data kelas lama (klIsi/klRencana/klImpor sebelum blok alumni; kartu Impor di VIEWS.kelas, data-ka=implama, input #klIn, V.onchange di bindKelas) + tahun lulus alumni (s.lulus, s.kelasLama; kelasNaik menanyakan tahun kelulusan; halaman Alumni dikelompokkan per tahun lulus). Data siswa TIDAK di repo (file .json terpisah, format app='btq-tahfidz-kelas-lama'). Tanpa perubahan skema DB/CSS; bagian terlindungi tidak disentuh; fingerprint SAMA, golden a998dc93b6deea07 30206, node --check lulus.
 - Sesi 50: v1.78 Halaman Alumni (hanya baca): ALM/almSar/almBaris/almIsi/VIEWS.alumni/bindAlumni sebelum bindKelas; tombol data-ka=alumni di kartu Kenaikan kelas; halaman tidak masuk PAGES/navigasi (hashPg mengabaikannya, Kembali ke #kelas); render() memanggil bindAlumni. Tanpa perubahan skema DB/CSS baru; bagian terlindungi tidak disentuh; fingerprint SAMA, golden a998dc93b6deea07 30206, node --check lulus. Belum: kembalikan ke kelas, ekspor, hapus alumni, tahun lulus.
