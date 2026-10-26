@@ -690,6 +690,11 @@ body.rfo{overflow:hidden}
  #navHdr .hb[data-p=setelan]::before{content:"Atur"}
 }
 </style>
+<style id="v177">
+html button.sm.red{border-color:#e5484d !important;color:#ff7b7f !important}
+html button.sm.red:active{background:#c9302c !important;color:#fff !important}
+html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c9302c !important}
+</style>
 </head>
 <body>
 <header>
@@ -765,7 +770,7 @@ body.rfo{overflow:hidden}
 </script>
 <script>
 'use strict';
-const VERSI='v1.75';
+const VERSI='v1.77';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -892,7 +897,7 @@ const VIEWS={
   <p><b>6. Tampilan</b> – pilih tema di pojok atas: ☀️ terang, 🌤️ biru, 🌙 gelap, atau 🪐 Angkasa (latar kertas berlapis dan planet). Tema hanya mengubah tampilan di layar; cetak rapor tidak terpengaruh.</p>
   <p><b>Pilih kelas & default</b> – bila perangkat belum punya pilihan, layar Pilih kelas atau koordinator tampil saat aplikasi dibuka. Ketuk satu kelas (atau Koordinator) dan pilihan itu tersimpan di perangkat tersebut, jadi berikutnya langsung masuk. Untuk mengganti, ketuk logo di kiri atas atau ubah di Pengaturan › Halaman awal perangkat ini.</p>
   <p><b>Kenaikan kelas & pembagian A/B</b> – di halaman Kelas, setelah Naikkan semua kelas, atur siapa masuk A atau B per tingkat: ketuk A/B pada siswa, Tukar seluruh A ↔ B, atau Bagi rata (acak). Tukar dan Bagi rata bisa diurungkan.</p>
-  <p><b>Tampilan HP</b> – nama kelas aktif tampil di header; ketuk tombol tema untuk berganti tema (nama tema muncul sebentar). Halaman Kelas menampilkan kelas berisi siswa lebih dulu, kelas kosong dilipat.</p>
+  <p><b>Tampilan HP</b> – nama kelas aktif tampil di header; ketuk tombol tema untuk berganti tema (nama tema muncul sebentar). Halaman Kelas menampilkan kelas berisi siswa lebih dulu, kelas kosong dilipat. Tombol “Hapus kelas…” di kartu kelas menghapus semua siswa kelas itu (konfirmasi, ketik kode kelas, ada tombol Urungkan); sebaiknya unduh cadangan dulu.</p>
   <p class="mut" style="margin-top:14px">Versi ${VERSI}</p></div></details></div>`}
 };
 function render(){ksBuat();kelasUI();autoSet();if(S.page==='setoran'&&!ST.mulai&&S.ks.length){ST.mulai=1;const q=urutSetor(ST.j);if(q.length){ST.i=q[0];prefillSt()}}$('#view').innerHTML=VIEWS[S.page]();if(S.page==='setelan')bindSetelan();if(S.page==='siswa')bindSiswa();if(S.page==='kelas')bindKelas();if(S.page==='nilai')bindNilai();if(S.page==='setoran')bindSetoran();if(S.page==='rapor')bindRapor();if(S.page==='rekap')bindRekapAll();if(S.page==='dashboard')bindDash();if(S.page==='koordinator')bindKor();pasangCari();gsIsi()}
@@ -1044,7 +1049,7 @@ function klsKartu(k){const a=k===S.set.kelasAktif,o=klsData(k),g=klsGuruT(k),n=k
   const mis=n&&!g[0]&&!g[1]&&!w;
   return `<div class="card kc${a?' on':''}" data-kc="${k}"><div class="kch"><b>Kelas ${k}</b>${a?'<span class="kcb">aktif</span>':''}<span class="mut">${n} siswa</span></div>
   ${mis?'<p class="kcw">Guru tahfidz belum diisi: tanda tangan rapor akan kosong.</p>':''}
-  <div class="row kca"><button class="sm" data-ka="buka" data-k="${k}">Buka siswa</button><button class="sm" data-ka="xls" data-k="${k}">Impor Excel</button><button class="sm" data-ka="tempel" data-k="${k}">Tempel nama</button></div>
+  <div class="row kca"><button class="sm" data-ka="buka" data-k="${k}">Buka siswa</button><button class="sm" data-ka="xls" data-k="${k}">Impor Excel</button><button class="sm" data-ka="tempel" data-k="${k}">Tempel nama</button>${n?`<button class="sm red" data-ka="hapus" data-k="${k}">Hapus kelas…</button>`:''}</div>
   <details class="kcd"><summary>Guru tahfidz${g[0]||g[1]?' · '+esc([g[0],g[1]].filter(Boolean).join(' / ')):''}</summary>
   <label>Guru tahfidz – ${esc(kp[0]||'Kelompok 1')}<input type="text" data-kg="${k}" data-gi="0" value="${esc(g[0])}" placeholder="Nama guru (tanda tangan rapor)"></label>
   <label>Guru tahfidz – ${esc(kp[1]||'Kelompok 2')}<input type="text" data-kg="${k}" data-gi="1" value="${esc(g[1])}" placeholder="Nama guru (tanda tangan rapor)"></label>
@@ -1059,11 +1064,21 @@ async function kelasNaik(){const n=S.siswa.filter(s=>klsOk(s.kelas)).length;if(!
   try{await DB.set('cadanganSebelumNaikKelas',{tgl:new Date().toISOString(),siswa:klsKlon(S.siswa)})}catch(_){return toast('Cadangan gagal dibuat; kenaikan dibatalkan.')}
   S.siswa.forEach(s=>{if(klsOk(s.kelas))s.kelas=klsT(s.kelas)>=6?'LULUS':(klsT(s.kelas)+1)+s.kelas.slice(1)});
   persist();AB.t=[1,2,3,4,5,6].find(n=>S.siswa.some(s=>klsT(s.kelas)===n&&klsOk(s.kelas)))||0;render();toast('Kenaikan kelas selesai. Atur pembagian A/B di bawah.');const kk=$('#abKartu');if(kk)kk.scrollIntoView({behavior:'smooth',block:'start'})}
+/* v1.77: hapus satu kelas = hapus semua siswa kelas itu beserta setoran dan nilainya. Pengaturan kelas (guru, kelompok, target) dibiarkan.
+   Pengaman: konfirmasi + ketik kode kelas + cadangan kv (cadanganHapusKelas-<kelas>) + tombol Urungkan. Penghapusan ikut tersinkron ke Firebase/perangkat lain (sama seperti hapus siswa). */
+async function kelasHapus(k){if(!klsOk(k))return;const L=S.siswa.filter(s=>s.kelas===k),n=L.length;if(!n)return toast('Kelas '+k+' belum berisi siswa.');
+  const st=L.reduce((a,s)=>a+((s.setoran||[]).length),0);
+  if(!confirm(`Hapus Kelas ${k}?\n\n${n} siswa beserta ${st} setoran dan semua nilainya akan dihapus. Bila sinkron antar guru aktif, data ini juga hilang dari perangkat guru lain.\n\nSebelum menghapus, sebaiknya unduh cadangan di Pengaturan. Pengaturan guru kelas ini tidak ikut terhapus.`))return;
+  if((prompt(`Ketik ${k} untuk menghapus Kelas ${k}.`)||'').trim().toUpperCase()!==k)return toast('Dibatalkan.');
+  try{await DB.set('cadanganHapusKelas-'+k,{tgl:new Date().toISOString(),kelas:k,siswa:klsKlon(L)})}catch(_){return toast('Cadangan gagal dibuat; penghapusan dibatalkan.')}
+  const ids=new Set(L.map(s=>s.id));S.siswa=S.siswa.filter(s=>s.kelas!==k);ids.forEach(id=>S.sel.delete(id));S.in.i=0;S.rp=0;if(typeof ST!=='undefined')ST.i=0;
+  persist();render();toast(`Kelas ${k} dihapus (${n} siswa).`,()=>{S.siswa=S.siswa.concat(L);persist();render();toast(`Kelas ${k} dikembalikan (${n} siswa).`)})}
 function bindKelas(){const V=$('#view');
   V.onclick=e=>{const b=e.target.closest('[data-ka]');if(!b)return;const k=b.dataset.k,a=b.dataset.ka;
     if(a==='salin'){const src=V.querySelector(`[data-ks="${k}"]`).value;if(!src)return toast('Pilih kelas sumber dulu.');if(!confirm(`Salin guru dan nama kelompok dari Kelas ${src} ke Kelas ${k}? Isian Kelas ${k} akan diganti.`))return;
       const o=klsData(src),d=S.set.kls[k]||(S.set.kls[k]=klsBawaan(k));['guru','guruT','klpNama'].forEach(x=>{if(o[x]!==undefined)d[x]=klsKlon(o[x])});if(k===S.set.kelasAktif)kelasMuat();saved();render();return toast('Tersalin.')}
     if(a==='naik')return kelasNaik();
+    if(a==='hapus')return kelasHapus(k);
     kelasPilih(k);go('siswa');
     if(a==='xls'){const f=$('#impIn');if(f)f.click()}
     else if(a==='tempel'){const t=$('#bulk');if(t){const d=t.closest('details');if(d)d.open=true;t.focus()}}};
@@ -2854,6 +2869,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 49: v1.76 orientasi tanpa ketukan di APK (PrintHelper.setOrientation native + oriNatif di native-shim; default Potret di HP bila belum dipilih, oriPil) dan v1.77 Hapus kelas (kelasHapus sebelum bindKelas, tombol data-ka=hapus di klsKartu, CSS style id=v177; cadangan kv cadanganHapusKelas-<kelas>; tanpa perubahan skema DB, bagian terlindungi tidak disentuh; fingerprint SAMA, golden a998dc93b6deea07 30206, node --check lulus). Perlu dicek manual di perangkat: kunci orientasi APK dan alur Hapus kelas.
 - Sesi 48 (lanjutan 3): v1.75 ekspor leger + rapor Excel: blok 'v1.75 EKSPOR LEGER + RAPOR' sebelum EKSPOR LEGER (XL_TPL tata letak sheet Rapot dari berkas contoh pengguna RAPOT_BTQ_TAHFIDZ_4A_SEM_2_2025.xlsm, XL_STY = styles.xml-nya; xlLedger/xlRapot/xlBuku/xlZip menulis OOXML langsung tanpa pustaka; eksporXl dipanggil menu Siswa ⋯; ekspor() lama tidak dipakai lagi). Rapot: J5 daftar pilihan nama, isi lewat INDEX/MATCH ke sheet ledger (kolom CO = guru tahfidz per kelompok untuk tanda tangan). Juz 30 selalu bila ada isian (atau bila tak ada paket terisi); paket Juz 29–1 hanya bila ada isian. Ledger Juz 30 tetap bisa diimpor ulang (kolom sama; kolom surat/hadis/doa kosong disembunyikan). Diuji LibreOffice (render + ganti nama), belum diuji di Microsoft Excel/HP: perlu dicek manual oleh pengguna.
 - Sesi 48 (lanjutan 2): v1.74 perbaikan orientasi: oriTerap hanya dipanggil dari tombol Pengaturan, jadi kunci hilang setelah aplikasi ditutup/dibuka; kini oriBuka() dipanggil di init (setelah tampilMuat), visibilitychange, pageshow; bila lock ditolak tanpa gestur, oriPasang() menunggu ketukan pertama (ORI_LOCK/ORI_ARM). Diuji Chromium dengan stub; perlu dicek manual di perangkat nyata.
 - Sesi 48 (lanjutan): v1.73 tombol − surat / + surat di Setoran Tahfidz (data-sr di quranFields, handler di onclick Setoran; tanpa CSS/DB baru; diuji Chromium).
