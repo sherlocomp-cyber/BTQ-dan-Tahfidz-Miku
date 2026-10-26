@@ -770,7 +770,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.77';
+const VERSI='v1.78';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -897,10 +897,10 @@ const VIEWS={
   <p><b>6. Tampilan</b> – pilih tema di pojok atas: ☀️ terang, 🌤️ biru, 🌙 gelap, atau 🪐 Angkasa (latar kertas berlapis dan planet). Tema hanya mengubah tampilan di layar; cetak rapor tidak terpengaruh.</p>
   <p><b>Pilih kelas & default</b> – bila perangkat belum punya pilihan, layar Pilih kelas atau koordinator tampil saat aplikasi dibuka. Ketuk satu kelas (atau Koordinator) dan pilihan itu tersimpan di perangkat tersebut, jadi berikutnya langsung masuk. Untuk mengganti, ketuk logo di kiri atas atau ubah di Pengaturan › Halaman awal perangkat ini.</p>
   <p><b>Kenaikan kelas & pembagian A/B</b> – di halaman Kelas, setelah Naikkan semua kelas, atur siapa masuk A atau B per tingkat: ketuk A/B pada siswa, Tukar seluruh A ↔ B, atau Bagi rata (acak). Tukar dan Bagi rata bisa diurungkan.</p>
-  <p><b>Tampilan HP</b> – nama kelas aktif tampil di header; ketuk tombol tema untuk berganti tema (nama tema muncul sebentar). Halaman Kelas menampilkan kelas berisi siswa lebih dulu, kelas kosong dilipat. Tombol “Hapus semua siswa…” di kartu kelas menghapus semua siswa kelas itu, kelasnya tetap ada (konfirmasi, ketik kode kelas, ada tombol Urungkan); sebaiknya unduh cadangan dulu.</p>
+  <p><b>Tampilan HP</b> – nama kelas aktif tampil di header; ketuk tombol tema untuk berganti tema (nama tema muncul sebentar). Halaman Kelas menampilkan kelas berisi siswa lebih dulu, kelas kosong dilipat. Tombol “Hapus semua siswa…” di kartu kelas menghapus semua siswa kelas itu, kelasnya tetap ada (konfirmasi, ketik kode kelas, ada tombol Urungkan); sebaiknya unduh cadangan dulu. Alumni (siswa kelas 6 yang sudah dinaikkan) dilihat lewat tombol “Lihat alumni” di halaman Kelas: daftar, cari nama, capaian terakhir.</p>
   <p class="mut" style="margin-top:14px">Versi ${VERSI}</p></div></details></div>`}
 };
-function render(){ksBuat();kelasUI();autoSet();if(S.page==='setoran'&&!ST.mulai&&S.ks.length){ST.mulai=1;const q=urutSetor(ST.j);if(q.length){ST.i=q[0];prefillSt()}}$('#view').innerHTML=VIEWS[S.page]();if(S.page==='setelan')bindSetelan();if(S.page==='siswa')bindSiswa();if(S.page==='kelas')bindKelas();if(S.page==='nilai')bindNilai();if(S.page==='setoran')bindSetoran();if(S.page==='rapor')bindRapor();if(S.page==='rekap')bindRekapAll();if(S.page==='dashboard')bindDash();if(S.page==='koordinator')bindKor();pasangCari();gsIsi()}
+function render(){ksBuat();kelasUI();autoSet();if(S.page==='setoran'&&!ST.mulai&&S.ks.length){ST.mulai=1;const q=urutSetor(ST.j);if(q.length){ST.i=q[0];prefillSt()}}$('#view').innerHTML=VIEWS[S.page]();if(S.page==='setelan')bindSetelan();if(S.page==='siswa')bindSiswa();if(S.page==='kelas')bindKelas();if(S.page==='nilai')bindNilai();if(S.page==='setoran')bindSetoran();if(S.page==='rapor')bindRapor();if(S.page==='rekap')bindRekapAll();if(S.page==='dashboard')bindDash();if(S.page==='koordinator')bindKor();if(S.page==='alumni')bindAlumni();pasangCari();gsIsi()}
 function bindSetelan(){
   psTampil();
   document.querySelectorAll('[data-k]').forEach(i=>i.oninput=()=>{S.set[i.dataset.k]=i.value;autoSet();saved();const p=$('#tglInfo');if(p)p.textContent=S.set.tempat+' · Semester '+S.set.semester+' · '+S.set.tp});
@@ -1057,7 +1057,7 @@ function klsKartu(k){const a=k===S.set.kelasAktif,o=klsData(k),g=klsGuruT(k),n=k
   <div class="row" style="margin-top:8px"><select data-ks="${k}"><option value="">Salin guru &amp; kelompok dari…</option>${KLS_ALL.filter(x=>x!==k).map(x=>`<option value="${x}">Kelas ${x}</option>`).join('')}</select><button class="sm" data-ka="salin" data-k="${k}">Salin</button></div></details></div>`}
 VIEWS.kelas=()=>{kelasSimpan();const tot=S.siswa.length;
   return `<h1>Kelas</h1><p class="mut" style="margin:0 0 12px">${tot} siswa di semua kelas. Pilih kelas, lalu impor atau tambah siswa. Tanda tangan rapor mengikuti guru kelompok tahfidz tiap siswa. Siswa 4A yang lama tetap tersimpan di Kelas 4A.</p>${(()=>{const ada=KLS_ALL.filter(k=>klsJml(k)||k===S.set.kelasAktif),kos=KLS_ALL.filter(k=>!ada.includes(k));return `<div class="kg">${ada.map(klsKartu).join('')}</div>${kos.length?`<div class="card fold" style="margin-top:12px"><details><summary>Kelas belum berisi siswa (${kos.length})</summary><div class="kg" style="margin-top:12px">${kos.map(klsKartu).join('')}</div></details></div>`:''}`})()}
-  <div class="card" style="margin-top:14px"><h3>Kenaikan kelas akhir tahun</h3><p class="mut">Memindahkan semua siswa naik satu tingkat (4A→5A, 3B→4B, dst.). Siswa kelas 6 ditandai lulus dan tidak muncul di daftar kelas (data tetap tersimpan). Cadangan otomatis dibuat dulu. Lakukan sekali saja saat tahun ajaran baru, sebaiknya setelah rapor dicetak.${S.siswa.some(s=>s.kelas==='LULUS')?` Saat ini ${S.siswa.filter(s=>s.kelas==='LULUS').length} siswa berstatus lulus.`:''}</p><button class="btn ghost" data-ka="naik">Naikkan semua kelas…</button></div>${abKartu()}`};
+  <div class="card" style="margin-top:14px"><h3>Kenaikan kelas akhir tahun</h3><p class="mut">Memindahkan semua siswa naik satu tingkat (4A→5A, 3B→4B, dst.). Siswa kelas 6 ditandai lulus dan tidak muncul di daftar kelas (data tetap tersimpan). Cadangan otomatis dibuat dulu. Lakukan sekali saja saat tahun ajaran baru, sebaiknya setelah rapor dicetak.${S.siswa.some(s=>s.kelas==='LULUS')?` Saat ini ${S.siswa.filter(s=>s.kelas==='LULUS').length} siswa berstatus lulus.`:''}</p><button class="btn ghost" data-ka="naik">Naikkan semua kelas…</button>${S.siswa.some(s=>s.kelas==='LULUS')?` <button class="btn ghost" data-ka="alumni">Lihat alumni (${S.siswa.filter(s=>s.kelas==='LULUS').length})</button>`:''}</div>${abKartu()}`};
 async function kelasNaik(){const n=S.siswa.filter(s=>klsOk(s.kelas)).length;if(!n)return toast('Belum ada siswa di kelas mana pun.');
   if(!confirm(`Naikkan ${n} siswa satu tingkat? Siswa kelas 6 menjadi lulus. Cadangan dibuat otomatis.`))return;
   if(prompt('Ketik NAIK untuk melanjutkan.')!=='NAIK')return toast('Dibatalkan.');
@@ -1073,12 +1073,32 @@ async function kelasHapus(k){if(!klsOk(k))return;const L=S.siswa.filter(s=>s.kel
   try{await DB.set('cadanganHapusKelas-'+k,{tgl:new Date().toISOString(),kelas:k,siswa:klsKlon(L)})}catch(_){return toast('Cadangan gagal dibuat; penghapusan dibatalkan.')}
   const ids=new Set(L.map(s=>s.id));S.siswa=S.siswa.filter(s=>s.kelas!==k);ids.forEach(id=>S.sel.delete(id));S.in.i=0;S.rp=0;if(typeof ST!=='undefined')ST.i=0;
   persist();render();toast(`Semua siswa Kelas ${k} dihapus (${n} siswa).`,()=>{S.siswa=S.siswa.concat(L);persist();render();toast(`Kelas ${k} dikembalikan (${n} siswa).`)})}
+/* ===== v1.78: HALAMAN ALUMNI (hanya baca): siswa berstatus LULUS (hasil Kenaikan kelas dari kelas 6). Dibuka dari halaman Kelas; tidak ada di bilah navigasi. ===== */
+const ALM={q:''};
+const almSar=()=>{const q=korNorm(ALM.q).split(' ').filter(Boolean);return S.siswa.filter(s=>s.kelas==='LULUS'&&q.every(w=>korNorm(s.nama).includes(w))).sort((a,b)=>cmpNama(a.nama,b.nama))};
+function almBaris(s){const t=lastSet(s,'tahfidz'),b=lastSet(s,'btq'),n=(s.setoran||[]).length,
+  r=(s.setoran||[]).slice().sort((x,y)=>x.tgl<y.tgl?1:x.tgl>y.tgl?-1:(y.t||0)-(x.t||0)).slice(0,6);
+  return `<details class="card alm-r" style="margin-bottom:8px"><summary><b>${esc(s.nama)}</b><span class="mut"> · ${n} setoran</span></summary>
+  <p class="mut" style="margin:8px 0 0">NIS ${esc(s.nis||'–')} · NISN ${esc(s.nisn||'–')}</p>
+  <p style="margin:8px 0 0"><b>Tahfidz:</b> ${t?esc(t.pos)+' <span class="mut">('+esc(tglF(t.tgl))+')</span>':'<span class="mut">belum ada setoran</span>'}${s.pcTah&&s.pcTah.status?`<br><span class="mut">Di rapor: ${esc(pcText(s.pcTah))}</span>`:''}</p>
+  <p style="margin:8px 0 0"><b>BTQ:</b> ${b?esc(b.pos)+' <span class="mut">('+esc(tglF(b.tgl))+')</span>':'<span class="mut">belum ada setoran</span>'}${s.pcBTQ&&s.pcBTQ.status?`<br><span class="mut">Di rapor: ${esc(pcText(s.pcBTQ))}</span>`:''}</p>
+  ${r.length?`<p class="mut" style="margin:10px 0 4px">Setoran terakhir</p>${r.map(e=>`<div class="att"><div><b>${e.j==='btq'?'BTQ':'Tahfidz'} · ${esc(e.pos||'')}</b><span class="mut">${esc(tglF(e.tgl))}${e.ket?' • '+esc(e.ket):''}</span></div></div>`).join('')}`:''}</details>`}
+function almIsi(){const L=almSar(),tot=S.siswa.filter(s=>s.kelas==='LULUS').length;
+  if(!tot)return '<div class="card"><p class="mut">Belum ada alumni. Siswa kelas 6 berstatus alumni setelah Kenaikan kelas akhir tahun (halaman Kelas).</p></div>';
+  if(!L.length)return `<p class="mut">Tidak ada alumni bernama “${esc(ALM.q.trim())}”.</p>`;
+  return `<p class="mut" style="margin:0 0 8px">${ALM.q.trim()?L.length+' dari '+tot+' alumni cocok':tot+' alumni'}</p>${L.slice(0,100).map(almBaris).join('')}${L.length>100?'<p class="mut">Menampilkan 100 pertama. Ketik nama untuk mempersempit.</p>':''}`}
+VIEWS.alumni=()=>`<div class="row" style="margin-bottom:10px"><button class="sm" data-al="kembali">‹ Kelas</button></div><h1>Alumni</h1>
+  <label class="kor-q"><span class="kor-sr">Cari nama alumni</span><input type="search" id="almQ" placeholder="Cari nama alumni…" autocomplete="off" enterkeyhint="search" value="${esc(ALM.q)}"></label><div id="almList">${almIsi()}</div>`;
+function bindAlumni(){const V=$('#view'),q=$('#almQ');
+  V.onclick=e=>{if(e.target.closest('[data-al=kembali]'))go('kelas')};
+  if(q)q.oninput=()=>{ALM.q=q.value;$('#almList').innerHTML=almIsi()}}
 function bindKelas(){const V=$('#view');
   V.onclick=e=>{const b=e.target.closest('[data-ka]');if(!b)return;const k=b.dataset.k,a=b.dataset.ka;
     if(a==='salin'){const src=V.querySelector(`[data-ks="${k}"]`).value;if(!src)return toast('Pilih kelas sumber dulu.');if(!confirm(`Salin guru dan nama kelompok dari Kelas ${src} ke Kelas ${k}? Isian Kelas ${k} akan diganti.`))return;
       const o=klsData(src),d=S.set.kls[k]||(S.set.kls[k]=klsBawaan(k));['guru','guruT','klpNama'].forEach(x=>{if(o[x]!==undefined)d[x]=klsKlon(o[x])});if(k===S.set.kelasAktif)kelasMuat();saved();render();return toast('Tersalin.')}
     if(a==='naik')return kelasNaik();
     if(a==='hapus')return kelasHapus(k);
+    if(a==='alumni')return go('alumni');
     kelasPilih(k);go('siswa');
     if(a==='xls'){const f=$('#impIn');if(f)f.click()}
     else if(a==='tempel'){const t=$('#bulk');if(t){const d=t.closest('details');if(d)d.open=true;t.focus()}}};
@@ -2869,6 +2889,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 50: v1.78 Halaman Alumni (hanya baca): ALM/almSar/almBaris/almIsi/VIEWS.alumni/bindAlumni sebelum bindKelas; tombol data-ka=alumni di kartu Kenaikan kelas; halaman tidak masuk PAGES/navigasi (hashPg mengabaikannya, Kembali ke #kelas); render() memanggil bindAlumni. Tanpa perubahan skema DB/CSS baru; bagian terlindungi tidak disentuh; fingerprint SAMA, golden a998dc93b6deea07 30206, node --check lulus. Belum: kembalikan ke kelas, ekspor, hapus alumni, tahun lulus.
 - Sesi 49: v1.76 orientasi tanpa ketukan di APK (PrintHelper.setOrientation native + oriNatif di native-shim; default Potret di HP bila belum dipilih, oriPil) dan v1.77 Hapus siswa satu kelas (kelasHapus sebelum bindKelas, tombol data-ka=hapus di klsKartu, CSS style id=v177; cadangan kv cadanganHapusKelas-<kelas>; tanpa perubahan skema DB, bagian terlindungi tidak disentuh; fingerprint SAMA, golden a998dc93b6deea07 30206, node --check lulus). Perlu dicek manual di perangkat: kunci orientasi APK dan alur Hapus kelas.
 - Sesi 48 (lanjutan 3): v1.75 ekspor leger + rapor Excel: blok 'v1.75 EKSPOR LEGER + RAPOR' sebelum EKSPOR LEGER (XL_TPL tata letak sheet Rapot dari berkas contoh pengguna RAPOT_BTQ_TAHFIDZ_4A_SEM_2_2025.xlsm, XL_STY = styles.xml-nya; xlLedger/xlRapot/xlBuku/xlZip menulis OOXML langsung tanpa pustaka; eksporXl dipanggil menu Siswa ⋯; ekspor() lama tidak dipakai lagi). Rapot: J5 daftar pilihan nama, isi lewat INDEX/MATCH ke sheet ledger (kolom CO = guru tahfidz per kelompok untuk tanda tangan). Juz 30 selalu bila ada isian (atau bila tak ada paket terisi); paket Juz 29–1 hanya bila ada isian. Ledger Juz 30 tetap bisa diimpor ulang (kolom sama; kolom surat/hadis/doa kosong disembunyikan). Diuji LibreOffice (render + ganti nama), belum diuji di Microsoft Excel/HP: perlu dicek manual oleh pengguna.
 - Sesi 48 (lanjutan 2): v1.74 perbaikan orientasi: oriTerap hanya dipanggil dari tombol Pengaturan, jadi kunci hilang setelah aplikasi ditutup/dibuka; kini oriBuka() dipanggil di init (setelah tampilMuat), visibilitychange, pageshow; bila lock ditolak tanpa gestur, oriPasang() menunggu ketukan pertama (ORI_LOCK/ORI_ARM). Diuji Chromium dengan stub; perlu dicek manual di perangkat nyata.

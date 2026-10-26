@@ -71,6 +71,7 @@ Catatan: kode aplikasi memanggil plugin native `PrintHelper` (dialog cetak Andro
 
 ## Riwayat singkat
 
+- **v1.78** — Halaman Alumni (hanya baca): tombol “Lihat alumni” di halaman Kelas (muncul bila ada siswa berstatus lulus) membuka daftar alumni dengan kotak cari nama, jumlah setoran, capaian terakhir Tahfidz dan BTQ, serta enam setoran terakhir.
 - **v1.77** — Hapus siswa satu kelas: tombol “Hapus semua siswa…” di kartu kelas (halaman Kelas) menghapus semua siswa kelas itu beserta setoran dan nilainya; kelasnya tetap ada. Pengaman: konfirmasi, ketik kode kelas, cadangan otomatis di perangkat, tombol Urungkan. Pengaturan guru kelas tidak ikut terhapus. Penghapusan ikut tersinkron ke guru lain.
 - **v1.76** — Orientasi layar di APK terkunci langsung saat aplikasi dibuka (tanpa ketukan pertama; perlu APK baru). Di HP, orientasi bawaan Potret selama belum dipilih di Pengaturan.
 - **v1.75** — Ekspor leger + rapor Excel (Siswa › menu ⋯): sheet `ledger 30` + `Rapot 30` persis seperti berkas contoh; di Rapot pilih nama di kolom NAMA dan seluruh rapor berubah otomatis (siap cetak A4). Hanya juz yang sudah terisi yang dibuat (paket Juz 29–1 menjadi sheet `ledger N` / `Rapot N`).
