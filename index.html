@@ -719,6 +719,8 @@ body.rfo{overflow:hidden}
   var C=window.Capacitor;
   if(!C||!C.isNativePlatform||!C.isNativePlatform())return;
   var FS=C.registerPlugin('Filesystem'),SH=C.registerPlugin('Share'),PH=C.registerPlugin('PrintHelper');
+  /* v1.76: kunci orientasi native (portrait/landscape/auto); ditolak bila APK belum punya metode setOrientation */
+  window.oriNatif=function(m){return PH.setOrientation({mode:m})};
   /* SheetJS lokal (ikut di dalam APK) -> ekspor Excel jalan tanpa internet */
   var s=document.createElement('script');s.src='xlsx.full.min.js';document.head.appendChild(s);
   function bersih(n){return String(n||'berkas').replace(/[\\\/:*?"<>|]+/g,'_')}
@@ -1111,8 +1113,11 @@ function abAksi(b){const a=b.dataset.ab,t=abTingkat(),y=scrollY;
    Android Chrome mengunci tanpa layar penuh bila aplikasi terpasang (standalone); di tab biasa perlu layar penuh.
    iPhone/iPad (Safari) tidak mendukung kunci: hanya menampilkan petunjuk. ===== */
 let ORI_MSG='',ORI_FS=false,ORI_LOCK=false;const ORI_T={potret:'portrait',lanskap:'landscape'};
+const oriHP=()=>{try{return matchMedia('(pointer:coarse)').matches&&Math.min(screen.width,screen.height)<600}catch(_){return false}};
 function oriNote(m){ORI_MSG=m||'';const e=document.getElementById('oriNote');if(e)e.textContent=ORI_MSG}
 async function oriTerap(gest){const o=TAMPIL.ori,so=window.screen&&screen.orientation,md=ORI_T[o];ORI_LOCK=false;
+  /* v1.76: di APK kunci dipasang oleh Android langsung (PrintHelper.setOrientation), tanpa ketukan/layar penuh. APK lama tanpa metode ini jatuh ke jalur web di bawah. */
+  if(window.oriNatif&&(md||gest)){try{await window.oriNatif(md||'auto');if(md){ORI_LOCK=true;if(gest)oriNote('Orientasi terkunci: '+o+'.')}else if(gest)oriNote('');return}catch(_){}}
   if(!md){if(!gest)return;if(so&&so.unlock){try{so.unlock()}catch(_){}}if(ORI_FS&&document.fullscreenElement){try{await document.exitFullscreen()}catch(_){}}ORI_FS=false;oriNote('');return}
   if(!so||!so.lock){if(gest)oriNote('Peramban ini tidak mendukung kunci orientasi (mis. iPhone/iPad). Putar perangkat secara manual.');return}
   try{await so.lock(md);ORI_LOCK=true;if(gest)oriNote('Orientasi terkunci: '+o+'.')}
@@ -1132,11 +1137,13 @@ function tampilTerap(){const T=TAMPIL,h=document.documentElement,W=T.mode==='des
   const n=document.createElement('meta');n.name='viewport';n.content=vp;if(v)v.replaceWith(n);else document.head.append(n)}
 function tampilSet(o){Object.assign(TAMPIL,o);TAMPIL.zoom=Math.min(150,Math.max(70,Math.round(TAMPIL.zoom)));
   try{localStorage.setItem('btqTampil',JSON.stringify(TAMPIL))}catch(_){}tampilTerap();render()}
-function tampilMuat(){try{const o=JSON.parse(localStorage.getItem('btqTampil')||'{}');if(['auto','hp','desktop'].includes(o.mode))TAMPIL.mode=o.mode;if(+o.zoom>=70&&+o.zoom<=150)TAMPIL.zoom=Math.round(+o.zoom);if(['auto','potret','lanskap'].includes(o.ori))TAMPIL.ori=o.ori}catch(_){}tampilTerap();oriTerap(false)}
+function tampilMuat(){try{const o=JSON.parse(localStorage.getItem('btqTampil')||'{}');if(['auto','hp','desktop'].includes(o.mode))TAMPIL.mode=o.mode;if(+o.zoom>=70&&+o.zoom<=150)TAMPIL.zoom=Math.round(+o.zoom);if(['auto','potret','lanskap'].includes(o.ori))TAMPIL.ori=o.ori;
+  /* v1.76: HP (layar sentuh, sisi pendek < 600 px) default Potret selama pengguna belum memilih orientasi sendiri; pilihan eksplisit (oriPil) tetap dihormati */
+  if(o.oriPil)TAMPIL.oriPil=1;else if(TAMPIL.ori==='auto'&&oriHP())TAMPIL.ori='potret'}catch(_){}tampilTerap();oriTerap(false)}
 {const s2=VIEWS.setelan;VIEWS.setelan=function(){const T=TAMPIL,m=(k,t)=>`<button class="${T.mode===k?'on':''}" data-tm="${k}">${t}</button>`,og=(k,t)=>`<button class="${T.ori===k?'on':''}" data-to="${k}">${t}</button>`;
   return s2()+`<div class="card" style="margin-top:16px"><h3>Tampilan</h3><p class="mut">Berlaku hanya di perangkat ini.</p><p class="mut" style="margin:10px 0 6px">Mode tampilan</p><div class="seg">${m('auto','Otomatis')}${m('hp','HP')}${m('desktop','Desktop')}</div><p class="mut" style="margin:14px 0 6px">Orientasi layar</p><div class="seg">${og('auto','Otomatis')}${og('potret','Potret')}${og('lanskap','Lanskap')}</div><p class="mut" id="oriNote" role="status" style="margin-top:6px">${ORI_MSG}</p><p class="mut" style="margin:14px 0 6px">Ukuran tampilan: <b>${T.zoom}%</b></p><div class="row"><button class="sm" data-tz="-10">A− Perkecil</button><button class="sm" data-tz="10">A+ Perbesar</button><button class="sm" data-tz="0">Atur ulang</button></div></div>`}}
 {const b2=bindSetelan;bindSetelan=function(){b2();document.querySelectorAll('[data-tm]').forEach(b=>b.onclick=()=>tampilSet({mode:b.dataset.tm}));
-  document.querySelectorAll('[data-to]').forEach(b=>b.onclick=()=>{ORI_MSG='';tampilSet({ori:b.dataset.to});oriTerap(true)});
+  document.querySelectorAll('[data-to]').forEach(b=>b.onclick=()=>{ORI_MSG='';tampilSet({ori:b.dataset.to,oriPil:1});oriTerap(true)});
   document.querySelectorAll('[data-tz]').forEach(b=>b.onclick=()=>tampilSet({zoom:+b.dataset.tz?TAMPIL.zoom+ +b.dataset.tz:100}))}}
 /* ===== INPUT NILAI: per siswa (geser) & per kolom ===== */
 const SURAT=["An-Naba","An-Naazi'aat","'Abasa","At-Takwir","Al-Infithaar","Al-Muthaffifin","Al-Insyiqaaq","Al-Buruuj","At-Thaariq","Al-A'laa","Al-Ghaasyiyah","Al-Fajr","Al-Balad","Asy-Syams","Al-Lail","Ad-Dhuhaa","Al-Insyirah","At-Tiin","Al-'Alaq","Al-Qadr","Al-Bayyinah","Az-Zalzalah","Al-'Adiyat","Al-Qori'ah","At-Takatsur","Al-'Asr","Al-Humazah","Al-Fiil","Al-Quraisy","Al-Ma'un","Al-Kautsar","Al-Kaafirun","An-Nasr","Al-Lahab","Al-Ikhlas","Al-Falaq","An-Naas"];
