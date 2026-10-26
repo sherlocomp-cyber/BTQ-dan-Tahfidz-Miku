@@ -36,6 +36,7 @@ Baca juga: blok `proyek-handoff` di dalam `index.html` (aturan proyek, fingerpri
 - [x] **Tahap 5 (v1.36)** sinkron Firebase per kelas: kunci `kelas/<kode>`; blob `set` tidak lagi memuat `kls`; perangkat baru mengambil pengaturan kelas dari server (`terapKelas`); blob `set` lama dengan `kls` disemai (`klsTerap`). **Belum**: kode ruang/PIN, hanya mengunduh kelas tertentu.
 - [x] **Koordinator tahfidz (v1.56)** halaman Koordinator: antrean lintas kelas dari setoran tahfidz bertanda `harus` yang belum `kor`, input nilai surat/tahap, mode koordinator per perangkat (`localStorage btqKoor`). **v1.57:** halaman depan (gerbang) memuat kartu Koordinator + 12 kelas, pilihan tersimpan per perangkat (`btqKelasDefault` / `btqKoor`), kotak cari + saring kelas. Rekap lintas kelas untuk kepala madrasah masih di Tahap 6.
 - [x] **Tahap 6a (v1.72)** Rekap › Semua kelas: ringkasan per kelas (siswa, setor, ke koordinator, target), tombol Buka, cetak landscape, Excel. Cetak/Excel perlu dicek manual.
+- [x] **v1.79** Impor data kelas lama (`klImpor`, file .json terpisah, tidak di repo) + tahun lulus alumni (`s.lulus`, `s.kelasLama`). Dipakai 27 Okt 2026 untuk memasukkan data 2025/2026: 1A→2A, 1B→2B, 2B→3B, 3A/3B→4A (yang sudah ada tetap)/4B, 4A→5A, 4B→5B, 5A→6A, 5B→6B, kelas 6 → alumni 2025/2026. Belum ada file kelas 2A (jadi 3A kosong).
 - [ ] **Tahap 6b** pemisahan data siswa 4A (`REKAP_BAWAAN`) dari `index.html` (repo publik memuat nama siswa 4A!); menunggu keputusan pengguna.
 
 ## Usulan detail tahap berikutnya (untuk akun lain)

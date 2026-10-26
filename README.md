@@ -2,7 +2,7 @@
 
 Aplikasi web satu file (PWA) untuk mencatat setoran harian, nilai, dan mencetak rapor **BTQ** dan **Tahfidz** di madrasah. Berjalan di browser HP maupun komputer, bisa dipakai tanpa internet, dan bisa dibungkus menjadi APK dengan Capacitor.
 
-Versi saat ini: **v1.75**
+Versi saat ini: **v1.79**
 
 ## Fitur
 
@@ -71,6 +71,7 @@ Catatan: kode aplikasi memanggil plugin native `PrintHelper` (dialog cetak Andro
 
 ## Riwayat singkat
 
+- **v1.79** — Impor data kelas lama (halaman Kelas): memuat file .json siswa tahun lalu yang sudah dibagi per kelas baru; siswa yang sudah ada tidak dipindah/ditimpa (hanya melengkapi NIS, NISN, nilai yang kosong), aman diulang, cadangan otomatis. Kelas 6 menjadi alumni dengan tahun lulus (halaman Alumni dikelompokkan per tahun; Kenaikan kelas menanyakan tahun kelulusan). Data siswa tidak disimpan di repo ini.
 - **v1.78** — Halaman Alumni (hanya baca): tombol “Lihat alumni” di halaman Kelas (muncul bila ada siswa berstatus lulus) membuka daftar alumni dengan kotak cari nama, jumlah setoran, capaian terakhir Tahfidz dan BTQ, serta enam setoran terakhir.
 - **v1.77** — Hapus siswa satu kelas: tombol “Hapus semua siswa…” di kartu kelas (halaman Kelas) menghapus semua siswa kelas itu beserta setoran dan nilainya; kelasnya tetap ada. Pengaman: konfirmasi, ketik kode kelas, cadangan otomatis di perangkat, tombol Urungkan. Pengaturan guru kelas tidak ikut terhapus. Penghapusan ikut tersinkron ke guru lain.
 - **v1.76** — Orientasi layar di APK terkunci langsung saat aplikasi dibuka (tanpa ketukan pertama; perlu APK baru). Di HP, orientasi bawaan Potret selama belum dipilih di Pengaturan.
