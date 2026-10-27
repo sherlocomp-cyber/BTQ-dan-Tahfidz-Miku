@@ -689,6 +689,9 @@ body.rfo{overflow:hidden}
  #navHdr .hb[data-p=kelas]::before{content:"Kelas"}
  #navHdr .hb[data-p=setelan]::before{content:"Atur"}
 }
+/* v1.83 Koordinator: nilai per surat dalam tahap */
+.kor-r .it{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-top:1px solid var(--ln)}
+.kor-rt{font-weight:700;margin:8px 0 2px}
 </style>
 <style id="v177">
 html button.sm.red{border-color:#e5484d !important;color:#ff7b7f !important}
@@ -770,7 +773,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.82';
+const VERSI='v1.83';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -889,7 +892,7 @@ const VIEWS={
   <p><b>Setor ke koordinator tahfidz</b> – pada Setoran Tahfidz, centang "Harus setor ke koordinator tahfidz" bila siswa sudah lulus dari guru tahfidz dan masih harus menyetor ke koordinator (bukan mengulang setoran). Tandanya tampil di Riwayat dan sebagai status "Setor ke Koordinator" di Rekap bulan. Centang yang sama ada di Setoran Per kelompok.</p>
   <p><b>Halaman depan</b> – saat aplikasi dibuka di sebuah perangkat, pilih kelas atau Koordinator Tahfidz. Pilihan tersimpan di perangkat itu, jadi berikutnya langsung masuk. Ketuk logo di kiri atas untuk kembali ke halaman depan atau mengganti pilihan (bisa juga di Pengaturan › Halaman awal). Kartu Koordinator dan kartu kelas menunjukkan jumlah siswa yang menunggu nilai koordinator.</p>
   <p><b>Aktif/Nonaktif Koordinator</b> – di Pengaturan › Pilihan Koordinator tahfidz, pilihan Koordinator bisa dinonaktifkan per perangkat (kartu di halaman depan, opsi halaman awal, dan tab hilang) agar guru kelas tidak masuk ke Koordinator. Di Koordinator, tab Sudah dinilai punya tombol Batalkan nilai: nilai kembali seperti sebelumnya dan siswa kembali ke antrean Menunggu.</p>
-  <p><b>Halaman Koordinator</b> – siswa dari semua kelas yang bertanda setor ke koordinator muncul otomatis di tab Menunggu. Cari nama di kotak cari (cukup sebagian nama, urutan bebas) atau saring per kelas; angka di tombol kelas = jumlah yang menunggu. Ketuk nilai (A, A-, B, C, –, atau Mumtaz–Maqbul untuk setoran tahap) untuk menyimpan; kotak cari kosong lagi untuk siswa berikutnya. Nilai masuk ke Input Nilai dan rapor, siswa pindah ke tab Sudah dinilai, dan nilainya masih bisa diganti atau diurungkan. Siswa yang sudah dinilai satu koordinator otomatis hilang dari antrean koordinator lain.</p>
+  <p><b>Halaman Koordinator</b> – siswa dari semua kelas yang bertanda setor ke koordinator muncul otomatis di tab Menunggu. Cari nama di kotak cari (cukup sebagian nama, urutan bebas) atau saring per kelas; angka di tombol kelas = jumlah yang menunggu. Ketuk nilai (A, A-, B, C, –, atau Mumtaz–Maqbul untuk Tahap V) untuk menyimpan. Untuk setoran Tahap I–IV, koordinator menilai tiap surat dalam tahap itu: nilai surat langsung mengganti nilai surat di rapor, rata-ratanya otomatis menjadi predikat tahap (Mumtaz ≥ 90, Jayyid Jiddan ≥ 80, Jayyid ≥ 70, Maqbul ≥ 60; A=95, A-=85, B=75, C=65), dan siswa keluar dari antrean setelah semua surat tahap terisi; kotak cari kosong lagi untuk siswa berikutnya. Nilai masuk ke Input Nilai dan rapor, siswa pindah ke tab Sudah dinilai, dan nilainya masih bisa diganti atau diurungkan. Siswa yang sudah dinilai satu koordinator otomatis hilang dari antrean koordinator lain.</p>
   <p><b>Tahap di Setoran</b> – pada Setoran Tahfidz pilih "Per tahap" untuk mencatat Tahap I–V (centang Selesai bila tuntas; nilai tahap opsional, masuk ke Input Nilai › Tahapan Juz 30). Posisi tahap tampil di Rekap, mis. "Tahap 4 (belum selesai)".</p>
   <p><b>Nilai surat di Setoran</b> – pada Setoran Tahfidz, setelah memilih surat muncul pilihan nilai A / A- / B / C / –. Nilai langsung masuk ke Input Nilai › Surat (Juz 30 atau juz yang dipilih) dan tampil di rapor; dibiarkan kosong berarti nilai lama tidak diubah. Nilai juga tercatat di Riwayat setoran.</p>
   <p><b>Kelompok</b> – satu kelas dibagi 2 kelompok tahfidz dan 2 kelompok BTQ (anggota boleh berbeda). Atur di Siswa › Kelompok Tahfidz & BTQ (bagi dua otomatis atau ketuk angka per siswa; nama kelompok bisa diubah). Halaman Setoran punya tombol pilihan kelompok sehingga antrean hanya berisi siswa kelompok itu. Impor dari Rekap Nilai mengisi kelompok dari daftar siswa tahfidz/BTQ di sana.</p>
@@ -2278,6 +2281,43 @@ function eksporXl(){if(!S.ks.length)return toast('Belum ada siswa untuk diekspor
     toast(`Leger + rapor diekspor (${gs.map(g=>'Juz '+juzLbl(g)).join(', ')}). Buka sheet Rapot, pilih nama di kolom NAMA.`)}
   catch(e){toast('Ekspor gagal: '+(e&&e.message||e))}}
 
+/* ===== v1.83: Tahap dinilai per surat oleh koordinator. Nilai tiap surat langsung masuk s.surat (nilai surat di rapor); rata-rata surat dalam tahap (A=95, A-=85, B=75, C=65; surat "-" tidak dihitung) menjadi predikat s.tahap[t-1] (Mumtaz >=90, Jayyid Jiddan >=80, Jayyid >=70, Maqbul >=60). Tahap V (Sambung Ayat) tetap satu nilai. Siswa keluar dari antrean setelah semua surat tahap itu terisi. ===== */
+const TH_SR={1:[26,37],2:[14,25],3:[7,13],4:[1,6]},THK=[[90,'MUMTAZ'],[80,'JAYYID JIDDAN'],[70,'JAYYID'],[60,'MAQBUL']];
+const thIdx=t=>{const r=TH_SR[+t];return r?rng(r[0],r[1]).reverse():[]};
+function thRata(s,t){const v=thIdx(t).map(i=>NILAI[(s.surat||{})[i]]).filter(n=>n!=null);return v.length?rata(v):null}
+function thKunci(m){if(m==null)return '';const k=THK.find(x=>m>=x[0]);return k?k[1]:''}
+function thHitung(s,t){const k=thKunci(thRata(s,t));if(k)(s.tahap||(s.tahap=['','','','','']))[+t-1]=k;return k}
+function thLengkap(s,t){return thIdx(t).every(i=>!!(s.surat||{})[i])}
+function thSetSurat(s,i,v){if(!s.surat)s.surat={};if(v)s.surat[i]=v;else delete s.surat[i]}
+function thNilai(s,e,i,v){if(!s||!e||!e.tahap||!TH_SR[+e.tahap]||!thIdx(e.tahap).includes(i)||!SO.some(x=>x[0]===v))return null;
+  const t=+e.tahap,U={th:1,surat:{[i]:(s.surat||{})[i]||''},ksb:e.ksb?{...e.ksb}:undefined,sb0:e.sb0,kor:e.kor?{...e.kor}:undefined,tahap:(s.tahap||[])[t-1]||''};
+  if(!e.ksb){e.ksb={};e.sb0=(s.tahap||[])[t-1]||''}
+  if(e.ksb[i]===undefined)e.ksb[i]=(s.surat||{})[i]||'';
+  thSetSurat(s,i,v);const k=thHitung(s,t);
+  if(k&&thLengkap(s,t))e.kor=e.kor?{...e.kor,nilai:k}:{nilai:k,t:Date.now(),sb:e.sb0};
+  return U}
+function thUndo(s,e,U){Object.keys(U.surat).forEach(i=>thSetSurat(s,+i,U.surat[i]));
+  if(U.ksb)e.ksb=U.ksb;else delete e.ksb;if(U.sb0!==undefined)e.sb0=U.sb0;else delete e.sb0;
+  if(U.kor)e.kor=U.kor;else delete e.kor;
+  (s.tahap||(s.tahap=['','','','','']))[+e.tahap-1]=U.tahap}
+{const b0=korBatal;korBatal=function(s,e){
+  if(!(s&&e&&e.kor&&e.tahap&&TH_SR[+e.tahap]&&e.ksb))return b0(s,e);
+  const t=+e.tahap,U={th:1,surat:{},ksb:{...e.ksb},sb0:e.sb0,kor:{...e.kor},tahap:(s.tahap||[])[t-1]||''};
+  Object.keys(e.ksb).forEach(i=>{U.surat[i]=(s.surat||{})[i]||'';thSetSurat(s,+i,e.ksb[i])});
+  (s.tahap||(s.tahap=['','','','','']))[t-1]=e.sb0||'';delete e.kor;delete e.ksb;delete e.sb0;return U}}
+{const u0=korUrung;korUrung=function(s,e,U){if(U&&U.th)return thUndo(s,e,U);return u0(s,e,U)}}
+{const r0=korRow;korRow=function(x){const {s,e}=x;if(!(e.tahap&&TH_SR[+e.tahap]))return r0(x);
+  const t=+e.tahap,idx=thIdx(t),gu=korGuru(s),m=thRata(s,t),k=thKunci(m),lab=(AO.find(a=>a[0]===k)||[])[1]||'–',n=idx.filter(i=>(s.surat||{})[i]).length,done=!!e.kor;
+  const rows=idx.map(i=>{const cur=(s.surat||{})[i]||'';return `<div class="it"><span>${i}. ${esc(SURAT[i-1])}</span><div class="seg" role="group" aria-label="Nilai ${esc(SURAT[i-1])}">${SO.map(([v,l])=>`<button class="${cur===v?'on':''}" data-kp="${esc(s.id)}" data-ke="${esc(e.id)}" data-i="${i}" data-v="${esc(v)}">${l}</button>`).join('')}</div></div>`}).join('');
+  return `<li class="kor-r"><div class="kor-h"><b>${esc(s.nama)}</b><span class="kor-k">Kelas ${esc(s.kelas)}</span></div>
+    <p class="mut kor-m">${esc(e.pos||'')} • setor ${esc(tglF(e.tgl))}${gu?' • guru '+esc(gu):''}${done&&e.kor.t?' • dinilai '+esc(new Date(e.kor.t).toLocaleDateString('id-ID',{day:'numeric',month:'short'})):''}</p>
+    <p class="kor-rt">Tahap ${['I','II','III','IV'][t-1]}: ${n}/${idx.length} surat terisi · rata-rata ${m==null?'–':Math.round(m)} → ${lab}</p>${rows}${done?`<button class="sm kor-b" data-kb="${esc(s.id)}" data-ke="${esc(e.id)}">Batalkan nilai</button>`:''}</li>`}}
+{const b0=korBindRows;korBindRows=function(){b0();$('#korList').querySelectorAll('[data-kp]').forEach(b=>b.onclick=()=>{
+  const s=S.siswa.find(x=>String(x.id)===b.dataset.kp),e=s&&(s.setoran||[]).find(x=>String(x.id)===b.dataset.ke),v=b.dataset.v,baru=!(e&&e.kor);
+  const U=thNilai(s,e,+b.dataset.i,v);if(!U)return toast('Nilai tidak bisa disimpan untuk setoran ini.');sv(s);
+  const k=(s.tahap||[])[+e.tahap-1],lab=(AO.find(a=>a[0]===k)||[])[1]||'–';
+  toast(`${s.nama.split(' ')[0]}: ${SURAT[+b.dataset.i-1]} ${v==='-'?'–':v} · Tahap ${['I','II','III','IV'][+e.tahap-1]} ${lab}${e.kor&&baru?' tersimpan lengkap':''}`,()=>{thUndo(s,e,U);sv(s);render()});
+  if(baru&&e.kor&&KOR.tab!=='sudah')KOR.q='';render();if(baru&&e.kor){const q=$('#korQ');if(q)q.focus()}})}}
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
 const ALAB=['Tajwid','Makhroj','Murojaah','Kelancaran','Tajwid','Makhroj','Menulis','Membaca'];
 async function ekspor(){if(!S.ks.length)return toast('Belum ada siswa untuk diekspor.');
