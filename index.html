@@ -770,7 +770,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.81';
+const VERSI='v1.82';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -897,6 +897,7 @@ const VIEWS={
   <p><b>6. Tampilan</b> – pilih tema di pojok atas: ☀️ terang, 🌤️ biru, 🌙 gelap, atau 🪐 Angkasa (latar kertas berlapis dan planet). Tema hanya mengubah tampilan di layar; cetak rapor tidak terpengaruh.</p>
   <p><b>Pilih kelas & default</b> – bila perangkat belum punya pilihan, layar Pilih kelas atau koordinator tampil saat aplikasi dibuka. Ketuk satu kelas (atau Koordinator) dan pilihan itu tersimpan di perangkat tersebut, jadi berikutnya langsung masuk. Untuk mengganti, ketuk logo di kiri atas atau ubah di Pengaturan › Halaman awal perangkat ini.</p>
   <p><b>Kenaikan kelas & pembagian A/B</b> – di halaman Kelas, setelah Naikkan semua kelas, atur siapa masuk A atau B per tingkat: ketuk A/B pada siswa, Tukar seluruh A ↔ B, atau Bagi rata (acak). Tukar dan Bagi rata bisa diurungkan.</p>
+  <p><b>Impor template Excel kelas lama</b> – di halaman Kelas › Impor data kelas lama, ketuk Pilih template Excel dan pilih satu atau beberapa file template (nama, NIS/NISN, nilai surat Juz 30 dan paket juz, aspek, pencapaian, tahapan). Kelas baru boleh kosong (naik satu tingkat otomatis, kelas 6 menjadi alumni). Sel yang tidak dikenali dilewati dan dilaporkan; data yang sudah ada tidak ditimpa.</p>
   <p><b>Impor data kelas lama</b> – di halaman Kelas, kartu Impor data kelas lama memuat file .json siswa tahun lalu yang sudah dibagi per kelas baru; kelas 6 menjadi alumni dengan tahun lulus (tampil di halaman Alumni). Siswa yang sudah ada tidak dipindah dan tidak ditimpa, hanya diisi bagian yang kosong; aman diulang. Saat Kenaikan kelas, aplikasi menanyakan tahun kelulusan kelas 6.</p>
   <p><b>Tampilan HP</b> – nama kelas aktif tampil di header; ketuk tombol tema untuk berganti tema (nama tema muncul sebentar). Halaman Kelas menampilkan kelas berisi siswa lebih dulu, kelas kosong dilipat. Tombol “Hapus semua siswa…” di kartu kelas menghapus semua siswa kelas itu, kelasnya tetap ada (konfirmasi, ketik kode kelas, ada tombol Urungkan); sebaiknya unduh cadangan dulu. Alumni (siswa kelas 6 yang sudah dinaikkan) dilihat lewat tombol “Lihat alumni” di halaman Kelas: daftar, cari nama, capaian terakhir.</p>
   <p class="mut" style="margin-top:14px">Versi ${VERSI}</p></div></details></div>`}
@@ -1058,7 +1059,7 @@ function klsKartu(k){const a=k===S.set.kelasAktif,o=klsData(k),g=klsGuruT(k),n=k
   <div class="row" style="margin-top:8px"><select data-ks="${k}"><option value="">Salin guru &amp; kelompok dari…</option>${KLS_ALL.filter(x=>x!==k).map(x=>`<option value="${x}">Kelas ${x}</option>`).join('')}</select><button class="sm" data-ka="salin" data-k="${k}">Salin</button></div></details></div>`}
 VIEWS.kelas=()=>{kelasSimpan();const tot=S.siswa.length;
   return `<h1>Kelas</h1><p class="mut" style="margin:0 0 12px">${tot} siswa di semua kelas. Pilih kelas, lalu impor atau tambah siswa. Tanda tangan rapor mengikuti guru kelompok tahfidz tiap siswa. Siswa 4A yang lama tetap tersimpan di Kelas 4A.</p>${(()=>{const ada=KLS_ALL.filter(k=>klsJml(k)||k===S.set.kelasAktif),kos=KLS_ALL.filter(k=>!ada.includes(k));return `<div class="kg">${ada.map(klsKartu).join('')}</div>${kos.length?`<div class="card fold" style="margin-top:12px"><details><summary>Kelas belum berisi siswa (${kos.length})</summary><div class="kg" style="margin-top:12px">${kos.map(klsKartu).join('')}</div></details></div>`:''}`})()}
-  <div class="card" style="margin-top:14px"><h3>Kenaikan kelas akhir tahun</h3><p class="mut">Memindahkan semua siswa naik satu tingkat (4A→5A, 3B→4B, dst.). Siswa kelas 6 ditandai lulus dan tidak muncul di daftar kelas (data tetap tersimpan). Cadangan otomatis dibuat dulu. Lakukan sekali saja saat tahun ajaran baru, sebaiknya setelah rapor dicetak.${S.siswa.some(s=>s.kelas==='LULUS')?` Saat ini ${S.siswa.filter(s=>s.kelas==='LULUS').length} siswa berstatus lulus.`:''}</p><button class="btn ghost" data-ka="naik">Naikkan semua kelas…</button>${S.siswa.some(s=>s.kelas==='LULUS')?` <button class="btn ghost" data-ka="alumni">Lihat alumni (${S.siswa.filter(s=>s.kelas==='LULUS').length})</button>`:''}</div><div class="card" style="margin-top:14px"><h3>Impor data kelas lama</h3><p class="mut">Memasukkan data siswa tahun lalu dari file .json yang sudah disusun per kelas baru (siswa kelas 6 menjadi alumni dengan tahun lulus). Siswa yang sudah ada tidak dipindah dan tidak ditimpa, hanya dilengkapi bagian yang kosong; aman diulang. Cadangan otomatis dibuat dulu.</p><button class="btn ghost" data-ka="implama">Pilih file data kelas lama…</button><input type="file" id="klIn" accept=".json,application/json" style="display:none"></div>${abKartu()}`};
+  <div class="card" style="margin-top:14px"><h3>Kenaikan kelas akhir tahun</h3><p class="mut">Memindahkan semua siswa naik satu tingkat (4A→5A, 3B→4B, dst.). Siswa kelas 6 ditandai lulus dan tidak muncul di daftar kelas (data tetap tersimpan). Cadangan otomatis dibuat dulu. Lakukan sekali saja saat tahun ajaran baru, sebaiknya setelah rapor dicetak.${S.siswa.some(s=>s.kelas==='LULUS')?` Saat ini ${S.siswa.filter(s=>s.kelas==='LULUS').length} siswa berstatus lulus.`:''}</p><button class="btn ghost" data-ka="naik">Naikkan semua kelas…</button>${S.siswa.some(s=>s.kelas==='LULUS')?` <button class="btn ghost" data-ka="alumni">Lihat alumni (${S.siswa.filter(s=>s.kelas==='LULUS').length})</button>`:''}</div><div class="card" style="margin-top:14px"><h3>Impor data kelas lama</h3><p class="mut">Memasukkan data siswa tahun lalu dari file .json yang sudah disusun per kelas baru (siswa kelas 6 menjadi alumni dengan tahun lulus). Siswa yang sudah ada tidak dipindah dan tidak ditimpa, hanya dilengkapi bagian yang kosong; aman diulang. Cadangan otomatis dibuat dulu.</p><button class="btn ghost" data-ka="implama">Pilih file data kelas lama…</button><input type="file" id="klIn" accept=".json,application/json" style="display:none"><p class="mut" style="margin:14px 0 8px"><b>Atau dari template Excel (.xlsx)</b> yang diisi guru kelas lama. Boleh memilih beberapa file sekaligus; template bisa dilengkapi guru sebelumnya, lalu diimpor ulang.</p><button class="btn ghost" data-ka="implxl">Pilih template Excel…</button><input type="file" id="klXl" accept=".xlsx,.xlsm,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple style="display:none"></div>${abKartu()}`};
 async function kelasNaik(){const n=S.siswa.filter(s=>klsOk(s.kelas)).length;if(!n)return toast('Belum ada siswa di kelas mana pun.');
   if(!confirm(`Naikkan ${n} siswa satu tingkat? Siswa kelas 6 menjadi lulus. Cadangan dibuat otomatis.`))return;
   if(prompt('Ketik NAIK untuk melanjutkan.')!=='NAIK')return toast('Dibatalkan.');
@@ -1097,16 +1098,56 @@ function klRencana(d,siswa){const idx=new Map();siswa.forEach(s=>idx.set(nm(s.na
   return {baru,ada,lewat}}
 async function klImpor(e){const f=e.target.files[0];e.target.value='';if(!f)return;let d;
   try{d=JSON.parse(await f.text());if(d.app!=='btq-tahfidz-kelas-lama'||!Array.isArray(d.siswa))throw 0}catch(_){return toast('File bukan data kelas lama BTQ–Tahfidz (.json).')}
+  return klProses(d,f.name,'')}
+async function klProses(d,nmFile,info){
   const R=klRencana(d,S.siswa);if(!R.baru.length&&!R.ada.length)return toast('Tidak ada siswa yang bisa diimpor dari file ini.');
   const per={};R.baru.forEach(x=>{const k=x.kelas==='LULUS'?'Alumni '+(x.lulus||''):'Kelas '+x.kelas;per[k]=(per[k]||0)+1});
   const rin=Object.keys(per).sort().map(k=>'• '+k+': '+per[k]+' siswa baru').join('\n');
-  if(!confirm(`Impor data kelas lama dari "${f.name}"?\n\n${rin||'• tidak ada siswa baru'}\n• ${R.ada.length} siswa sudah ada di aplikasi: tidak dipindah, hanya melengkapi isian yang masih kosong (NIS, NISN, nilai Juz 30, nilai surat Juz 29–27 dan paket Juz 26-1-2, aspek, pencapaian).\n\nSiswa yang sudah ada tidak dihapus atau ditimpa. Cadangan otomatis dibuat dulu.`))return;
+  if(!confirm(`Impor data kelas lama dari "${nmFile}"?\n\n${rin||'• tidak ada siswa baru'}\n• ${R.ada.length} siswa sudah ada di aplikasi: tidak dipindah, hanya melengkapi isian yang masih kosong (NIS, NISN, nilai Juz 30, nilai surat Juz 29–27 dan paket Juz 26-1-2, aspek, pencapaian).${info?'\n\n'+info:''}\n\nSiswa yang sudah ada tidak dihapus atau ditimpa. Cadangan otomatis dibuat dulu.`))return;
   try{await DB.set('cadanganSebelumImporKelasLama',{tgl:new Date().toISOString(),siswa:klsKlon(S.siswa)})}catch(_){return toast('Cadangan gagal dibuat; impor dibatalkan.')}
   const idx=new Map();S.siswa.forEach(s=>idx.set(nm(s.nama),s));let nb=0,nl=0,ni=0;
   (d.siswa||[]).forEach(x=>{if(!x||!nm(x.nama)||!(klsOk(x.kelas)||x.kelas==='LULUS'))return;const k=nm(x.nama);let s=idx.get(k);
     if(s){ni+=klIsi(s,x)?1:0;return}
     s=Object.assign(blank(),{kelas:x.kelas,nama:k});if(x.kelas==='LULUS')s.lulus=x.lulus||d.tahunLama||'';klIsi(s,x);S.siswa.push(s);idx.set(k,s);x.kelas==='LULUS'?nl++:nb++});
   migrasi();persist();render();toast(`Diimpor: ${nb} siswa kelas, ${nl} alumni; ${ni} siswa lama dilengkapi.`)}
+/* ===== v1.82: IMPOR TEMPLATE LEGER KELAS LAMA (.xlsx). Template dibuat di luar aplikasi: baris 4 tersembunyi memuat kunci kolom (surat.N, aspek.k, pcTah.status, tahap.N, nj.juz.surat, rj.juz.aspek.k, rj.juz.tahap.N); baris data = kolom NO berisi angka. Hasilnya disusun menjadi data yang sama dengan file .json kelas lama lalu diproses klProses (cadangan otomatis, tidak menimpa, aman diulang). Nilai di luar daftar dilewati dan dilaporkan. ===== */
+const KL_N=['A','A-','B','C','-'],KL_A=['MUMTAZ','JAYYID JIDDAN','JAYYID','MAQBUL'],KL_P={TERCAPAI:'Tercapai',MELAMPAUI:'Melampaui',TIDAK:'Tidak'};
+function klXlsxBaca(wb){const U=XLSX.utils,R={siswa:[],tahun:'',buruk:0,contoh:[],tanpaKelas:0,sel:0},SH=[];
+  const tx=v=>v==null?'':typeof v==='number'?String(Math.round(v)):String(v).trim();
+  const nl=v=>{const u=v.toUpperCase().replace(/[\u2010-\u2015\u2212]/g,'-').replace(/\s+/g,'');return KL_N.indexOf(u)>=0?u:''};
+  const as=v=>{const u=v.toUpperCase().replace(/\s+/g,' ');return KL_A.indexOf(u)>=0?u:''};
+  wb.SheetNames.forEach(n=>{const ws=wb.Sheets[n];if(!ws||!ws['!ref'])return;const g=U.sheet_to_json(ws,{header:1,raw:true,defval:''});
+    for(let i=0;i<Math.min(g.length,15);i++)if(g[i][0]==='#KUNCI'){const K={};g[i].forEach((k,c)=>{if(c>=1&&tx(k))K[c]=tx(k)});SH.push({n,g,k:i,K});return}});
+  const ds=SH.filter(s=>s.K[1]==='nama')[0];if(!ds)return R;
+  ds.g.slice(0,6).forEach(r=>r.forEach(c=>{const m=/^\d{4}\/\d{4}$/.exec(tx(c));if(m&&!R.tahun)R.tahun=m[0]}));
+  const baris=s=>s.g.slice(s.k+3).map((row,i)=>({row,r:s.k+3+i})).filter(o=>/^\d+$/.test(tx(o.row[0])));
+  const naik=a=>klsOk(a)?(klsT(a)>=6?'LULUS':(klsT(a)+1)+a.slice(1)):'',byNo={};
+  baris(ds).forEach(o=>{const f={};Object.keys(ds.K).forEach(c=>f[ds.K[c]]=tx(o.row[c]));const nama=nm(f.nama);if(!nama)return;
+    const kl=String(f.kelasLama||'').toUpperCase().replace(/\s/g,'');let kb=String(f.kelas||'').toUpperCase().replace(/\s/g,'');
+    if(!(klsOk(kb)||kb==='LULUS'))kb=naik(kl);if(!kb){R.tanpaKelas++;return}
+    const x={kelas:kb,kelasLama:klsOk(kl)?kl:'',nama:nama,nis:f.nis||'',nisn:f.nisn||'',surat:{},hadist:{},doa:{},aspek:{},pcBTQ:{status:'',pos:'',raw:''},pcTah:{status:'',pos:'',raw:''},tahap:['','','','',''],nj:{},rj:{}};
+    if(kb==='LULUS')x.lulus=/^\d{4}\/\d{4}$/.test(f.lulus)?f.lulus:R.tahun;byNo[+tx(o.row[0])]=x;R.siswa.push(x)});
+  SH.forEach(s=>{if(s===ds)return;baris(s).forEach(o=>{const x=byNo[+tx(o.row[0])];if(!x)return;
+    Object.keys(s.K).forEach(c=>{const raw=tx(o.row[c]);if(!raw)return;const p=s.K[c].split('.');let ok=true;
+      const bad=()=>{R.buruk++;if(R.contoh.length<4)R.contoh.push(s.n+' baris '+(o.r+1)+': \u201C'+raw.slice(0,14)+'\u201D')};
+      if(p[0]==='surat'){const v=nl(raw);if(!v)return bad();x.surat[p[1]]=v}
+      else if(p[0]==='aspek'){const v=as(raw);if(!v)return bad();x.aspek[p[1]]=v}
+      else if(p[0]==='tahap'){const v=as(raw);if(!v)return bad();x.tahap[+p[1]-1]=v}
+      else if(p[0]==='pcTah'||p[0]==='pcBTQ'){if(p[1]==='pos')x[p[0]].pos=raw;else{const v=KL_P[raw.toUpperCase().replace(/\s+/g,'')];if(!v)return bad();x[p[0]].status=v}}
+      else if(p[0]==='nj'){const v=nl(raw);if(!v)return bad();(x.nj[p[1]]||(x.nj[p[1]]={}))[p[2]]=v}
+      else if(p[0]==='rj'){const r=x.rj[p[1]]||(x.rj[p[1]]={aspek:{},tahap:['','']});
+        if(p[2]==='aspek'){const v=as(raw);if(!v)return bad();r.aspek[p[3]]=v}else if(p[2]==='tahap'){const v=as(raw);if(!v)return bad();r.tahap[+p[3]-1]=v}else ok=false}
+      else ok=false;if(ok)R.sel++})})});
+  R.siswa.forEach(x=>['pcTah','pcBTQ'].forEach(f=>{x[f].raw=pcText(x[f])||x[f].pos}));return R}
+async function klXlsx(e){const fs=Array.from(e.target.files||[]);e.target.value='';if(!fs.length)return;
+  try{await loadX()}catch(_){return toast('Pustaka Excel gagal dimuat. Sambungkan internet sekali, lalu coba lagi.')}
+  const all=[],nama=[],gagal=[];let buruk=0,tk=0,sel=0;const contoh=[];
+  for(const f of fs){let R=null;try{R=klXlsxBaca(XLSX.read(await f.arrayBuffer(),{type:'array'}))}catch(_){}
+    if(!R||!R.siswa.length){gagal.push(f.name);continue}
+    R.siswa.forEach(x=>all.push(x));nama.push(f.name);buruk+=R.buruk;tk+=R.tanpaKelas;sel+=R.sel;R.contoh.forEach(c=>{if(contoh.length<4)contoh.push(c)})}
+  if(!all.length)return toast('Bukan template leger kelas lama (tidak ada siswa terbaca). Pakai file template yang dibagikan.');
+  const info=`• ${nama.length} file template terbaca, ${all.length} siswa, ${sel} sel nilai.`+(gagal.length?`\n• Tidak terbaca: ${gagal.join(', ')}.`:'')+(tk?`\n• ${tk} baris dilewati (kelas lama dan kelas baru kosong).`:'')+(buruk?`\n• ${buruk} sel dilewati karena nilainya tidak dikenali (mis. ${contoh.join('; ')}).`:'');
+  return klProses({app:'btq-tahfidz-kelas-lama',siswa:all},nama.length>1?nama.length+' file template':nama[0],info)}
 /* ===== v1.78: HALAMAN ALUMNI (hanya baca): siswa berstatus LULUS (hasil Kenaikan kelas dari kelas 6). Dibuka dari halaman Kelas; tidak ada di bilah navigasi. ===== */
 const ALM={q:''};
 const almSar=()=>{const q=korNorm(ALM.q).split(' ').filter(Boolean);return S.siswa.filter(s=>s.kelas==='LULUS'&&q.every(w=>korNorm(s.nama).includes(w))).sort((a,b)=>String(b.lulus||'').localeCompare(String(a.lulus||''))||cmpNama(a.nama,b.nama))};
@@ -1134,10 +1175,11 @@ function bindKelas(){const V=$('#view');
     if(a==='hapus')return kelasHapus(k);
     if(a==='alumni')return go('alumni');
     if(a==='implama'){const i=$('#klIn');return i&&i.click()}
+    if(a==='implxl'){const i=$('#klXl');return i&&i.click()}
     kelasPilih(k);go('siswa');
     if(a==='xls'){const f=$('#impIn');if(f)f.click()}
     else if(a==='tempel'){const t=$('#bulk');if(t){const d=t.closest('details');if(d)d.open=true;t.focus()}}};
-  V.onchange=e=>{if(e.target.id==='klIn')klImpor(e)};
+  V.onchange=e=>{if(e.target.id==='klIn')klImpor(e);else if(e.target.id==='klXl')klXlsx(e)};
   V.oninput=e=>{const t=e.target;if(!t.dataset.kg)return;const k=t.dataset.kg,o=S.set.kls[k]||(S.set.kls[k]=klsBawaan(k)),i=t.dataset.gi;
     if(i==='w')o.guru=t.value;else{const g=[...(o.guruT||['',''])];g[+i]=t.value;o.guruT=g}
     if(k===S.set.kelasAktif)kelasMuat();saved()}}
@@ -2768,6 +2810,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 47
 ## Ringkas
+- Catatan sesi 52: versi sebenarnya = const VERSI di file (v1.82). Impor template leger Excel kelas lama selesai di kode (klXlsxBaca, klXlsx, klProses hasil pecahan klImpor; kartu Impor di halaman Kelas punya tombol Pilih template Excel). Template dibuat di luar aplikasi per kelas lama (12 file berisi nama + nilai yang sudah masuk, plus 1 file kosong). Perlu dicek manual: alur impor di HP/APK dan keterbacaan template di Excel/WPS/Google Sheets.
 - Catatan sesi 48: versi sebenarnya = const VERSI di file (v1.72). Tahap 6a (Rekap › Semua kelas, rekap lintas kelas) SELESAI di kode; cetak/PDF dan Excel perlu dicek manual oleh pengguna. Tahap 6b (data bawaan 4A REKAP_BAWAAN di repo publik) menunggu keputusan pengguna.
 - Catatan sesi 47: versi sebenarnya = const VERSI di file (v1.71). File: aplikasi-btq-tahfidz-s47.html. Tahap C dan E2–E5 (perbaikan layout hasil kritik UI) SELESAI; sisa hanya utang teknis CSS (E6) dan cek manual di perangkat nyata. Rincian di riwayat sesi 47 dan docs/HANDOFF-UI-KRITIK.md.
 - Catatan sesi 46: versi sebenarnya = const VERSI di file (v1.66). Perbaikan layout hasil kritik UI, Tahap A–D; rincian di riwayat sesi 46 dan docs/HANDOFF-UI-KRITIK.md di repo.
@@ -2925,6 +2968,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 - Sesi 10: Tahap 12 (v1.17) selesai: tahapan per juz (setengah-setengah) ditulis dengan nama juz di rapor paket; sidik jari dan golden tetap SAMA.
 - Sesi 11: Tahap 13–15 (v1.18) selesai: target Juz 30 otomatis/dropdown menurut kelas & semester, pencapaian rapor Juz 29–1 (tahfidz Melampaui, BTQ ikut setoran), tanda tangan guru menurut kelompok tahfidz; sidik jari dan golden tetap SAMA.
 - Sesi 12: Tahap 16 (v1.19) selesai: Selesai = ayat terakhir otomatis, swipe pindah siswa di Setoran; sidik jari dan golden tetap SAMA.
+- Sesi 52: v1.82 Impor template leger Excel kelas lama. Format template: sheet DATA SISWA (kunci baris 4 tersembunyi: nama,nis,nisn,kelasLama,kelas,lulus; F3 = tahun pelajaran lama) + sheet Juz 30 (kunci surat.N, aspek.k, pcTah/pcBTQ.status|pos, tahap.N) + sheet paket juz (kunci nj.juz.surat, rj.lead.aspek.k, rj.juz.tahap.N); baris data = kolom NO angka, siswa dicocokkan per NO. Kelas baru kosong = naik satu tingkat (kelas 6 = LULUS). Nilai di luar daftar dilewati dan dilaporkan. Diuji: round-trip 298 siswa (270 dari JSON 2025/2026 + 28 siswa 2A dari berkas leger 2A) = nilai sama, klIsi idempoten; fingerprint SAMA, golden a998dc93b6deea07 30206, node --check lulus. Temuan data: kelas lama 2A tidak ada di JSON lama (siswa 3A kosong); 74 sel bernilai tidak valid (B-, tahap '-', LULUS, salah ketik) tidak terbaca.
 - Sesi 51c: v1.81 klIsi juga mengisi s.rj (aspek, pcBTQ/pcTah, tahap) dan nilai Juz 26/1/2 dari sheet 'ledger 26'/'ledger 26 -1'; aspek/pencapaian 'ledger 29' hanya yang kolomnya valid (tata letak beberapa berkas bergeser, 63 sel dibuang).
 - Sesi 51b: v1.80 klIsi juga mengisi s.nj (nilai surat Juz 29/28/27 dari sheet 'ledger 29' lama, hanya sel kosong; kolom aspek/pencapaian/tahapan sheet itu TIDAK diimpor karena tata letaknya tidak konsisten antar berkas). Bagian terlindungi tidak disentuh.
 - Sesi 51: v1.79 Impor data kelas lama (klIsi/klRencana/klImpor sebelum blok alumni; kartu Impor di VIEWS.kelas, data-ka=implama, input #klIn, V.onchange di bindKelas) + tahun lulus alumni (s.lulus, s.kelasLama; kelasNaik menanyakan tahun kelulusan; halaman Alumni dikelompokkan per tahun lulus). Data siswa TIDAK di repo (file .json terpisah, format app='btq-tahfidz-kelas-lama'). Tanpa perubahan skema DB/CSS; bagian terlindungi tidak disentuh; fingerprint SAMA, golden a998dc93b6deea07 30206, node --check lulus.
