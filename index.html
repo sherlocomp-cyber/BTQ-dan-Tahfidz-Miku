@@ -2570,6 +2570,7 @@ function gRow(s,j){const r=gGet(s,j),e=lastSet(s,j),sd=sdHari(s,j),id=esc(s.id),
   let c;
   if(gQ(j,r)){
     c=`${j==='btq'?`<select data-gf="bm" aria-label="Jenis">${opt([['iqra','Iqra'],['quran',"Al-Qur'an"]],r.bm,'')}</select>`:''}<select class="gsr" data-gf="surat" aria-label="Surat">${opt(SN.map((n,i)=>[i+1,(i+1)+'. '+n]),r.surat,'– pilih surat –')}</select>
+    <div class="gst" role="group" aria-label="Pindah surat"><button class="sm" data-gd="srm" aria-label="Surat sebelumnya"${+r.surat<=1?' disabled':''}>− surat</button><button class="sm" data-gd="srp" aria-label="Surat berikutnya"${+r.surat>=114?' disabled':''}>+ surat</button></div>
     <div class="gst">${A('am','−','Kurangi ayat')}<input type="number" inputmode="numeric" min="1"${mx?` max="${mx}"`:''} data-gf="ayat" aria-label="Sampai ayat" placeholder="ayat" value="${r.selesai&&mx?mx:(r.ayat||'')}">${A('ap','+','Tambah ayat')}${A('a3','+3','Tambah 3 ayat')}</div>
     <button class="sm gsl${r.selesai?' on':''}" data-gd="sel">Surat selesai</button>`+
     (j==='tahfidz'?`<select data-gf="status" aria-label="Status">${opt([['Bertambah','Bertambah'],['Mengulang','Mengulang'],['Murojaah','Murojaah']],r.status,'')}</select><label class="ck gck"><input type="checkbox" data-gf="harus"${r.harus?' checked':''}> Harus setor ke koordinator tahfidz</label>`:'')}
@@ -2662,6 +2663,8 @@ function gAksi(b){const {row,s}=gCari(b);if(!s)return;const j=ST.j,r=gGet(s,j),a
   if(a==='back'){const k=gSkipK(s,j);if(GM.back[k])delete GM.back[k];else{GM.back[k]=++GM.bc;toast(s.nama.split(' ')[0]+' dimundurkan ke antrean belakang.')}gBackSave();gGanti(row,s,j);gSusun();return}
   if(a==='cat'){const cur=(s.catat||{})[j]||'',v=prompt('Catatan '+(j==='btq'?'BTQ':'Tahfidz')+' untuk '+s.nama+' (kosongkan untuk menghapus):',cur);if(v===null)return;
     s.catat=s.catat||{};if(v.trim())s.catat[j]=v.trim();else delete s.catat[j];sv(s);gGanti(row,s,j);return}
+  if(a==='srm'||a==='srp'){if(!gQ(j,r))return;if(!r.surat)return toast('Pilih surat dulu.');const n=+r.surat+(a==='srp'?1:-1);if(n<1||n>114)return;
+    r.surat=n;r.ayat='';r.selesai=false;return gGanti(row,s,j)}
   if(gQ(j,r)){if(!r.surat)return toast('Pilih surat dulu.');const mx=NS[r.surat-1];
     if(a==='am')r.ayat=Math.max(1,(+r.ayat||1)-1);else if(a==='ap')r.ayat=Math.min(mx,(+r.ayat||0)+1);else if(a==='a3')r.ayat=Math.min(mx,(+r.ayat||0)+3);
     else if(a==='sel'){r.selesai=!r.selesai;if(r.selesai)r.ayat=mx}
