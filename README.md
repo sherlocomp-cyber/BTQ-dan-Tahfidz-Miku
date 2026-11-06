@@ -2,7 +2,7 @@
 
 Aplikasi web satu file (PWA) untuk mencatat setoran harian, nilai, dan mencetak rapor **BTQ** dan **Tahfidz** di madrasah. Berjalan di browser HP maupun komputer, bisa dipakai tanpa internet, dan bisa dibungkus menjadi APK dengan Capacitor.
 
-Versi saat ini: **v1.81**
+Versi saat ini: **v1.88**
 
 ## Fitur
 
@@ -71,6 +71,11 @@ Catatan: kode aplikasi memanggil plugin native `PrintHelper` (dialog cetak Andro
 
 ## Riwayat singkat
 
+- **v1.88** — UI/UX Tahap 5: tema bawaan Terang (perangkat baru); menu tema bernama di HP; "Dashboard" → "Dasbor"; teks minimum 12 px (label) dan 14 px (bantu); petunjuk isian terpisah dari label.
+- **v1.87** — UI/UX Tahap 4: "Reset data di perangkat ini" jadi kartu sendiri dengan ketik-konfirmasi RESET; status simpan dua keadaan (Tersinkron HH.MM / Belum terkirim) dan dua baris penjelasan di Pengaturan.
+- **v1.86** — UI/UX Tahap 3: kartu Bantuan (langkah awal + panduan terlipat) dan tombol ? kontekstual di tiap halaman.
+- **v1.85** — UI/UX Tahap 2: layar Setoran lebih ringan. Dua centang diganti satu pilihan "Setelah setoran ini" (BTQ: Lancar / Ulang lagi / Koordinator; Tahfidz: Lanjut dengan guru / Ke koordinator); Keterangan, Tidak setor, Mundurkan, dan Per tahap dilipat di "Lainnya" (terbuka sendiri bila sudah terisi). Data dan rekap tidak berubah.
+- **v1.84** — UI/UX Tahap 1: tab bawah berurutan Setoran, Siswa, Nilai, Rapor, Rekap; Kelas pindah dari header HP ke kartu "Kelas & kenaikan kelas" di puncak Pengaturan (tetap ada di sidebar desktop).
 - **v1.81** — Impor data kelas lama juga memuat aspek, pencapaian, tahap, dan nilai paket Juz 26-1-2 (hanya sel kosong yang diisi).
 - **v1.80** — Impor data kelas lama juga memuat nilai surat Juz 29–27 (hanya sel kosong yang diisi).
 - **v1.79** — Impor data kelas lama (halaman Kelas): memuat file .json siswa tahun lalu yang sudah dibagi per kelas baru; siswa yang sudah ada tidak dipindah/ditimpa (hanya melengkapi NIS, NISN, nilai yang kosong), aman diulang, cadangan otomatis. Kelas 6 menjadi alumni dengan tahun lulus (halaman Alumni dikelompokkan per tahun; Kenaikan kelas menanyakan tahun kelulusan). Data siswa tidak disimpan di repo ini.
