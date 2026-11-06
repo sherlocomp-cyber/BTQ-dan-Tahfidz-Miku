@@ -735,6 +735,20 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 .zonaBhy{margin-top:16px;border:1px solid var(--rd,#ef4444)}
 .zonaBhy h3{color:var(--rd,#ef4444)}
 .zonaBhy .btn{margin-top:10px}
+
+/* Tahap 5: menu tema, ukuran teks minimum, teks bantu isian */
+#themeMenu{position:fixed;z-index:60;min-width:210px;padding:6px;border-radius:16px;background:var(--card2);color:var(--tx);border:1px solid var(--ln);box-shadow:0 12px 32px rgba(0,0,0,.35);display:grid;gap:2px}
+#themeMenu button{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 12px;border:0;border-radius:10px;background:transparent;color:inherit;font:inherit;font-size:15px;text-align:left;cursor:pointer}
+#themeMenu button[aria-checked=true]{background:var(--ac);color:#04222a;font-weight:700}
+#themeMenu svg{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.form .hint{font-weight:400;font-size:14px;line-height:1.4}
+@media print{#themeMenu{display:none}}
+@media screen{
+ .tabbar button{font-size:12px}
+ .rkp-t small,.kr .kg small,.nbt,.kcb,.abt button small{font-size:12px}
+ .mut,.chip,.stMore>summary .mut{font-size:14px}
+}
+@media(max-width:480px){#navHdr .hb::before{font-size:12px;line-height:13px}}
 </style>
 </head>
 <body>
@@ -811,7 +825,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.87';
+const VERSI='v1.88';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -831,8 +845,8 @@ const DB={
   aspek:{tjT,mkT,mrT,kl,tjB,mkB,mn,mb}, pcBTQ:{status,pos}, pcTah:{status,pos}, tahap:[5]} */
 const DEFAULT={madrasah:'MI Khoiru Ummah',kelas:'IV (Empat) Thalhah bin Ubaidillah',semester:'II (Dua)',tp:'2024/2025',
   tempat:'Cikarang Selatan, 20 Juni 2025',guru:'Budi Syahbuana Faturrohman, S.Pd',kepala:'Tittu Riana Sari, S.Pd',
-  target:'Al-Quran/Ad-Dhuha-An Nas',targetMode:'auto',tema:'angkasa',logo:'',kode:'',footer:'Sherlocomp'};
-const FIELDS=[['madrasah','Nama madrasah'],['kelas','Kelas'],['kota','Kota rapor'],['guru','Nama guru tahfidz (umum; dipakai bila siswa belum punya kelompok)'],['kepala','Nama kepala madrasah'],['kode','Kode kelas untuk judul rekap (mis. 4A)'],['footer','Teks kaki halaman cetak rekap']];
+  target:'Al-Quran/Ad-Dhuha-An Nas',targetMode:'auto',tema:'terang',logo:'',kode:'',footer:'Sherlocomp'};
+const FIELDS=[['madrasah','Nama madrasah'],['kelas','Kelas'],['kota','Kota rapor'],['guru','Nama guru tahfidz','Umum; dipakai bila siswa belum punya kelompok.'],['kepala','Nama kepala madrasah'],['kode','Kode kelas untuk judul rekap','Contoh: 4A.'],['footer','Teks kaki halaman cetak rekap']];
 /* ===== OTOMATIS: semester, tahun pelajaran, tanggal rapor (mengikuti tanggal hari ini) ===== */
 const AUTO_K=['semester','tp','tempat'],BLN_P=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const isoHari=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`,
@@ -859,7 +873,7 @@ const IC={koordinator:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-4 3-6 
  setelan:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>'};
 let TAMPIL={mode:'auto',zoom:100,ori:'auto'};const DESK=()=>TAMPIL.mode==='desktop'||(TAMPIL.mode!=='hp'&&matchMedia('(min-width:1024px)').matches);let SELS='';
 const NAV_INTI=['siswa','setoran','nilai','rapor','rekap'];
-const PAGES=[['dashboard','Dashboard'],['kelas','Kelas'],['setoran','Setoran'],['siswa','Siswa'],['nilai','Input Nilai'],['rapor','Rapor'],['rekap','Rekap'],['setelan','Pengaturan']];
+const PAGES=[['dashboard','Dasbor'],['kelas','Kelas'],['setoran','Setoran'],['siswa','Siswa'],['nilai','Input Nilai'],['rapor','Rapor'],['rekap','Rekap'],['setelan','Pengaturan']];
 function buildNav(){
   $('#navTop').innerHTML=PAGES.filter(p=>NAV_INTI.includes(p[0])).map(([k,t])=>`<button data-p="${k}">${t}</button>`).join('');
   $('#navHdr').innerHTML=PAGES.filter(p=>!NAV_INTI.includes(p[0])&&p[0]!=='kelas').map(([k,t])=>`<button class="hb" data-p="${k}" title="${t}" aria-label="${t}"><svg viewBox="0 0 24 24">${IC[k]||IC.setelan}</svg></button>`).join('');
@@ -900,7 +914,7 @@ const VIEWS={
   <div class="card"><h3>Identitas & rapor</h3>
   <label class="ck" style="margin-bottom:6px"><input type="checkbox" id="autoIn"${S.set.auto!==false?' checked':''}> Semester, tahun pelajaran, dan tanggal rapor otomatis</label>
   <p class="mut" style="margin-bottom:12px">Mengikuti tanggal hari ini: Juli–Desember = Semester I, Januari–Juni = Semester II. Matikan bila ingin mengisi sendiri.</p>
-  <div class="form">${FIELDS.map(([k,t])=>`<label>${t}<input type="text" data-k="${k}" value="${esc(S.set[k])}"${S.set.auto!==false&&AUTO_K.includes(k)?' disabled':''}></label>`).join('')}${kontrolGuru()}${kontrolTarget()}${kontrolTgl()}</div>
+  <div class="form">${FIELDS.map(([k,t,h])=>`<label>${t}<input type="text" data-k="${k}" value="${esc(S.set[k])}"${S.set.auto!==false&&AUTO_K.includes(k)?' disabled':''}>${h?`<small class="hint">${h}</small>`:''}</label>`).join('')}${kontrolGuru()}${kontrolTarget()}${kontrolTgl()}</div>
   <p class="mut" style="margin-top:10px">Tertulis di rapor: <b id="tglInfo">${esc(S.set.tempat)} · Semester ${esc(S.set.semester)} · ${esc(S.set.tp)}</b></p>
   <div class="row" style="align-items:center"><label style="gap:8px">Logo madrasah<input type="file" id="logoIn" accept="image/*"></label>
   ${S.set.logo?`<img class="logoprev" src="${S.set.logo}" alt="Logo">`:'<span class="mut">Belum ada logo.</span>'}</div></div>
@@ -925,15 +939,15 @@ const VIEWS={
   <p><b>Pindah surat cepat</b> – di Setoran Tahfidz, tombol − surat dan + surat di bawah pilihan Surat berpindah ke surat sebelumnya/berikutnya dalam juz yang dipilih (ayat dan Selesai dikosongkan).</p>
   <p><b>Tahap di Setoran</b> – pada Setoran Tahfidz buka Lainnya lalu pilih "Per tahap" untuk mencatat Tahap I–V (centang Selesai bila tuntas; nilai tahap opsional, masuk ke Input Nilai › Tahapan Juz 30). Posisi tahap tampil di Rekap, mis. "Tahap 4 (belum selesai)".</p>
   <p><b>Nilai surat di Setoran</b> – pada Setoran Tahfidz, setelah memilih surat muncul pilihan nilai A / A- / B / C / –. Nilai langsung masuk ke Input Nilai › Surat (Juz 30 atau juz yang dipilih) dan tampil di rapor; dibiarkan kosong berarti nilai lama tidak diubah. Nilai juga tercatat di Riwayat setoran.</p>
-  <p><b>2. Siswa</b> – tambah satu per satu, tempel banyak nama, atau Impor leger Excel lewat menu ⋯ di kanan atas (butuh internet sekali). Daftar siswa selalu otomatis berurutan A–Z, dan nomor absen mengikuti urutan itu (juga saat ada siswa baru). Ketuk baris siswa untuk membuka detail; Ubah dan Hapus ada di sana. Dashboard dan Pengaturan ada di ikon header. Di layar lebar (≥1024 px) menu pindah ke sidebar kiri, daftar siswa menjadi tabel dengan panel detail di kanan, dan Setoran punya antrean di kiri (↑/↓ ganti siswa, Enter simpan).</p>
+  <p><b>2. Siswa</b> – tambah satu per satu, tempel banyak nama, atau Impor leger Excel lewat menu ⋯ di kanan atas (butuh internet sekali). Daftar siswa selalu otomatis berurutan A–Z, dan nomor absen mengikuti urutan itu (juga saat ada siswa baru). Ketuk baris siswa untuk membuka detail; Ubah dan Hapus ada di sana. Dasbor dan Pengaturan ada di ikon header. Di layar lebar (≥1024 px) menu pindah ke sidebar kiri, daftar siswa menjadi tabel dengan panel detail di kanan, dan Setoran punya antrean di kiri (↑/↓ ganti siswa, Enter simpan).</p>
   <p><b>3. Input Nilai</b> – mode Per siswa (geser kiri/kanan) atau Per kolom; ketuk nilai lagi untuk mengosongkan. Otomatis tersimpan. Surat yang sudah selesai di Setoran tetapi belum ada nilainya diberi tanda “belum dinilai” (bisa difilter). “Mode cepat” menampilkan satu item per layar dan langsung maju ke berikutnya. Isi massal/Salin bisa diurungkan lewat tombol Urungkan. Mode Per kolom menampilkan ringkasan kelas.</p>
   <p><b>4. Rapor</b> – pilih Juz (30 = format asli; juz lain berpasangan 3-3: 29-28-27, 26-1-2, 3-4-5, 6-7-8, … sampai 24-25, satu halaman per paket), pilih siswa, cek pratinjau, lalu Cetak atau Simpan sebagai PDF (satu siswa, terpilih, atau satu kelas). Di HP, ketuk pratinjau atau tombol "Lihat penuh" untuk melihat rapor lebih besar (tombol −/+ memperbesar, Tutup untuk kembali).</p>
   <p><b>Tanda tangan &amp; pencapaian rapor</b> – nama guru di tanda tangan mengikuti kelompok tahfidz siswa (belum berkelompok = guru umum). Rapor Juz 29–1: pencapaian tahfidz selalu "Melampaui target"; pencapaian BTQ mengikuti setoran BTQ terakhir.</p>
   <p><b>5. Cadangan</b> – unduh cadangan JSON berkala; pulihkan bila ganti perangkat. Ekspor leger + rapor Excel ada di halaman Siswa › menu ⋯ (sheet ledger dan Rapot; di Rapot pilih nama di kolom NAMA lalu cetak; hanya juz yang sudah terisi yang dibuat). Di Pengaturan › Cadangan data ada status perlindungan penyimpanan; ketuk Lindungi penyimpanan agar browser tidak menghapus data otomatis saat memori penuh (cadangan tetap perlu).</p>
   <p><b>6. Tampilan</b> – pilih tema di pojok atas: ☀️ terang, 🌤️ biru, 🌙 gelap, atau 🪐 Angkasa (latar kertas berlapis dan planet). Tema hanya mengubah tampilan di layar; cetak rapor tidak terpengaruh.</p>
-  <p><b>Tampilan HP</b> – nama kelas aktif tampil di header; ketuk tombol tema untuk berganti tema (nama tema muncul sebentar). Halaman Kelas menampilkan kelas berisi siswa lebih dulu, kelas kosong dilipat. Tombol “Hapus semua siswa…” di kartu kelas menghapus semua siswa kelas itu, kelasnya tetap ada (konfirmasi, ketik kode kelas, ada tombol Urungkan); sebaiknya unduh cadangan dulu. Alumni (siswa kelas 6 yang sudah dinaikkan) dilihat lewat tombol “Lihat alumni” di halaman Kelas: daftar, cari nama, capaian terakhir.</p>
+  <p><b>Tampilan HP</b> – nama kelas aktif tampil di header; ketuk tombol tema untuk membuka daftar tema. Halaman Kelas menampilkan kelas berisi siswa lebih dulu, kelas kosong dilipat. Tombol “Hapus semua siswa…” di kartu kelas menghapus semua siswa kelas itu, kelasnya tetap ada (konfirmasi, ketik kode kelas, ada tombol Urungkan); sebaiknya unduh cadangan dulu. Alumni (siswa kelas 6 yang sudah dinaikkan) dilihat lewat tombol “Lihat alumni” di halaman Kelas: daftar, cari nama, capaian terakhir.</p>
   <p><b>Navigasi &amp; tampilan</b> – tombol Kembali di HP/peramban kini pindah ke halaman sebelumnya; kartu Target di Setoran terlipat di layar sempit (ketuk judulnya untuk membuka); pemberitahuan di bawah layar bertahan lebih lama untuk pesan panjang dan berhenti selagi disentuh.</p>
-  <p><b>Pencarian</b> – kotak Cari nama ada di Siswa, Setoran, Input Nilai, dan Rapor (ketik nama lalu pilih untuk langsung loncat, atau daftar tersaring). Sebelum cetak rapor, aplikasi memberi peringatan bila ada siswa yang nilainya belum lengkap (boleh tetap cetak). Dashboard menampilkan siswa yang belum setor 7 hari atau lebih dan pengingat cadangan bila sudah lebih dari 14 hari.</p>
+  <p><b>Pencarian</b> – kotak Cari nama ada di Siswa, Setoran, Input Nilai, dan Rapor (ketik nama lalu pilih untuk langsung loncat, atau daftar tersaring). Sebelum cetak rapor, aplikasi memberi peringatan bila ada siswa yang nilainya belum lengkap (boleh tetap cetak). Dasbor menampilkan siswa yang belum setor 7 hari atau lebih dan pengingat cadangan bila sudah lebih dari 14 hari.</p>
   </div></details>
   <details class="bnd"><summary>Rekap dan kelompok</summary><div class="mut">
   <p><b>Rekap › Antarbulan</b> – rekap bulanan Tahfidz/BTQ per siswa (posisi awal bulan dan terbaru, plus posisi terbaru saat ini); bawaan tahun pelajaran Juli–Juni, bisa diubah. Unduh Excel (butuh internet sekali) atau Cetak / PDF (pilih Simpan sebagai PDF).</p>
@@ -2419,6 +2433,24 @@ function helpPasang(){const v=document.getElementById('view'),h=v&&v.querySelect
    si.title=j;sedang=true;if(sp.textContent!==t)sp.textContent=t;sedang=false;dua()});
   ob.observe(si,{childList:true,characterData:true,subtree:true})}
  {const _bs=bindSetelan;bindSetelan=function(){_bs.apply(this,arguments);dua()}}}
+/* ===== v1.88 (UI/UX Tahap 5): di HP (<=480 px) tombol tema aktif membuka daftar bernama (menggantikan pemutar yang berganti tema tiap ketukan). Esc / ketuk di luar menutup; panah atas-bawah berpindah. ===== */
+{const tb=document.getElementById('themes');if(tb){
+ const NM={terang:'Terang',biru:'Biru gelap',gelap:'Gelap',angkasa:'Angkasa',dunia:'Dunia'},mq=matchMedia('(max-width:480px)');let m=null;
+ const aktif=()=>tb.querySelector('button.on');
+ const ap=()=>tb.querySelectorAll('button').forEach(b=>{if(mq.matches)b.setAttribute('aria-haspopup','menu');else{b.removeAttribute('aria-haspopup');b.removeAttribute('aria-expanded')}});
+ const tutup=(fokus)=>{if(!m)return;m.remove();m=null;const a=aktif();if(a){a.setAttribute('aria-expanded','false');if(fokus)a.focus()}};
+ const buka=()=>{const a=aktif();if(!a)return;m=document.createElement('div');m.id='themeMenu';m.setAttribute('role','menu');m.setAttribute('aria-label','Pilih tema');
+  Object.keys(NM).forEach(k=>{const src=tb.querySelector('[data-t="'+k+'"]');if(!src)return;const b=document.createElement('button');b.type='button';b.setAttribute('role','menuitemradio');b.setAttribute('aria-checked',String(k===a.dataset.t));
+   const sv=src.querySelector('svg');if(sv)b.append(sv.cloneNode(true));const s=document.createElement('span');s.textContent=NM[k];b.append(s);
+   b.onclick=()=>{theme(k);saved();tutup(true)};m.append(b)});
+  document.body.append(m);const r=tb.getBoundingClientRect();m.style.top=Math.round(r.bottom+8)+'px';m.style.right='12px';a.setAttribute('aria-expanded','true');
+  (m.querySelector('[aria-checked=true]')||m.firstChild).focus()};
+ ap();(mq.addEventListener?mq.addEventListener('change',ap):mq.addListener(ap));
+ tb.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!mq.matches||!b.classList.contains('on'))return;e.stopImmediatePropagation();m?tutup(true):buka()},true);
+ document.addEventListener('click',e=>{if(m&&!m.contains(e.target)&&!tb.contains(e.target))tutup(false)});
+ document.addEventListener('keydown',e=>{if(!m)return;if(e.key==='Escape'){e.preventDefault();tutup(true)}
+  else if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();const o=[...m.querySelectorAll('button')],i=o.indexOf(document.activeElement);o[(i+(e.key==='ArrowDown'?1:-1)+o.length)%o.length].focus()}});
+}}
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
 const ALAB=['Tajwid','Makhroj','Murojaah','Kelancaran','Tajwid','Makhroj','Menulis','Membaca'];
 async function ekspor(){if(!S.ks.length)return toast('Belum ada siswa untuk diekspor.');
@@ -2454,14 +2486,14 @@ function targetBar(l,k){const c={Tercapai:0,Melampaui:0,Tidak:0,'':0};S.ks.forEa
   return `<p style="font-weight:600;font-size:14px;margin-top:10px">${l}</p><div class="bar"><span style="width:${100*(c.Tercapai+c.Melampaui)/N}%;background:var(--ac)"></span><span style="width:${100*c.Tidak/N}%;background:#e5484d"></span></div><p class="mut">Tercapai ${c.Tercapai}${c.Melampaui?` · Melampaui ${c.Melampaui}`:''} · Tidak tercapai ${c.Tidak} · Belum diisi ${c['']}</p>`}
 function viewDash(){const N=S.ks.length,kls=esc(S.set.kelas);
   const hero=`<div class="card hero"><h3>Kelas</h3><div class="big">${esc(S.set.kelas.split(' ')[0])}</div><p>${kls}<br>Semester ${esc(S.set.semester)} · ${esc(S.set.tp)}</p><p style="margin-top:8px;font-size:13px;opacity:.85">Guru: ${esc(guruDaftar())}<br>Target: ${esc(S.set.target)}</p></div>`;
-  if(!N)return `<h1>Dashboard</h1><div class="grid">${hero}<div class="card"><h3>Jumlah siswa</h3><div class="big">0</div><p class="mut">Belum ada siswa. Tambah atau impor leger Excel di halaman Siswa; grafik muncul setelah ada nilai.</p></div></div>`;
+  if(!N)return `<h1>Dasbor</h1><div class="grid">${hero}<div class="card"><h3>Jumlah siswa</h3><div class="big">0</div><p class="mut">Belum ada siswa. Tambah atau impor leger Excel di halaman Siswa; grafik muncul setelah ada nilai.</p></div></div>`;
   const all=S.ks.map(s=>({s,v:nilaiS(s).map(x=>NILAI[x]),pct:pcent([s],RI())})),ar=rata(all.flatMap(a=>a.v)),prog=pcent(S.ks,RI());
   const cnt={A:0,'A-':0,B:0,C:0};S.ks.forEach(s=>nilaiS(s).forEach(x=>cnt[BK[x]]++));
   const av=ASPEK.map(k=>rata(S.ks.map(s=>NILAI[s.aspek[k]]).filter(x=>x!==undefined)));
   const perlu=all.map(a=>{const r=[],s=a.s,m=rata(a.v);if(a.pct<100)r.push(`terisi ${a.pct}%`);if(m!==null&&m<75)r.push(`rata-rata ${Math.round(m)}`);
     if(s.pcTah.status==='Tidak')r.push('target tahfidz belum tercapai');if(s.pcBTQ.status==='Tidak')r.push('target BTQ belum tercapai');return {...a,r,m}}).filter(a=>a.r.length).sort((a,b)=>a.pct-b.pct||b.r.length-a.r.length);
   const top=all.filter(a=>a.v.length).map(a=>({s:a.s,m:rata(a.v)})).sort((a,b)=>b.m-a.m).slice(0,5);
-  return `<h1>Dashboard</h1>${kartuCad()}<div class="grid">${hero}
+  return `<h1>Dasbor</h1>${kartuCad()}<div class="grid">${hero}
   <div class="card"><h3>Jumlah siswa</h3><div class="big">${N}</div><p class="mut">Data tersimpan di perangkat ini.</p></div>
   <div class="card"><h3>Rata-rata kelas</h3><div class="big">${ar===null?'–':ar.toFixed(1)}</div><p class="mut">${ar===null?'Belum ada nilai.':predik(ar)}</p></div>
   <div class="card"><h3>Progres input leger</h3><div class="big">${prog}%</div><div class="pg"><span style="width:${prog}%"></span></div><p class="mut" style="margin-top:6px">Item yang tampil di rapor (surat 1–37, aspek, pencapaian, tahapan).</p></div></div>
@@ -2828,7 +2860,6 @@ function gSave(s,j,row,qt){const TT=qt?()=>{}:toast,r=gGet(s,j);if(r.tahap)retur
 (async()=>{
   tampilMuat();oriBuka();korPasang();buildNav();korBrand();
   document.querySelectorAll('#themes button').forEach(b=>b.onclick=()=>{theme(b.dataset.t);saved()});
-  $('#themes').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!b.classList.contains('on')||!matchMedia('(max-width:480px)').matches)return;e.stopImmediatePropagation();const o=[...document.querySelectorAll('#themes button')],n=o[(o.indexOf(b)+1)%o.length];theme(n.dataset.t);saved()},true);
   try{await DB.open();const p=await DB.get('pengaturan');if(p)S.set={...DEFAULT,...p};S.cad=(await DB.get('cadanganTerakhir'))||'';S.siswa=await DB.all()}
   catch(_){toast('Penyimpanan perangkat tidak tersedia; data tidak akan tersimpan.')}
   migrasi();await kelasInit();{const t=S.siswa.map(s=>s.id+s.no).join();urutAZ();if(S.siswa.map(s=>s.id+s.no).join()!==t)DB.saveSiswa(S.siswa)}autoSet();theme(S.set.tema);{const d=kdGet();if(d&&d!==S.set.kelasAktif)kelasPilih(d)}

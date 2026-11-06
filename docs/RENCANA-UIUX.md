@@ -29,15 +29,15 @@ Masalah: tab bawah berurutan Siswa, Setoran, Nilai, Rapor, Rekap; Kelas (tugas t
 - [x] Sudah terpenuhi sebelumnya: `toast()` yang aktif (v1.7x, menimpa definisi awal) memakai wadah `#toastBox` ber-`role="status"` dan `aria-live="polite"`. Tidak diubah.
 
 ## Tahap 5 – Tema, istilah, ukuran teks
-- [ ] Ubah `DEFAULT.tema` dari `'angkasa'` ke `'terang'`.
-- [ ] HP ≤480 px: satu tombol tema yang membuka daftar pilihan (bukan memutar).
-- [ ] Seragamkan istilah: Dashboard/Dasbor, Input Nilai/Nilai, Pengaturan/Atur.
-- [ ] Ukuran minimum: label 12 px, teks bantu 14 px (tab bawah, label ikon header, `.mut`, chip).
-- [ ] Pindahkan penjelasan panjang di `FIELDS` dari label ke teks bantu.
+- [x] (v1.88) `DEFAULT.tema` = `'terang'`. Hanya berlaku untuk perangkat baru atau setelah Reset; perangkat yang sudah menyimpan tema tetap memakai pilihannya.
+- [x] (v1.88) HP ≤480 px: tombol tema aktif membuka menu bernama (Terang, Biru gelap, Gelap, Angkasa, Dunia), item 48 px, Esc/ketuk luar menutup, panah atas-bawah berpindah, aria-haspopup/expanded/menuitemradio. Pemutar lama dihapus. Desktop tidak berubah.
+- [x] Sebagian (v1.88): "Dashboard" → "Dasbor" di judul, navigasi, dan panduan. Sengaja TIDAK diubah: "Input Nilai" (istilah Anda; tab bawah memakai "Nilai" karena sempit) dan label header HP "Atur" (sempit). Bila ingin satu istilah penuh di mana-mana, itu keputusan terpisah.
+- [x] (v1.88) Tab bawah, label ikon header, `.rkp-t small`, `.kr .kg small`, `.nbt`, `.kcb`, `.abt button small` → 12 px; `.mut`, `.chip` → 14 px. Hanya `@media screen`, jadi cetak tidak berubah. Tidak ada overflow baru di 320/360/390/768/1280.
+- [x] (v1.88) `FIELDS` menerima elemen ketiga (teks bantu `.hint`, 14 px): Nama guru tahfidz dan Kode kelas.
 
 ## Tahap 6 – Rapikan CSS
 - [ ] Gabungkan blok `<style id="v128|v132|v140|v155|v156|v160|v166|v177">` menjadi satu sistem token + komponen; buang `!important` (v177).
 - [ ] Selesaikan bentrok nama kelas: `.kc` (chip vs kartu kelas, kini ditambal `.card.kc`) dan `.kg` (didefinisikan dua kali). Ganti nama salah satunya.
 
 ## Temuan tambahan (belum dijadwalkan)
-- Rekap overflow mendatar 14 px di 360 px dan 7 px di 390 px (ada sejak v1.83, bukan akibat tahap ini).
+- Rekap overflow mendatar 14 px di 360 px, 7 px di 390 px, 24 px di 320 px (ada sejak v1.83 dan tidak berubah oleh Tahap 1–5; diukur terhadap berkas asli).
