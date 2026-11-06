@@ -698,6 +698,12 @@ html button.sm.red{border-color:#e5484d !important;color:#ff7b7f !important}
 html button.sm.red:active{background:#c9302c !important;color:#fff !important}
 html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c9302c !important}
 </style>
+<style id="v184">
+/* v1.84+ (UI/UX Tahap 1-5): semua CSS baru tahap ini ada di sini */
+#klKartu{display:flex;flex-direction:column;gap:10px}
+#klKartu .klk{display:flex;flex-direction:column;gap:2px}
+#klKartu .klk b{font-size:16px}
+</style>
 </head>
 <body>
 <header>
@@ -773,7 +779,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.83';
+const VERSI='v1.84';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -821,10 +827,10 @@ const IC={koordinator:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-4 3-6 
  setelan:'<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>'};
 let TAMPIL={mode:'auto',zoom:100,ori:'auto'};const DESK=()=>TAMPIL.mode==='desktop'||(TAMPIL.mode!=='hp'&&matchMedia('(min-width:1024px)').matches);let SELS='';
 const NAV_INTI=['siswa','setoran','nilai','rapor','rekap'];
-const PAGES=[['dashboard','Dashboard'],['kelas','Kelas'],['siswa','Siswa'],['setoran','Setoran'],['nilai','Input Nilai'],['rapor','Rapor'],['rekap','Rekap'],['setelan','Pengaturan']];
+const PAGES=[['dashboard','Dashboard'],['kelas','Kelas'],['setoran','Setoran'],['siswa','Siswa'],['nilai','Input Nilai'],['rapor','Rapor'],['rekap','Rekap'],['setelan','Pengaturan']];
 function buildNav(){
   $('#navTop').innerHTML=PAGES.filter(p=>NAV_INTI.includes(p[0])).map(([k,t])=>`<button data-p="${k}">${t}</button>`).join('');
-  $('#navHdr').innerHTML=PAGES.filter(p=>!NAV_INTI.includes(p[0])).map(([k,t])=>`<button class="hb" data-p="${k}" title="${t}" aria-label="${t}"><svg viewBox="0 0 24 24">${IC[k]||IC.setelan}</svg></button>`).join('');
+  $('#navHdr').innerHTML=PAGES.filter(p=>!NAV_INTI.includes(p[0])&&p[0]!=='kelas').map(([k,t])=>`<button class="hb" data-p="${k}" title="${t}" aria-label="${t}"><svg viewBox="0 0 24 24">${IC[k]||IC.setelan}</svg></button>`).join('');
   $('#navBot').innerHTML=PAGES.filter(p=>NAV_INTI.includes(p[0])).map(([k,t])=>`<button data-p="${k}"><svg viewBox="0 0 24 24">${IC[k]||IC.setelan}</svg>${t.replace('Input ','')}</button>`).join('');
   {const ic=k=>`<svg viewBox="0 0 24 24">${IC[k]||IC.setelan}</svg>`,bt=([k,t])=>`<button data-p="${k}">${ic(k)}${t.replace('Input ','')}</button>`;
    $('#navSide').innerHTML=PAGES.filter(p=>NAV_INTI.includes(p[0])).map(bt).join('')+'<div class="sd-sp"></div>'+PAGES.filter(p=>!NAV_INTI.includes(p[0])).map(bt).join('');
@@ -2318,6 +2324,10 @@ function thUndo(s,e,U){Object.keys(U.surat).forEach(i=>thSetSurat(s,+i,U.surat[i
   const k=(s.tahap||[])[+e.tahap-1],lab=(AO.find(a=>a[0]===k)||[])[1]||'–';
   toast(`${s.nama.split(' ')[0]}: ${SURAT[+b.dataset.i-1]} ${v==='-'?'–':v} · Tahap ${['I','II','III','IV'][+e.tahap-1]} ${lab}${e.kor&&baru?' tersimpan lengkap':''}`,()=>{thUndo(s,e,U);sv(s);render()});
   if(baru&&e.kor&&KOR.tab!=='sudah')KOR.q='';render();if(baru&&e.kor){const q=$('#korQ');if(q)q.focus()}})}}
+/* ===== v1.84 (UI/UX Tahap 1): Kelas dipindah dari header ke Pengaturan (kartu di atas). Tautan umum: elemen ber-atribut data-golink membuka halaman itu. ===== */
+{const _kl=VIEWS.setelan;VIEWS.setelan=function(){const h=_kl.apply(this,arguments);
+  return h.replace('</h1>','</h1><div class="card" id="klKartu" style="margin-top:12px"><div class="klk"><b>Kelas &amp; kenaikan kelas</b><span class="mut">Tambah siswa per kelas, atur guru tiap kelompok, naikkan kelas di akhir tahun, dan lihat alumni.</span></div><button class="btn" data-golink="kelas">Buka halaman Kelas</button></div>')}}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-golink]');if(b)go(b.dataset.golink)});
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
 const ALAB=['Tajwid','Makhroj','Murojaah','Kelancaran','Tajwid','Makhroj','Menulis','Membaca'];
 async function ekspor(){if(!S.ks.length)return toast('Belum ada siswa untuk diekspor.');

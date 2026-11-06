@@ -10,10 +10,10 @@ Bagian rapor/cetak (`.page`, `.s1`–`.s64`, `#printArea`) JANGAN disentuh.
 
 ## Tahap 1 – Navigasi mengikuti frekuensi pakai
 Masalah: tab bawah berurutan Siswa, Setoran, Nilai, Rapor, Rekap; Kelas (tugas tahunan) punya ikon tetap di header dengan ikon rumah.
-- [ ] `buildNav()` menyusun tombol dari urutan array `PAGES` (difilter `NAV_INTI`), jadi urutan diubah di `PAGES`: pindahkan `['setoran','Setoran']` sebelum `['siswa','Siswa']`. Urutan baru: Setoran, Siswa, Nilai, Rapor, Rekap.
-- [ ] Pindahkan `kelas` dari header ke Pengaturan: tambah kartu "Kelas & kenaikan" di `VIEWS.setelan` yang memanggil `go('kelas')`, lalu keluarkan `kelas` dari ikon header (`#navHdr`) dan label `::before` ("Kelas") di CSS v1.66 Tahap E5. Halaman `kelas` tetap ada.
-- [ ] Bila `kelas` tetap di header: ganti ikon `IC.kelas` (rumah) dengan ikon kelompok/papan tulis.
-- [ ] Periksa: hash `#kelas`, tombol Kembali, dan sidebar desktop (`#navSide`) tetap berfungsi.
+- [x] (v1.84) Urutan `PAGES` diubah: Setoran sebelum Siswa. Urutan tab bawah dan sidebar: Setoran, Siswa, Nilai, Rapor, Rekap.
+- [x] (v1.84) Kartu "Kelas & kenaikan kelas" di puncak Pengaturan (judulnya bukan `h3` agar tidak ikut dilipat pelipat v1.63) membuka halaman Kelas lewat atribut umum `data-golink`. Kelas keluar dari ikon header HP; di sidebar desktop tetap ada.
+- [x] Tidak perlu: Kelas tidak lagi di header, jadi ikon rumah tidak dipakai di sana.
+- [x] Diuji di Chrome (360/390/768/1280): hash `#kelas`, tombol Kembali ke Pengaturan, sidebar desktop berfungsi; tanpa galat JS.
 
 ## Tahap 2 – Layar Setoran lebih ringan
 - [ ] Tampilkan di muka: kelompok, siswa, juz/surat/ayat, nilai, Simpan.
@@ -38,3 +38,6 @@ Masalah: tab bawah berurutan Siswa, Setoran, Nilai, Rapor, Rekap; Kelas (tugas t
 ## Tahap 6 – Rapikan CSS
 - [ ] Gabungkan blok `<style id="v128|v132|v140|v155|v156|v160|v166|v177">` menjadi satu sistem token + komponen; buang `!important` (v177).
 - [ ] Selesaikan bentrok nama kelas: `.kc` (chip vs kartu kelas, kini ditambal `.card.kc`) dan `.kg` (didefinisikan dua kali). Ganti nama salah satunya.
+
+## Temuan tambahan (belum dijadwalkan)
+- Rekap overflow mendatar 14 px di 360 px dan 7 px di 390 px (ada sejak v1.83, bukan akibat tahap ini).
