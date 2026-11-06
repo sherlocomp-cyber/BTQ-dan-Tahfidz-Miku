@@ -16,9 +16,9 @@ Masalah: tab bawah berurutan Siswa, Setoran, Nilai, Rapor, Rekap; Kelas (tugas t
 - [x] Diuji di Chrome (360/390/768/1280): hash `#kelas`, tombol Kembali ke Pengaturan, sidebar desktop berfungsi; tanpa galat JS.
 
 ## Tahap 2 – Layar Setoran lebih ringan
-- [ ] Tampilkan di muka: kelompok, siswa, juz/surat/ayat, nilai, Simpan.
-- [ ] Lipat di "Lainnya": Keterangan (dropdown + chip + ketik), "Tidak setor…", Mundurkan, mode Per tahap.
-- [ ] Gabungkan "Harus setor lagi (belum lancar)" dan "Harus setor ke koordinator" jadi satu pilihan eksklusif: Lancar / Ulang / Ke koordinator. Petakan ke field yang sudah ada agar rekap dan rapor tidak berubah. Uji data lama.
+- [x] (v1.85) Di muka: kelompok, siswa, juz/surat/ayat, nilai, pilihan "Setelah setoran ini", Simpan. Tinggi halaman Setoran HP turun 2051 → 1565 px.
+- [x] (v1.85) Dilipat di "Lainnya": Keterangan (dropdown + chip + ketik), "Tidak setor…", Mundurkan, mode Per tahap. Terbuka otomatis bila sudah ada isinya; status buka diingat (`ST.more`).
+- [x] (v1.85) BTQ: Lancar / Ulang lagi / Koordinator; Tahfidz: Lanjut dengan guru / Ke koordinator (Tahfidz tidak punya "ulang" sebagai tanda; Mengulang tetap di dropdown Status). Dipetakan ke `harus`/`koor` yang sama sehingga rekap dan rapor tidak berubah. Setoran Per kelompok tidak diubah (masih centang).
 
 ## Tahap 3 – Bantuan
 - [ ] Pecah "Panduan singkat" (±30 paragraf) menjadi: bantuan kontekstual per halaman (ikon ?, 2–3 kalimat), daftar langkah awal, dan "Yang baru" terpisah dari panduan.

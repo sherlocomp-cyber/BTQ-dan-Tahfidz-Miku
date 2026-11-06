@@ -703,6 +703,17 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 #klKartu{display:flex;flex-direction:column;gap:10px}
 #klKartu .klk{display:flex;flex-direction:column;gap:2px}
 #klKartu .klk b{font-size:16px}
+
+/* Tahap 2: Setoran */
+.stHk .seg{margin-top:6px}.stHk .stHkT{margin-top:6px;font-size:14px;line-height:1.45}
+.stMore{background:var(--card2);border-radius:14px;padding:0 12px;min-width:0}
+.stMore[open]{padding-bottom:12px}
+.stMore>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;min-height:48px;font-weight:600}
+.stMore>summary::-webkit-details-marker{display:none}
+.stMore>summary .mut{flex:1;min-width:0;font-weight:400;font-size:13px;line-height:1.3;text-align:right}
+.stMore>summary::after{content:"";flex:none;width:9px;height:9px;margin-right:4px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg)}
+.stMore[open]>summary{margin-bottom:6px}.stMore[open]>summary::after{transform:rotate(-135deg)}
+@media(prefers-reduced-motion:no-preference){.stMore>summary::after{transition:transform .2s}}
 </style>
 </head>
 <body>
@@ -779,7 +790,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.84';
+const VERSI='v1.85';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -884,7 +895,7 @@ const VIEWS={
   <p><b>Setoran</b> – centang Selesai pada tahfidz otomatis mengisi ayat terakhir surat; ayat otomatis terisi ayat terakhir yang disetor (tombol −, +1, +3 menggeser ayat); geser layar ke kiri/kanan untuk pindah siswa.</p>
   <p><b>Tanda tangan &amp; pencapaian rapor</b> – nama guru di tanda tangan mengikuti kelompok tahfidz siswa (belum berkelompok = guru umum). Rapor Juz 29–1: pencapaian tahfidz selalu "Melampaui target"; pencapaian BTQ mengikuti setoran BTQ terakhir.</p>
   <p><b>2. Siswa</b> – tambah satu per satu, tempel banyak nama, atau Impor leger Excel lewat menu ⋯ di kanan atas (butuh internet sekali). Daftar siswa selalu otomatis berurutan A–Z, dan nomor absen mengikuti urutan itu (juga saat ada siswa baru). Ketuk baris siswa untuk membuka detail; Ubah dan Hapus ada di sana. Dashboard dan Pengaturan ada di ikon header. Di layar lebar (≥1024 px) menu pindah ke sidebar kiri, daftar siswa menjadi tabel dengan panel detail di kanan, dan Setoran punya antrean di kiri (↑/↓ ganti siswa, Enter simpan).</p>
-  <p><b>Keterangan &amp; koordinator BTQ</b> – di Setoran satu per satu (Tahfidz dan BTQ), Keterangan bisa diisi dari dropdown Kelancaran (Lancar, Cukup lancar, Kurang lancar, Terbata-bata), catatan cepat yang diketuk (Tajwid, Makhroj, dll.), dan/atau ketikan sendiri; semuanya digabung dan muncul di Riwayat serta kolom Keterangan di Rekap bulan (hanya keterangan terbaru yang tampil; Rekap Harian juga memuatnya, dan bila hari itu tidak diisi keterangan maka yang muncul keterangan terakhir yang pernah diisi lengkap dengan tanggalnya, termasuk di teks Salin/Bagikan. Sakit/Izin dst. tetap dihitung di kolom Keterangan Rekap bulan). Di BTQ ada centang "Harus setor ke koordinator BTQ" (status Setor ke Koordinator di Rekap), terpisah dari "Harus setor lagi (belum lancar)". </p>
+  <p><b>Keterangan &amp; koordinator BTQ</b> – di Setoran satu per satu (Tahfidz dan BTQ), bagian Lainnya memuat Keterangan yang bisa diisi dari dropdown Kelancaran (Lancar, Cukup lancar, Kurang lancar, Terbata-bata), catatan cepat yang diketuk (Tajwid, Makhroj, dll.), dan/atau ketikan sendiri; semuanya digabung dan muncul di Riwayat serta kolom Keterangan di Rekap bulan (hanya keterangan terbaru yang tampil; Rekap Harian juga memuatnya, dan bila hari itu tidak diisi keterangan maka yang muncul keterangan terakhir yang pernah diisi lengkap dengan tanggalnya, termasuk di teks Salin/Bagikan. Sakit/Izin dst. tetap dihitung di kolom Keterangan Rekap bulan). Di BTQ, pilihan "Setelah setoran ini" punya tiga isi: Lancar, Ulang lagi (belum lancar), dan Koordinator (status Setor ke Koordinator di Rekap); hanya satu yang bisa dipilih. </p>
   <p><b>Navigasi &amp; tampilan</b> – tombol Kembali di HP/peramban kini pindah ke halaman sebelumnya; kartu Target di Setoran terlipat di layar sempit (ketuk judulnya untuk membuka); pemberitahuan di bawah layar bertahan lebih lama untuk pesan panjang dan berhenti selagi disentuh.</p>
   <p><b>Mundurkan &amp; halaman</b> – di Setoran satu per satu, tombol "Mundurkan (belum siap)" memindahkan siswa ke belakang antrean (tandanya ⏭; ketuk "Batal mundur" atau Urungkan untuk mengembalikan). Di BTQ Iqra, tombol − dan + di bawah Halaman (1–32) menggeser satu halaman; di bawah Baris ada +2, +4 (maksimal 8) dan Selesai (baris 1–8). Untuk menurunkan baris, pilih dari dropdown.</p>
   <p><b>Setoran harian</b> – siswa tampil berurutan otomatis (belum pernah setor dulu, lalu yang terlama belum setor; yang sudah setor hari itu paling akhir; tombol Urutan untuk kembali ke nomor absen). Pilih Tahfidz/BTQ, isi juz lalu surat dan ayat muncul otomatis. Simpan, dan posisi terakhir langsung masuk kolom Pencapaian di rapor. Salah simpan? Ketuk Urungkan di notifikasi yang muncul sekitar 7 detik. Siswa yang tidak setor dicatat lewat pilihan “Tidak setor…” di bawah tombol Simpan (Sakit, Izin, dll.): ditandai ✗ di daftar dan dilewati di antrean; menyimpan setoran membatalkan catatannya.</p>
@@ -895,7 +906,7 @@ const VIEWS={
   <p><b>Rekap › Rekap bulan</b> – tabel satu bulan per siswa: hafalan awal bulan, hafalan saat ini, tanggal, status (Bertambah / Setor ke Koordinator / Harus Setor / Belum Setor), jumlah setoran, target, keterangan. Pilih Tahfidz/BTQ, kelompok, dan bulan; Cetak / PDF (landscape A4) atau Unduh Excel. Kode kelas dan teks kaki halaman diatur di Pengaturan.</p>
   <p><b>Rekap › Semua kelas</b> – ringkasan satu bulan untuk koordinator dan kepala madrasah: per kelas jumlah siswa, sudah/belum setor, yang harus ke koordinator, total setoran, dan sebaran target (Melampaui / Tercapai / Proses / Tertinggal). Tombol Buka membuka kelas itu di Rekap bulan; Cetak / PDF landscape A4 atau Unduh Excel. Hanya kelas yang berisi siswa di perangkat ini yang tampil.</p>
   <p><b>Pindah surat cepat</b> – di Setoran Tahfidz, tombol − surat dan + surat di bawah pilihan Surat berpindah ke surat sebelumnya/berikutnya dalam juz yang dipilih (ayat dan Selesai dikosongkan).</p>
-  <p><b>Setor ke koordinator tahfidz</b> – pada Setoran Tahfidz, centang "Harus setor ke koordinator tahfidz" bila siswa sudah lulus dari guru tahfidz dan masih harus menyetor ke koordinator (bukan mengulang setoran). Tandanya tampil di Riwayat dan sebagai status "Setor ke Koordinator" di Rekap bulan. Centang yang sama ada di Setoran Per kelompok.</p>
+  <p><b>Setor ke koordinator tahfidz</b> – pada Setoran Tahfidz, pilih "Ke koordinator" di "Setelah setoran ini" (atau centang "Harus setor ke koordinator tahfidz" di Per kelompok) bila siswa sudah lulus dari guru tahfidz dan masih harus menyetor ke koordinator (bukan mengulang setoran). Tandanya tampil di Riwayat dan sebagai status "Setor ke Koordinator" di Rekap bulan. Centang yang sama ada di Setoran Per kelompok.</p>
   <p><b>Halaman depan</b> – saat aplikasi dibuka di sebuah perangkat, pilih kelas atau Koordinator Tahfidz. Pilihan tersimpan di perangkat itu, jadi berikutnya langsung masuk. Ketuk logo di kiri atas untuk kembali ke halaman depan atau mengganti pilihan (bisa juga di Pengaturan › Halaman awal). Kartu Koordinator dan kartu kelas menunjukkan jumlah siswa yang menunggu nilai koordinator.</p>
   <p><b>Aktif/Nonaktif Koordinator</b> – di Pengaturan › Pilihan Koordinator tahfidz, pilihan Koordinator bisa dinonaktifkan per perangkat (kartu di halaman depan, opsi halaman awal, dan tab hilang) agar guru kelas tidak masuk ke Koordinator. Di Koordinator, tab Sudah dinilai punya tombol Batalkan nilai: nilai kembali seperti sebelumnya dan siswa kembali ke antrean Menunggu.</p>
   <p><b>Halaman Koordinator</b> – siswa dari semua kelas yang bertanda setor ke koordinator muncul otomatis di tab Menunggu. Cari nama di kotak cari (cukup sebagian nama, urutan bebas) atau saring per kelas; angka di tombol kelas = jumlah yang menunggu. Ketuk nilai (A, A-, B, C, –, atau Mumtaz–Maqbul untuk Tahap V) untuk menyimpan. Untuk setoran Tahap I–IV, koordinator menilai tiap surat dalam tahap itu: nilai surat langsung mengganti nilai surat di rapor, rata-ratanya otomatis menjadi predikat tahap (Mumtaz ≥ 90, Jayyid Jiddan ≥ 80, Jayyid ≥ 70, Maqbul ≥ 60; A=95, A-=85, B=75, C=65), dan siswa keluar dari antrean setelah semua surat tahap terisi; kotak cari kosong lagi untuk siswa berikutnya. Nilai masuk ke Input Nilai dan rapor, siswa pindah ke tab Sudah dinilai, dan nilainya masih bisa diganti atau diurungkan. Siswa yang sudah dinilai satu koordinator otomatis hilang dari antrean koordinator lain.</p>
@@ -1448,7 +1459,7 @@ function viewSetoran(){const N=S.ks.length;
   const qg=urutSetor(ST.j),Ng=qg.length,sudah=qg.filter(k=>sdHari(S.ks[k],ST.j)).length,tdk=qg.filter(k=>!sdHari(S.ks[k],ST.j)&&stAda(S.ks[k],ST.j)).length;
   const sw=(k,t)=>`<button class="${ST.j===k?'on':''}" data-j="${k}">${t}</button>`;
   let f;
-  if(ST.j==='tahfidz')f=`${tmSeg()}${ST.tm==='tahap'?fldTahap():quranFields()+fldNilai()}<label>Status<select data-f="status">${opt([['Bertambah','Bertambah (hafalan baru)'],['Mengulang','Mengulang'],['Murojaah','Murojaah']],ST.status,'')}</select></label>`;
+  if(ST.j==='tahfidz')f=`${ST.tm==='tahap'?fldTahap():quranFields()+fldNilai()}<label>Status<select data-f="status">${opt([['Bertambah','Bertambah (hafalan baru)'],['Mengulang','Mengulang'],['Murojaah','Murojaah']],ST.status,'')}</select></label>`;
   else{const iq=ST.bm==='iqra';
     f=`<div class="seg"><button class="${iq?'on':''}" data-bm="iqra">Masih Iqra</button><button class="${iq?'':'on'}" data-bm="quran">Sudah Al-Qur'an</button></div>`+(iq?
     `<label>Iqra<select data-f="iqra">${opt(Array.from({length:6},(_,k)=>[k+1,'Iqra '+(k+1)]),ST.iqra,'– pilih jilid –')}</select></label>
@@ -1466,12 +1477,9 @@ function viewSetoran(){const N=S.ks.length;
    <div class="stS"><p class="mut stI">Sudah setor ${tglF(ST.tgl)}: ${sudah} dari ${Ng}${tdk?` • tidak setor ${tdk}`:''} • sisa ${Ng-sudah-tdk} • terakhir setor: ${tglAkhir(s,ST.j)?tglF(tglAkhir(s,ST.j)):'belum pernah'}</p><button class="sm" id="stUrut" title="${ST.urut==='auto'?'Urutan: terlama belum setor. Ketuk untuk ganti ke nomor absen':'Urutan: nomor absen. Ketuk untuk ganti ke otomatis'}">${ST.urut==='auto'?'Urut: terlama':'Urut: absen'}</button></div>
    <div class="last">${last?`Posisi terakhir: <b>${esc(last.pos)}</b> • ${tglF(last.tgl)}`:'Belum ada setoran.'}${pc.status?`<br>Di rapor: <b>${esc(pcText(pc))}</b>`:''}</div>
    <div class="fl" style="margin-top:14px"><label>Tanggal<input type="date" data-f="tgl" value="${ST.tgl}"></label>${f}
-    <label class="ck"><input type="checkbox" data-f="harus"${ST.harus?' checked':''}>${ST.j==='tahfidz'?' Harus setor ke koordinator tahfidz (sudah lulus dari guru tahfidz)':' Harus setor lagi (belum lancar)'}</label>
-    ${ST.j==='btq'?`<label class="ck"><input type="checkbox" data-f="koor"${ST.koor?' checked':''}> Harus setor ke koordinator BTQ (sudah lulus dari guru, bukan karena belum lancar)</label>`:''}
-     <label>Kelancaran<select data-f="kl">${opt(KL_OPSI.map(x=>[x,x]),ST.kl,'– pilih (opsional) –')}</select></label>
-     <div><div class="mut" style="margin-bottom:6px">Catatan cepat (ketuk untuk memilih)</div><div class="chips" style="flex-wrap:wrap;overflow:visible;margin-bottom:0">${(ST.j==='tahfidz'?KC_T:KC_B).map((x,k)=>`<button type="button" class="chip${(ST.kc||[]).includes(x)?' on':''}" data-kc="${k}">${esc(x)}</button>`).join('')}</div></div>
-     <label>Keterangan tambahan<input type="text" data-f="ket" placeholder="Ketik sendiri (opsional)" value="${esc(ST.ket)}"></label>
-    <button class="btn" id="stSave">💾 Simpan setoran & berikutnya</button>${sdHari(s,ST.j)||stAda(s,ST.j)?'':`<button class="btn ghost" id="stBack">${mdr(s,ST.j)?'Batal mundur':'Mundurkan (belum siap)'}</button>`}${stAlasanUI(s)}</div></div></div><div class="stD">
+    ${stHk()}
+    ${stLain(s)}
+    <button class="btn" id="stSave">💾 Simpan setoran & berikutnya</button></div></div></div><div class="stD">
   <div class="card" style="margin-top:14px"><details><summary>Riwayat ${ST.j==='tahfidz'?'tahfidz':'BTQ'} (${esc(s.nama)})</summary>${rw.length?rw.map(e=>`<div class="att"><div><b>${esc(e.pos)}${e.maju?'':' <span class="mut">('+esc(e.status)+')</span>'}</b><span class="mut">${tglF(e.tgl)}${e.ket?' • '+esc(e.ket):''}${e.nilai?' • nilai '+esc(e.nilai==='-'?'–':e.nilai):''}${e.koor?' • setor ke koordinator':e.harus?(e.j==='tahfidz'?' • harus setor ke koordinator':' • harus setor'):''}</span></div><button class="sm" data-del="${e.id}">Hapus</button></div>`).join(''):'<p class="mut" style="margin-top:8px">Belum ada riwayat.</p>'}</details></div>
   <p class="mut" style="margin-top:12px">Setoran terbaru (status Bertambah) otomatis jadi isi kolom Pencapaian di rapor. Tercapai bila semua surat target sudah tuntas (tahfidz) atau sudah sampai jilid target (BTQ, tidak perlu tamat); bisa diubah manual di Input Nilai › Pencapaian.</p></div></div>`}
 function simpanSt(){const s=S.ks[ST.i],q=ST.j==='tahfidz'||ST.bm==='quran',q0=urutSetor(ST.j);let e;
@@ -2084,7 +2092,7 @@ function korRow({s,e}){const pil=e.tahap?AO:SO,cur=e.kor?e.kor.nilai:'',gu=korGu
   return `<li class="kor-r"><div class="kor-h"><b>${esc(s.nama)}</b><span class="kor-k">Kelas ${esc(s.kelas)}</span></div>
     <p class="mut kor-m">${esc(e.pos||'')} • setor ${esc(tglF(e.tgl))}${gu?' • guru '+esc(gu):''}${!cur&&e.nilai?' • nilai dari guru: '+esc(e.nilai==='-'?'–':e.nilai):''}${cur&&e.kor.t?' • dinilai '+esc(new Date(e.kor.t).toLocaleDateString('id-ID',{day:'numeric',month:'short'})):''}</p>${btn}</li>`}
 function korIsiList(){const {p,d}=korAntrean(S.siswa),A=KOR.tab!=='sudah',L=korSaring(A?p:d,KOR.k,KOR.q),lain=korSaring(A?d:p,KOR.k,KOR.q).length,q=KOR.q.trim(),sar=!!(q||KOR.k);
-  if(!L.length){const t=A?(sar?`Tidak ada siswa${q?' bernama “'+esc(q)+'”':''}${KOR.k?' di kelas '+KOR.k:''} yang menunggu nilai. Siswa muncul di sini setelah guru tahfidz mencentang “Harus setor ke koordinator tahfidz”.`:'Belum ada siswa yang harus setor ke koordinator. Siswa muncul di sini otomatis setelah guru tahfidz mencentang “Harus setor ke koordinator tahfidz” di Setoran.'):(sar?'Tidak ada yang cocok di daftar sudah dinilai.':'Belum ada nilai dari koordinator.');
+  if(!L.length){const t=A?(sar?`Tidak ada siswa${q?' bernama “'+esc(q)+'”':''}${KOR.k?' di kelas '+KOR.k:''} yang menunggu nilai. Siswa muncul di sini setelah guru tahfidz menandai siswa untuk setor ke koordinator di Setoran.`:'Belum ada siswa yang harus setor ke koordinator. Siswa muncul di sini otomatis setelah guru tahfidz menandai siswa untuk setor ke koordinator di Setoran.'):(sar?'Tidak ada yang cocok di daftar sudah dinilai.':'Belum ada nilai dari koordinator.');
     return `<p class="mut">${t}${lain?` ${lain} siswa yang cocok ${A?'sudah dinilai (lihat tab Sudah dinilai)':'masih menunggu nilai (lihat tab Menunggu)'}.`:''}</p>`}
   return `${sar?`<p class="mut kor-n">${L.length} siswa cocok</p>`:''}<ul class="kor-l">${L.slice(0,80).map(korRow).join('')}</ul>${L.length>80?'<p class="mut kor-n">Menampilkan 80 pertama. Ketik nama atau pilih kelas untuk mempersempit.</p>':''}`}
 function korChips(){const {p,d}=korAntrean(S.siswa),src=KOR.tab!=='sudah'?p:d,pk=korPerKelas(src),c=(k,t,n)=>`<button class="${KOR.k===k?'on':''}" data-kk="${k}" aria-pressed="${KOR.k===k}">${t} <span class="kor-c">${n}</span></button>`;
@@ -2328,6 +2336,23 @@ function thUndo(s,e,U){Object.keys(U.surat).forEach(i=>thSetSurat(s,+i,U.surat[i
 {const _kl=VIEWS.setelan;VIEWS.setelan=function(){const h=_kl.apply(this,arguments);
   return h.replace('</h1>','</h1><div class="card" id="klKartu" style="margin-top:12px"><div class="klk"><b>Kelas &amp; kenaikan kelas</b><span class="mut">Tambah siswa per kelas, atur guru tiap kelompok, naikkan kelas di akhir tahun, dan lihat alumni.</span></div><button class="btn" data-golink="kelas">Buka halaman Kelas</button></div>')}}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-golink]');if(b)go(b.dataset.golink)});
+/* ===== v1.85 (UI/UX Tahap 2): layar Setoran lebih ringan. Satu pilihan "Setelah setoran ini" menggantikan dua centang (dipetakan ke ST.harus/ST.koor yang sama, jadi rekap dan rapor tidak berubah); keterangan, tidak setor, mundurkan, dan mode Per tahap dilipat di "Lainnya". ===== */
+function stHk(){const j=ST.j,v=ST.koor?'koor':(ST.harus&&j==='tahfidz')?'koor':ST.harus?'ulang':'lancar',
+  o=j==='tahfidz'?[['lancar','Lanjut dengan guru'],['koor','Ke koordinator']]:[['lancar','Lancar'],['ulang','Ulang lagi'],['koor','Koordinator']],
+  tx={lancar:j==='tahfidz'?'Siswa tetap setor ke guru kelompoknya.':'Siswa lanjut ke setoran berikutnya.',
+   ulang:'Belum lancar: siswa muncul lagi di antrean untuk mengulang.',
+   koor:j==='tahfidz'?'Sudah lulus dari guru tahfidz; siswa masuk antrean koordinator tahfidz.':'Sudah lulus dari guru (bukan karena belum lancar); setor berikutnya ke koordinator BTQ.'}[v];
+  return `<div class="stHk"><div class="mut" id="stHkL">Setelah setoran ini</div><div class="seg" role="group" aria-labelledby="stHkL">${o.map(([k,x])=>`<button type="button" class="${v===k?'on':''}" data-hk="${k}" aria-pressed="${v===k}">${x}</button>`).join('')}</div><p class="mut stHkT">${tx}</p></div>`}
+function stLain(s){const j=ST.j,buka=ST.more||ST.tm==='tahap'||ST.kl||(ST.kc||[]).length||ST.ket||stAda(s,j)||mdr(s,j);
+  return `<details class="stMore" id="stMore"${buka?' open':''}><summary>Lainnya<span class="mut">keterangan, tidak setor, mundurkan</span></summary><div class="fl">${j==='tahfidz'?`<div><div class="mut" style="margin-bottom:6px">Cara menyetor</div>${tmSeg()}</div>`:''}
+     <label>Kelancaran<select data-f="kl">${opt(KL_OPSI.map(x=>[x,x]),ST.kl,'– pilih (opsional) –')}</select></label>
+     <div><div class="mut" style="margin-bottom:6px">Catatan cepat (ketuk untuk memilih)</div><div class="chips" style="flex-wrap:wrap;overflow:visible;margin-bottom:0">${(ST.j==='tahfidz'?KC_T:KC_B).map((x,k)=>`<button type="button" class="chip${(ST.kc||[]).includes(x)?' on':''}" data-kc="${k}">${esc(x)}</button>`).join('')}</div></div>
+     <label>Keterangan tambahan<input type="text" data-f="ket" placeholder="Ketik sendiri (opsional)" value="${esc(ST.ket)}"></label>
+${sdHari(s,ST.j)||stAda(s,ST.j)?'':`<button class="btn ghost" id="stBack">${mdr(s,ST.j)?'Batal mundur':'Mundurkan (belum siap)'}</button>`}${stAlasanUI(s)}</div></details>`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-hk]');if(!b||S.page!=='setoran')return;const k=b.dataset.hk,sy=scrollY;
+  if(ST.j==='tahfidz'){ST.harus=(k==='koor');ST.koor=false}else{ST.harus=(k==='ulang');ST.koor=(k==='koor')}
+  render();scrollTo(0,sy)});
+document.addEventListener('toggle',e=>{const x=e.target;if(x&&x.id==='stMore')ST.more=x.open},true);
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
 const ALAB=['Tajwid','Makhroj','Murojaah','Kelancaran','Tajwid','Makhroj','Menulis','Membaca'];
 async function ekspor(){if(!S.ks.length)return toast('Belum ada siswa untuk diekspor.');
