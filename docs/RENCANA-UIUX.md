@@ -21,7 +21,7 @@ Masalah: tab bawah berurutan Siswa, Setoran, Nilai, Rapor, Rekap; Kelas (tugas t
 - [x] (v1.85) BTQ: Lancar / Ulang lagi / Koordinator; Tahfidz: Lanjut dengan guru / Ke koordinator (Tahfidz tidak punya "ulang" sebagai tanda; Mengulang tetap di dropdown Status). Dipetakan ke `harus`/`koor` yang sama sehingga rekap dan rapor tidak berubah. Setoran Per kelompok tidak diubah (masih centang).
 
 ## Tahap 3 – Bantuan
-- [ ] Pecah "Panduan singkat" (±30 paragraf) menjadi: bantuan kontekstual per halaman (ikon ?, 2–3 kalimat), daftar langkah awal, dan "Yang baru" terpisah dari panduan.
+- [x] (v1.86) "Panduan singkat" dipecah jadi kartu Bantuan: 6 langkah awal, tombol ? per halaman (9 halaman, status buka diingat), dan 3 lipatan (Panduan dasar, Rekap dan kelompok, Yang baru). Isi 29 paragraf lama dipertahankan; kalimat yang menyebut centang/posisi lama diperbarui.
 
 ## Tahap 4 – Tindakan merusak & status simpan
 - [ ] "Hapus semua data" → "Reset data di perangkat ini"; jauhkan dari Unduh/Pulihkan; pakai dialog ketik-konfirmasi seperti "Hapus semua siswa"; perjelas pesan soal data server.
