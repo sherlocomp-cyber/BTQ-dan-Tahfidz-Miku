@@ -24,9 +24,9 @@ Masalah: tab bawah berurutan Siswa, Setoran, Nilai, Rapor, Rekap; Kelas (tugas t
 - [x] (v1.86) "Panduan singkat" dipecah jadi kartu Bantuan: 6 langkah awal, tombol ? per halaman (9 halaman, status buka diingat), dan 3 lipatan (Panduan dasar, Rekap dan kelompok, Yang baru). Isi 29 paragraf lama dipertahankan; kalimat yang menyebut centang/posisi lama diperbarui.
 
 ## Tahap 4 – Tindakan merusak & status simpan
-- [ ] "Hapus semua data" → "Reset data di perangkat ini"; jauhkan dari Unduh/Pulihkan; pakai dialog ketik-konfirmasi seperti "Hapus semua siswa"; perjelas pesan soal data server.
-- [ ] Indikator simpan: dua status, "Tersimpan di perangkat" dan "Tersinkron HH.MM / belum terkirim".
-- [ ] `toast()`: tambahkan `role="status"` (dan `aria-live="polite"`).
+- [x] (v1.87) Jadi kartu sendiri "Reset data di perangkat ini" (terlipat, merah) di bawah Data bawaan, terpisah dari Unduh/Pulihkan; wajib mengetik RESET; pesan menegaskan data server tidak dihapus. Diuji: salah ketik → 23 siswa utuh, ketik RESET → terhapus.
+- [x] (v1.87) Lencana header: "Tersinkron HH.MM" / "Belum terkirim" (title menjelaskan keduanya); Pengaturan › Cadangan memuat dua baris "Di perangkat ini … Di server …". Diturunkan dari teks Cloud.tampil lewat MutationObserver, logika sinkron tidak disentuh. Catatan: di ≤380 px teks lencana disembunyikan (aturan lama), jadi detail ada di Pengaturan.
+- [x] Sudah terpenuhi sebelumnya: `toast()` yang aktif (v1.7x, menimpa definisi awal) memakai wadah `#toastBox` ber-`role="status"` dan `aria-live="polite"`. Tidak diubah.
 
 ## Tahap 5 – Tema, istilah, ukuran teks
 - [ ] Ubah `DEFAULT.tema` dari `'angkasa'` ke `'terang'`.

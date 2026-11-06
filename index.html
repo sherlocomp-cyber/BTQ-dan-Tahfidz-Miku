@@ -730,6 +730,11 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 .bnd[open]>summary{margin-bottom:6px}.bnd[open]>summary::after{transform:rotate(-135deg)}
 .bnd>div p{margin:0 0 10px;font-size:14px;line-height:1.5}
 @media(prefers-reduced-motion:no-preference){.bnd>summary::after{transition:transform .2s}}
+
+/* Tahap 4: zona reset */
+.zonaBhy{margin-top:16px;border:1px solid var(--rd,#ef4444)}
+.zonaBhy h3{color:var(--rd,#ef4444)}
+.zonaBhy .btn{margin-top:10px}
 </style>
 </head>
 <body>
@@ -806,7 +811,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.86';
+const VERSI='v1.87';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -901,11 +906,12 @@ const VIEWS={
   ${S.set.logo?`<img class="logoprev" src="${S.set.logo}" alt="Logo">`:'<span class="mut">Belum ada logo.</span>'}</div></div>
   <div class="card" style="margin-top:16px"><h3>Cadangan data</h3><p class="mut">Simpan cadangan secara berkala. File cadangan berisi pengaturan dan data siswa, dan tetap di perangkat Anda.</p>
   <p class="mut" id="psInfo" style="margin-top:8px"></p>
+  <p class="mut" id="simpanDua" style="margin-top:6px"></p>
   <div class="row"><button class="btn" id="bk">Unduh cadangan (JSON)</button>
   <button class="btn ghost" id="rs">Pulihkan dari cadangan</button><input type="file" id="rsIn" accept=".json,application/json" hidden>
-  <button class="btn ghost" id="psBtn" hidden>Lindungi penyimpanan</button>
-  <button class="btn red" id="rst">Hapus semua data</button></div></div>
+  <button class="btn ghost" id="psBtn" hidden>Lindungi penyimpanan</button></div></div>
   <div class="card fold"><details><summary>Data bawaan (jarang dipakai)</summary><p class="mut" style="margin:8px 0 10px">Memuat siswa dan setoran kelas 4A bawaan aplikasi. Data yang sudah ada tidak dihapus, tetapi siswa dan setoran baru akan ditambahkan. Unduh cadangan dulu bila ragu.</p><button class="btn ghost" id="impBw">Muat data Rekap kelas 4A</button></details></div>
+  <div class="card zonaBhy" id="zonaBhy"><h3>Reset data di perangkat ini</h3><p class="mut">Menghapus semua siswa, setoran, nilai, dan pengaturan yang tersimpan di perangkat ini saja. Data di server tidak dihapus dan akan dimuat ulang. Unduh cadangan dulu di kartu Cadangan data.</p><button class="btn red" id="rst">Reset data di perangkat ini…</button></div>
   <div class="card" id="bantuan" style="margin-top:16px"><h3>Bantuan</h3>
   <div class="bnt"><p class="bnh">Langkah awal</p>
   <ol><li>Pengaturan: isi identitas madrasah, guru, kepala, dan unggah logo.</li><li>Kelas dan Siswa: tambah, tempel, atau impor siswa untuk kelas yang dipakai.</li><li>Setoran: catat setoran harian Tahfidz dan BTQ.</li><li>Nilai: isi nilai surat, aspek, tahapan, dan pencapaian.</li><li>Rapor: cek pratinjau, lalu cetak atau simpan sebagai PDF.</li><li>Cadangan: unduh cadangan JSON secara berkala.</li></ol>
@@ -960,8 +966,8 @@ function bindSetelan(){
   $('#bk').onclick=backup;
   {const bw=$('#impBw');if(bw)bw.onclick=()=>{if(S.set.kelasAktif!=='4A')return toast('Data bawaan hanya untuk kelas 4A. Pilih Kelas 4A dulu.');if(!confirm('Muat data bawaan Rekap kelas 4A?\n\nSiswa dan setoran dari data bawaan akan DITAMBAHKAN ke data yang ada sekarang. Disarankan unduh cadangan dulu.'))return;impRekap(REKAP_BAWAAN,'data bawaan Rekap Nilai')}}
   $('#rs').onclick=()=>$('#rsIn').click();$('#rsIn').onchange=restore;
-  $('#rst').onclick=async()=>{if(!confirm('Hapus data di perangkat ini? Data di server TIDAK dihapus dan akan dimuat ulang. Unduh cadangan dulu bila perlu.'))return;
-    Cloud.jeda();await DB.clear();S.set={...DEFAULT};S.siswa=[];theme('terang');toast('Data perangkat dihapus; memuat ulang dari server.');render();Cloud.start()};
+  $('#rst').onclick=async()=>{if((prompt('Semua data di perangkat ini akan dihapus. Data di server TIDAK dihapus dan akan dimuat ulang. Sebaiknya unduh cadangan dulu.\n\nKetik RESET untuk melanjutkan.')||'').trim().toUpperCase()!=='RESET')return toast('Dibatalkan. Data tidak diubah.');
+    Cloud.jeda();await DB.clear();S.set={...DEFAULT};S.siswa=[];theme('terang');toast('Data di perangkat ini direset; memuat ulang dari server.');render();Cloud.start()};
 }
 /* ===== SISWA: CRUD, tempel, impor Excel ===== */
 const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
@@ -2397,6 +2403,22 @@ function helpPasang(){const v=document.getElementById('view'),h=v&&v.querySelect
   const set=o=>{HLP_BUKA[S.page]=o;k.hidden=!o;b.setAttribute('aria-expanded',String(o))};
   b.onclick=()=>set(k.hidden);h.append(b);h.after(k);set(!!HLP_BUKA[S.page])}
 {const _rb=render;render=function(){const r=_rb.apply(this,arguments);try{helpPasang()}catch(_){}return r}}
+/* ===== v1.87 (UI/UX Tahap 4): status simpan jadi dua keadaan yang jelas. Lencana header menampilkan "Tersinkron HH.MM" / "Belum terkirim"; Pengaturan › Cadangan menjelaskan dua baris: di perangkat dan di server. Diturunkan dari teks Cloud.tampil (MutationObserver), jadi logika sinkron tidak disentuh. ===== */
+{const si=document.getElementById('saveInd');let lastSync=null,kirim=false,raw='';
+ const jam=d=>String(d.getHours()).padStart(2,'0')+'.'+String(d.getMinutes()).padStart(2,'0');
+ const dua=()=>{const e=document.getElementById('simpanDua');if(!e)return;
+  const s=raw==='Tersinkron'||raw==='Mengirim…'?(raw==='Mengirim…'?'sedang dikirim.':'tersinkron'+(lastSync?' pukul '+jam(lastSync):'')+'.'):raw==='Menunggu kirim'?'belum terkirim; dikirim otomatis saat tersambung.':raw==='Offline'?'tidak tersambung.':raw==='Menghubungkan…'?'menghubungkan…':raw==='Server menolak'?'ditolak server.':'';
+  e.textContent='Di perangkat ini: tersimpan. Di server: '+(s||'-')};
+ if(si&&window.MutationObserver){let sedang=false;
+  const ob=new MutationObserver(()=>{if(sedang)return;const sp=si.lastChild;if(!sp)return;const x=sp.textContent;
+   const m=/^(Tersinkron)( \d\d\.\d\d)?$/.exec(x);let t=x,j;
+   if(m){if(kirim||!lastSync){lastSync=new Date();kirim=false}raw='Tersinkron';t='Tersinkron '+jam(lastSync);j='Tersimpan di perangkat. Tersinkron ke server pukul '+jam(lastSync)+'.'}
+   else if(x==='Mengirim…'||x==='Menyimpan…'){raw='Mengirim…';kirim=true;j='Tersimpan di perangkat; sedang dikirim ke server.'}
+   else if(x==='Menunggu kirim'||x==='Belum terkirim'){raw='Menunggu kirim';t='Belum terkirim';j='Tersimpan di perangkat, belum terkirim ke server. Dikirim otomatis saat tersambung.'}
+   else{raw=x;j='Tersimpan di perangkat. '+x+'.'}
+   si.title=j;sedang=true;if(sp.textContent!==t)sp.textContent=t;sedang=false;dua()});
+  ob.observe(si,{childList:true,characterData:true,subtree:true})}
+ {const _bs=bindSetelan;bindSetelan=function(){_bs.apply(this,arguments);dua()}}}
 /* ===== EKSPOR LEGER (format sama dengan sheet 'ledger 30', bisa diimpor ulang) ===== */
 const ALAB=['Tajwid','Makhroj','Murojaah','Kelancaran','Tajwid','Makhroj','Menulis','Membaca'];
 async function ekspor(){if(!S.ks.length)return toast('Belum ada siswa untuk diekspor.');
