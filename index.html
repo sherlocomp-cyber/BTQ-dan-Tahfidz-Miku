@@ -462,6 +462,7 @@ html.fhp .tabbar{left:50%;right:auto;width:100%;max-width:520px;transform:transl
 .ujin input{width:100%;min-width:0;text-align:center;padding:6px 4px}
 .ujst{flex:none;border:1px solid var(--ln);background:transparent;color:var(--mu);border-radius:8px;padding:2px 6px;cursor:pointer;font-size:14px;line-height:1.2}
 .ujst.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.ujin input.ujoto{color:var(--mu);font-style:italic}
 .ujt{font-weight:700;text-align:center}.ujg{font-weight:600;font-size:13px}
 @media(max-width:700px){
  .ujh{display:none}
@@ -852,7 +853,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.89';
+const VERSI='v1.92';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -1707,15 +1708,29 @@ const UJ_SKALA=[[86,'A','Mumtaz'],[66,'B','Jayyid Jiddan'],[41,'C','Jayyid'],[0,
 const UJ_NOTE='Nilai akhir ujian: 86 - 100 = Mumtaz  ·  66 - 85 = Jayyid Jiddan  ·  41 - 65 = Jayyid  ·  1 - 40 = Maqbul';
 const ujNum=v=>{if(v===''||v==null)return null;const n=parseFloat(String(v).replace(',','.'));return Number.isFinite(n)?n:null};
 const ujFmt=n=>n==null?'':String(Math.round(n*10)/10).replace('.',',');
-/* melampaui target: ditandai guru (mel), pencapaian tahfidz = Melampaui, setoran maju lewat target, atau sudah ada nilai surat Juz 29-1 */
-function ujMel(s,tanpaTanda){
-  if(!tanpaTanda&&s.uj&&s.uj.mel)return true;
-  if(s.pcTah&&s.pcTah.status==='Melampaui')return true;
-  try{if(autoSt(s,'tahfidz')==='Melampaui')return true}catch(_){}
-  return !!(s.nj&&Object.values(s.nj).some(o=>o&&Object.values(o).some(Boolean)))}
+/* Arah target: Juz 30 dari An-Naba ke An-Nas (surat 78 -> 114), lalu tahap dari An-Nas balik ke An-Naba, lalu Juz 29 dst (surat < 78).
+   Status posisi dihitung autoSt (setoran vs target kelas/semester) atau pcTah. 'Melampaui' = sudah masuk tahap / Juz 29 dst;
+   'Tercapai' = sudah sampai akhir target semester. Keduanya = target selesai -> nilai target hafalan otomatis 50 (form: target selesai = 50),
+   tetapi nilai yang diketik manual SELALU menang atas otomatis. */
+/* Status = posisi setoran tahfidz TERBARU (lastSet: setoran maju paling baru menurut tanggal & urutan), bukan riwayat lama.
+   Terbaru di tahap atau Juz 29 dst (surat < 78) = Melampaui; surat lewat akhir target semester (atau = akhir dan selesai) = Tercapai; selain itu belum. */
+function ujPos(s){const t=targetNow(),e=lastSet(s,'tahfidz');if(!t||!t.tah||!e)return null;
+  const n=+e.surat;let a='Tidak';
+  if(e.tahap||n<78)a='Melampaui';else if(n>t.tah[1]||(n===t.tah[1]&&e.selesai))a='Tercapai';
+  return {a,e}}
+function ujStatus(s,tanpaTanda){
+  if(!tanpaTanda&&s.uj&&s.uj.mel)return 'Melampaui';
+  const q=ujPos(s);if(q)return q.a==='Tidak'?'':q.a;
+  const p=s.pcTah&&s.pcTah.status;
+  if(p==='Melampaui'||p==='Tercapai')return p;
+  if(s.nj&&Object.values(s.nj).some(o=>o&&Object.values(o).some(Boolean)))return 'Melampaui';
+  return ''}
+const ujMel=(s,tanpaTanda)=>ujStatus(s,tanpaTanda)!=='';
 function ujVal(s,key,paksa){
+  const n=ujNum((s.uj||{})[key]);
+  if(n!==null)return Math.min(UJ_MAX[key],Math.max(0,n));
   if(key==='h'&&(paksa||ujMel(s)))return 50;
-  const n=ujNum((s.uj||{})[key]);return n===null?null:Math.min(UJ_MAX[key],Math.max(0,n))}
+  return null}
 function ujHitung(s,paksa){const h=ujVal(s,'h',paksa),k=ujVal(s,'k'),m=ujVal(s,'m'),ok=h!=null&&k!=null&&m!=null,
   tot=ok?Math.round((h+k+m)*10)/10:null,g=tot==null?null:UJ_SKALA.find(a=>tot>=a[0]);
   return {h,k,m,tot,huruf:g?g[1]:'',pred:g?g[2]:''}}
@@ -1724,9 +1739,11 @@ function ujTargetTeks(){const m=S.set,md=m.targetMode||'auto';let t=null;
   if(md==='auto')t=targetNow();else if(md!=='manual'){const p=md.split('-');t=(TGT[p[0]]||{})[p[1]]||null}
   if(t)return t.tl;
   return String(m.target||'').split(' / ')[0].replace(/^Tahfidz\s+/i,'').trim()}
-function ujCapai(s,paksa){if(paksa||ujMel(s))return 'MELAMPAUI TARGET';
+function ujCapai(s,paksa){const st=ujStatus(s);
+  if(paksa||st==='Melampaui')return 'MELAMPAUI TARGET';
+  const q=ujPos(s);if(q)return pcText({status:q.a,pos:q.e.pos||posTeks(q.e)});
   const p=s.pcTah||{};if(p.status)return p.raw||pcText(p);
-  let a=null;try{a=autoSt(s,'tahfidz')}catch(_){}return a?pcText({status:a,pos:''}):''}
+  return st?pcText({status:st,pos:''}):''}
 function ujKetTeks(s,paksa){const t=ujTargetTeks(),c=ujCapai(s,paksa);
   return (t?'Target semester:\n'+t:'Target semester: -')+'\nKetercapaian target:\n'+(c||'-')}
 /* Rapor Juz 30 (template RP): kunci 'u:...' dibaca rval() */
@@ -1752,13 +1769,13 @@ function ujSimpan(s){clearTimeout(ujTim.get(s.id));ujTim.set(s.id,setTimeout(()=
 function ujSumHTML(){const ks=S.ks,H=ks.map(s=>ujHitung(s,false)),L=H.filter(u=>u.tot!=null),
   av=L.length?Math.round(L.reduce((a,u)=>a+u.tot,0)/L.length*10)/10:null;
   return `Lengkap ${L.length} dari ${ks.length} siswa${av!=null?` · rata-rata nilai akhir ${ujFmt(av)}`:''}`}
-function ujRowHTML(s){const u=ujHitung(s,false),mel=ujMel(s),o=s.uj||{},auto=ujMel(s,true),id=esc(s.id);
-  const inp=(k,lab,max,dis,val)=>`<label class="ujc"><i>${lab}</i><span class="ujin"><input type="text" inputmode="decimal" autocomplete="off" data-uj="${k}" data-s="${id}" value="${esc(val)}"${dis?' disabled':''} aria-label="${esc(s.nama)} – ${lab}" placeholder="1-${max}">${k==='h'?`<button type="button" class="ujst${mel?' on':''}" data-ujmel="${id}" title="Melampaui target: nilai 50 otomatis" aria-label="Tandai melampaui target">★</button>`:''}</span></label>`;
+function ujRowHTML(s){const u=ujHitung(s,false),mel=ujMel(s),o=s.uj||{},oto=mel&&!o.h,id=esc(s.id);
+  const inp=(k,lab,max,dis,val,oto)=>`<label class="ujc"><i>${lab}</i><span class="ujin"><input type="text"${oto?' class="ujoto" title="Otomatis 50 (target selesai). Ketik angka lain untuk mengubah."':''} inputmode="decimal" autocomplete="off" data-uj="${k}" data-s="${id}" value="${esc(val)}"${dis?' disabled':''} aria-label="${esc(s.nama)} – ${lab}" placeholder="1-${max}">${k==='h'?`<button type="button" class="ujst${mel?' on':''}" data-ujmel="${id}" title="Tandai melampaui target (nilai 50 otomatis, tetap bisa diubah)" aria-label="Tandai melampaui target">★</button>`:''}</span></label>`;
   return `<div class="ujr" data-r="${id}"><b class="ujn">${esc(s.no)}</b><span class="ujm">${esc(s.nama)}</span>
-  <div class="uji">${inp('h','Target hafalan (1-50)',50,mel,mel?'50':(o.h||''))}${inp('k','Kelancaran (1-30)',30,false,o.k||'')}${inp('m','Makhroj & Tajwid (1-20)',20,false,o.m||'')}</div>
+  <div class="uji">${inp('h','Target hafalan (1-50)',50,false,o.h||(mel?'50':''),oto)}${inp('k','Kelancaran (1-30)',30,false,o.k||'')}${inp('m','Makhroj & Tajwid (1-20)',20,false,o.m||'')}</div>
   <span class="ujt">${ujFmt(u.tot)}</span><span class="ujg">${u.huruf?u.huruf+' · '+u.pred:''}</span></div>`}
 function ujGridHTML(){
-  return `<div class="card"><p class="mut" style="margin:0 0 8px">Form Penilaian Ujian Tahfidz Semester I. Nilai masuk ke Bagian B rapor (judul "Ujian Tahfidz"). Ketuk ★ bila siswa melampaui target: nilai target hafalan otomatis 50 (juga otomatis bila pencapaian/setoran sudah melampaui target). Enter = kolom berikutnya.</p>
+  return `<div class="card"><p class="mut" style="margin:0 0 8px">Form Penilaian Ujian Tahfidz Semester I. Nilai masuk ke Bagian B rapor (judul "Ujian Tahfidz"). Nilai target hafalan otomatis 50 bila target semester sudah tercapai/dilampaui (dibaca dari setoran dan pencapaian; arah target An-Naba ke An-Nas, lalu tahap dari An-Nas balik ke An-Naba), tetapi tetap bisa diubah manual: ketik angka lain, kosongkan untuk kembali otomatis. ★ = tandai manual melampaui target. Enter = kolom berikutnya.</p>
   <p class="mut" style="margin:0 0 8px"><b>Grade:</b> 86-100 Mumtaz (A) · 66-85 Jayyid Jiddan (B) · 41-65 Jayyid (C) · 1-40 Maqbul (D)</p>
   <p id="ujSum" style="margin:0 0 6px;font-weight:600">${ujSumHTML()}</p>
   <div class="ujw"><div class="ujh"><span>No</span><span>Nama Siswa</span><span class="ujhi"><span>Nilai 1-50<br>Target Hafalan 1 smt</span><span>Nilai 1-30<br>Kelancaran</span><span>Nilai 1-20<br>Makhroj &amp; Tajwid</span></span><span>Total Nilai</span><span>Grade</span></div>${S.ks.map(ujRowHTML).join('')}</div></div>`}
@@ -1770,7 +1787,7 @@ function ujBind(){const V=$('#view');V.ontouchstart=V.ontouchend=null;
   V.onclick=e=>{if(S.page!=='nilai')return;const b=e.target.closest('button');if(!b)return;
     if(b.dataset.ujm!==undefined){S.in.uj=b.dataset.ujm==='1';const y=scrollY;render();scrollTo(0,y);return}
     if(b.dataset.ujmel){const s=S.ks.find(z=>z.id===b.dataset.ujmel);if(!s)return;
-      if(ujMel(s,true)&&!(s.uj&&s.uj.mel))return toast('Sudah melampaui target dari setoran/pencapaian, nilai 50 otomatis.');
+      if(ujMel(s,true)&&!(s.uj&&s.uj.mel))return toast('Sudah terbaca tercapai/melampaui dari setoran atau pencapaian; nilai 50 otomatis.');
       s.uj=s.uj||{};if(s.uj.mel)delete s.uj.mel;else s.uj.mel=true;sv(s);ujSegar(s,true)}};
   V.oninput=e=>{const t=e.target;if(S.page!=='nilai'||!t.dataset||!t.dataset.uj)return;
     const s=S.ks.find(z=>z.id===t.dataset.s);if(!s)return;s.uj=s.uj||{};const v=t.value.trim();
@@ -1782,7 +1799,7 @@ function ujBind(){const V=$('#view');V.ontouchstart=V.ontouchend=null;
       else if(n>max){toast('Maksimal '+max+'.');v=String(max)}
       else if(n<1){toast('Rentang nilai 1-'+max+'.');v='1'}
       else v=ujFmt(n).replace(',','.')}
-    s.uj=s.uj||{};if(v==='')delete s.uj[k];else s.uj[k]=v;t.value=v;sv(s);ujSegar(s,false)};
+    s.uj=s.uj||{};if(v==='')delete s.uj[k];else s.uj[k]=v;t.value=v;sv(s);ujSegar(s,k==='h')};
   V.onkeydown=e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||!t.dataset.uj)return;e.preventDefault();
     const a=[...V.querySelectorAll('input[data-uj]:not(:disabled)')],i=a.indexOf(t);t.blur();if(a[i+1])a[i+1].focus()}}
 {const _vn=viewNilai,_bn=bindNilai,
