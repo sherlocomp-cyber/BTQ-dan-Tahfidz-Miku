@@ -456,6 +456,7 @@ html.fhp .tabbar{left:50%;right:auto;width:100%;max-width:520px;transform:transl
 .ujh{font-size:11px;font-weight:700;color:var(--mu);padding:6px 8px;line-height:1.2}
 .ujhi{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;text-align:center}
 .ujr{padding:6px 8px;border-top:1px solid var(--ln)}
+.ujgh{margin:14px 0 2px;padding:8px 10px;border-radius:10px;background:var(--card2);border:1px solid var(--ln);font-weight:700}.ujgh:first-child{margin-top:4px}
 .ujn{text-align:center}.ujm{font-weight:600;overflow:hidden;text-overflow:ellipsis}
 .ujc{display:block;margin:0}.ujc i{display:none;font-style:normal;font-size:10px;color:var(--mu);margin-bottom:2px}
 .ujin{display:flex;gap:4px;align-items:center}
@@ -853,7 +854,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.93';
+const VERSI='v1.94';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -1770,19 +1771,28 @@ function ujRaporJuz(s,tbl,tr,E){const u=ujHitung(s,true),sp=x=>x===''||x==null?'
 /* ----- Halaman Input Nilai › Ujian Tahfidz (bergaya form penilaian) ----- */
 const ujTim=new Map();
 function ujSimpan(s){clearTimeout(ujTim.get(s.id));ujTim.set(s.id,setTimeout(()=>{ujTim.delete(s.id);sv(s)},350))}
-function ujSumHTML(){const ks=S.ks,H=ks.map(s=>ujHitung(s,false)),L=H.filter(u=>u.tot!=null),
+/* v1.94: filter kelompok Tahfidz di Ujian Tahfidz. S.in.ukg: 0 = semua (dikelompokkan per kelompok), 1/2 = kelompok, -1 = belum dikelompokkan */
+const ujKg=()=>S.in.ukg||0,ujDaftar=()=>sisKlp('tahfidz',ujKg());
+function ujIsiHTML(){const g=ujKg(),L=ujDaftar(),c=klpHitung('tahfidz');
+  if(!L.length)return '<p class="mut" style="margin:10px 8px">Tidak ada siswa di pilihan ini.</p>';
+  if(g||!(c[1]+c[2]))return L.map(ujRowHTML).join('');
+  return [1,2,-1].map(k=>{const A=sisKlp('tahfidz',k);if(!A.length)return '';
+    return `<div class="ujgh">${k>0?esc(klpNamaOf('tahfidz',k)):'Belum dikelompokkan'} (${A.length} siswa)</div>`+A.map(ujRowHTML).join('')}).join('')}
+function ujSumHTML(){const ks=ujDaftar(),H=ks.map(s=>ujHitung(s,false)),L=H.filter(u=>u.tot!=null),
   av=L.length?Math.round(L.reduce((a,u)=>a+u.tot,0)/L.length*10)/10:null;
-  return `Lengkap ${L.length} dari ${ks.length} siswa${av!=null?` · rata-rata nilai akhir ${ujFmt(av)}`:''}`}
+  const g=ujKg(),gl=g>0?klpNamaOf('tahfidz',g):g===-1?'Belum dikelompokkan':'';
+  return `${gl?esc(gl)+': ':''}Lengkap ${L.length} dari ${ks.length} siswa${av!=null?` · rata-rata nilai akhir ${ujFmt(av)}`:''}`}
 function ujRowHTML(s){const u=ujHitung(s,false),mel=ujMel(s),o=s.uj||{},oto=mel&&!o.h,id=esc(s.id);
   const inp=(k,lab,max,dis,val,oto)=>`<label class="ujc"><i>${lab}</i><span class="ujin"><input type="text"${oto?' class="ujoto" title="Otomatis 50 (target selesai). Ketik angka lain untuk mengubah."':''} inputmode="decimal" autocomplete="off" data-uj="${k}" data-s="${id}" value="${esc(val)}"${dis?' disabled':''} aria-label="${esc(s.nama)} – ${lab}" placeholder="1-${max}">${k==='h'?`<button type="button" class="ujst${mel?' on':''}" data-ujmel="${id}" title="Tandai melampaui target (nilai 50 otomatis, tetap bisa diubah)" aria-label="Tandai melampaui target">★</button>`:''}</span></label>`;
   return `<div class="ujr" data-r="${id}"><b class="ujn">${esc(s.no)}</b><span class="ujm">${esc(s.nama)}</span>
   <div class="uji">${inp('h','Target hafalan (1-50)',50,false,o.h||(mel?'50':''),oto)}${inp('k','Kelancaran (1-30)',30,false,o.k||'')}${inp('m','Makhroj & Tajwid (1-20)',20,false,o.m||'')}</div>
   <span class="ujt">${ujFmt(u.tot)}</span><span class="ujg">${u.huruf?u.huruf+' · '+u.pred:''}</span></div>`}
 function ujGridHTML(){
-  return `<div class="card"><p class="mut" style="margin:0 0 8px">Form Penilaian Ujian Tahfidz Semester I. Nilai masuk ke Bagian B rapor (judul "Ujian Tahfidz"). Nilai target hafalan otomatis 50 bila target semester sudah tercapai/dilampaui (dibaca dari setoran dan pencapaian; arah target An-Naba ke An-Nas, lalu tahap dari An-Nas balik ke An-Naba), tetapi tetap bisa diubah manual: ketik angka lain, kosongkan untuk kembali otomatis. ★ = tandai manual melampaui target. Enter = kolom berikutnya.</p>
+  return `<div class="card"><p class="mut" style="margin:0 0 8px">Form Penilaian Ujian Tahfidz Semester I. Nilai masuk ke Bagian B rapor (judul "Ujian Tahfidz"). Nilai target hafalan otomatis 50 bila target semester sudah tercapai/dilampaui (dibaca dari setoran dan pencapaian; arah target An-Naba ke An-Nas, lalu tahap dari An-Nas balik ke An-Naba), tetapi tetap bisa diubah manual: ketik angka lain, kosongkan untuk kembali otomatis. ★ = tandai manual melampaui target. Enter = kolom berikutnya. Pilih kelompok Tahfidz di atas untuk menampilkan nama per kelompok.</p>
   <p class="mut" style="margin:0 0 8px"><b>Grade:</b> 86-100 Mumtaz (A) · 66-85 Jayyid Jiddan (B) · 41-65 Jayyid (C) · 1-40 Maqbul (D)</p>
+  ${(()=>{const c=klpHitung('tahfidz');return c[1]+c[2]?klpSeg('ujkg','tahfidz',ujKg()):'<p class="mut" style="margin:0 0 8px">Belum ada kelompok Tahfidz. Atur di Siswa › Kelompok Tahfidz &amp; BTQ, lalu nama di sini terkelompok otomatis.</p>'})()}
   <p id="ujSum" style="margin:0 0 6px;font-weight:600">${ujSumHTML()}</p>
-  <div class="ujw"><div class="ujh"><span>No</span><span>Nama Siswa</span><span class="ujhi"><span>Nilai 1-50<br>Target Hafalan 1 smt</span><span>Nilai 1-30<br>Kelancaran</span><span>Nilai 1-20<br>Makhroj &amp; Tajwid</span></span><span>Total Nilai</span><span>Grade</span></div>${S.ks.map(ujRowHTML).join('')}</div></div>`}
+  <div class="ujw"><div class="ujh"><span>No</span><span>Nama Siswa</span><span class="ujhi"><span>Nilai 1-50<br>Target Hafalan 1 smt</span><span>Nilai 1-30<br>Kelancaran</span><span>Nilai 1-20<br>Makhroj &amp; Tajwid</span></span><span>Total Nilai</span><span>Grade</span></div>${ujIsiHTML()}</div></div>`}
 function ujSegar(s,penuh){const r=document.querySelector(`.ujr[data-r="${CSS.escape(s.id)}"]`);if(!r)return;
   if(penuh){const t=document.createElement('div');t.innerHTML=ujRowHTML(s);r.replaceWith(t.firstElementChild)}
   else{const u=ujHitung(s,false);r.querySelector('.ujt').textContent=ujFmt(u.tot);r.querySelector('.ujg').textContent=u.huruf?u.huruf+' · '+u.pred:''}
@@ -1790,6 +1800,7 @@ function ujSegar(s,penuh){const r=document.querySelector(`.ujr[data-r="${CSS.esc
 function ujBind(){const V=$('#view');V.ontouchstart=V.ontouchend=null;
   V.onclick=e=>{if(S.page!=='nilai')return;const b=e.target.closest('button');if(!b)return;
     if(b.dataset.ujm!==undefined){S.in.uj=b.dataset.ujm==='1';const y=scrollY;render();scrollTo(0,y);return}
+    if(b.dataset.ujkg!==undefined){S.in.ukg=+b.dataset.ujkg;const y=scrollY;render();scrollTo(0,y);return}
     if(b.dataset.ujmel){const s=S.ks.find(z=>z.id===b.dataset.ujmel);if(!s)return;
       if(ujMel(s,true)&&!(s.uj&&s.uj.mel))return toast('Sudah terbaca tercapai/melampaui dari setoran atau pencapaian; nilai 50 otomatis.');
       s.uj=s.uj||{};if(s.uj.mel)delete s.uj.mel;else s.uj.mel=true;sv(s);ujSegar(s,true)}};
@@ -3133,6 +3144,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 47
 ## Ringkas
+- Catatan sesi 54: v1.94 Ujian Tahfidz bisa per kelompok. Input Nilai › Ujian Tahfidz dapat disaring per kelompok Tahfidz (Semua / Kelompok 1 / Kelompok 2 / Belum; S.in.ukg, ujDaftar, ujIsiHTML, klpSeg('ujkg')). Pilihan Semua menampilkan nama dikelompokkan dengan judul tiap kelompok; ringkasan 'Lengkap X dari Y' ikut kelompok. Data dan rapor tidak berubah; bagian terlindungi tidak disentuh.
 - Catatan sesi 53: v1.89 Ujian Tahfidz. Rapor Bagian B (Juz 30 lewat template RP baris 26-32 + kunci 'u:' di rval; Juz 29-1 lewat ujRaporJuz) diganti jadi "UJIAN TAHFIDZ": Target Hafalan 1 Semester (1-50, melampaui target otomatis 50), Kelancaran (1-30), Makhroj dan Tajwid (1-20), Nilai Akhir = predikat (86-100 Mumtaz, 66-85 Jayyid Jiddan, 41-65 Jayyid, 1-40 Maqbul; pemetaan A-D ke predikat = asumsi, ubah di UJ_SKALA), kolom Keterangan digabung (rowspan) = hafalan sekarang + status; target semester dan skala nilai di bawah tabel. Data siswa baru: s.uj={h,k,m,mel}; aspek lama tjT/mkT/mrT TIDAK dihapus. Input: Input Nilai › Ujian Tahfidz (ujGridHTML/ujBind); tab Aspek Tahfidz disembunyikan; cekLengkap dan RI tidak lagi menghitung aspek lama. BELUM: ekspor Excel leger/rapor (XL_TPL, ASPEK) masih format B lama; radar dasbor masih membaca aspek lama. Cadangan: index.backup-sebelum-ujian-tahfidz.html (v1.88).
 - Catatan sesi 52: versi sebenarnya = const VERSI di file (v1.82). Impor template leger Excel kelas lama selesai di kode (klXlsxBaca, klXlsx, klProses hasil pecahan klImpor; kartu Impor di halaman Kelas punya tombol Pilih template Excel). Template dibuat di luar aplikasi per kelas lama (12 file berisi nama + nilai yang sudah masuk, plus 1 file kosong). Perlu dicek manual: alur impor di HP/APK dan keterbacaan template di Excel/WPS/Google Sheets.
 - Catatan sesi 48: versi sebenarnya = const VERSI di file (v1.72). Tahap 6a (Rekap › Semua kelas, rekap lintas kelas) SELESAI di kode; cetak/PDF dan Excel perlu dicek manual oleh pengguna. Tahap 6b (data bawaan 4A REKAP_BAWAAN di repo publik) menunggu keputusan pengguna.
