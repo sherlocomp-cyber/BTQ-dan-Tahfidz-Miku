@@ -778,6 +778,12 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
  .mut,.chip,.stMore>summary .mut{font-size:14px}
 }
 @media(max-width:480px){#navHdr .hb::before{font-size:12px;line-height:13px}}
+.ddw{position:relative}
+.ddl{position:absolute;left:0;top:calc(100% + 4px);width:max(100%,300px);max-width:92vw;max-height:min(60vh,380px);overflow:auto;background:var(--card);border:1px solid var(--ln);border-radius:14px;box-shadow:0 14px 36px rgba(0,0,0,.28);z-index:80;padding:6px;-webkit-overflow-scrolling:touch}
+.ddl button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;color:var(--tx);padding:11px 12px;border-radius:10px;font:inherit;cursor:pointer}
+.ddl button b{min-width:26px;opacity:.6}.ddl button span{flex:1;min-width:0}
+.ddl button.on,.ddl button:hover{background:var(--card2)}
+.ddhi{outline:2px solid var(--ac);outline-offset:2px;border-radius:12px}
 </style>
 </head>
 <body>
@@ -785,7 +791,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
   <div class="brand"><div class="logo" style="background:#fff;border:1px solid var(--ln);overflow:hidden"><img src="data:image/png;base64,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" alt="" style="width:100%;height:100%;object-fit:contain"></div><span>BTQ – Tahfidz</span></div>
   <nav class="pills" id="navTop"></nav>
   <div class="ksw"><select id="kelasSel" aria-label="Kelas aktif"></select></div>
-  <div class="gs"><input type="search" id="gsIn" list="gsDl" placeholder="Cari siswa…" aria-label="Cari siswa" autocomplete="off"><datalist id="gsDl"></datalist></div>
+  <div class="gs"><input type="search" id="gsIn" placeholder="Cari siswa…" aria-label="Cari siswa" autocomplete="off"></div>
   <div class="sp"></div>
   <div class="save" id="saveInd" title="Status penyimpanan"><i></i><span>Tersimpan</span></div>
   <div class="hnav" id="navHdr"></div>
@@ -909,7 +915,7 @@ function buildNav(){
   $('#navBot').innerHTML=PAGES.filter(p=>NAV_INTI.includes(p[0])).map(([k,t])=>`<button data-p="${k}"><svg viewBox="0 0 24 24">${IC[k]||IC.setelan}</svg>${t.replace('Input ','')}</button>`).join('');
   {const ic=k=>`<svg viewBox="0 0 24 24">${IC[k]||IC.setelan}</svg>`,bt=([k,t])=>`<button data-p="${k}">${ic(k)}${t.replace('Input ','')}</button>`;
    $('#navSide').innerHTML=PAGES.filter(p=>NAV_INTI.includes(p[0])).map(bt).join('')+'<div class="sd-sp"></div>'+PAGES.filter(p=>!NAV_INTI.includes(p[0])).map(bt).join('');
-   $('#gsIn').onchange=gsLompat}
+   ddCari($('#gsIn'),gsPilih)}
   document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>go(b.dataset.p));
   {const k=$('#kelasSel');if(k)k.onchange=()=>{kelasPilih(k.value);render()}}
 }
@@ -1094,13 +1100,34 @@ function panelSis(){const P=$('#sisPanel');if(!P)return;const s=S.ks.find(x=>x.i
   <div class="row"><button class="btn" data-pa="u">Ubah</button><button class="btn ghost" data-pa="x">Tutup</button></div>
   <div style="border-top:1px solid var(--ln);padding-top:12px;margin-top:12px"><button class="btn red" data-pa="h">Hapus siswa</button></div></div>`;
   P.onclick=e=>{const a=e.target.closest('button');if(!a)return;const k=a.dataset.pa;if(k==='u')form(SELS);else if(k==='h')hapus(SELS);else{SELS='';panelSis()}}}
-function gsIsi(){const d=$('#gsDl');if(d)d.innerHTML=S.ks.map(s=>`<option value="${esc(s.nama)}">`).join('')}
-function gsLompat(){const i=$('#gsIn'),q=i.value.trim();if(!q)return;const L=S.ks.map((s,k)=>[s,k]),f=L.find(([s])=>s.nama.toLowerCase()===q.toLowerCase())||L.find(([s])=>cariCocok(s.nama,q));
-  if(!f)return toast('Siswa tidak ditemukan.');i.value='';const [s,k]=f;
+function gsIsi(){}
+/* v1.95: pencarian siswa berupa dropdown sendiri (daftar nama yang bisa diketuk) di kotak header dan kotak per halaman; pengganti datalist bawaan browser yang tidak muncul di sebagian tablet */
+function ddCari(inp,pick){if(!inp||inp._dd)return;inp._dd=1;const w=inp.parentNode;w.classList.add('ddw');
+  const box=document.createElement('div');box.className='ddl';box.setAttribute('role','listbox');box.hidden=true;w.appendChild(box);inp.autocomplete='off';
+  let hit=[],cur=-1;
+  const jn=()=>((S.page==='nilai'&&S.in.tab==='btq')||(S.page==='setoran'&&ST.j==='btq'))?'btq':'tahfidz';
+  const cari=q=>{q=q.trim().toLowerCase();const w=q.split(/\s+/).filter(Boolean);
+    return S.ks.map((x,k)=>[x,k]).filter(([x])=>!w.length||w.every(t=>x.nama.toLowerCase().includes(t))||String(x.no)===q)
+      .sort((a,b)=>{const pa=a[0].nama.toLowerCase().startsWith(q)?0:1,pb=b[0].nama.toLowerCase().startsWith(q)?0:1;return pa-pb||a[0].no-b[0].no}).slice(0,60)};
+  const tutup=()=>{box.hidden=true;cur=-1};
+  const gambar=()=>{hit=cari(inp.value);cur=hit.length&&inp.value.trim()?0:-1;
+    box.innerHTML=hit.length?hit.map(([x,k],n)=>`<button type="button" role="option" data-dk="${k}" class="${n===cur?'on':''}"><b>${x.no}</b><span>${esc(x.nama)}</span>${kChip(x,jn())}</button>`).join(''):'<p class="mut" style="margin:8px 10px">Siswa tidak ditemukan.</p>';box.hidden=false};
+  const sorot=n=>{const b=[...box.querySelectorAll('button')];if(!b.length)return;cur=(n+b.length)%b.length;b.forEach((x,i)=>x.classList.toggle('on',i===cur));b[cur].scrollIntoView({block:'nearest'})};
+  const ambil=k=>{inp.value='';tutup();inp.blur();pick(+k)};
+  inp.addEventListener('focus',gambar);inp.addEventListener('input',gambar);
+  inp.addEventListener('keydown',e=>{if(e.key==='Escape'){tutup();return}if(box.hidden&&(e.key==='ArrowDown'||e.key==='ArrowUp'))gambar();
+    if(e.key==='ArrowDown'){e.preventDefault();sorot(cur+1)}else if(e.key==='ArrowUp'){e.preventDefault();sorot(cur-1)}
+    else if(e.key==='Enter'){e.preventDefault();const h=hit[cur<0?0:cur];if(h)ambil(h[1]);else if(inp.value.trim())toast('Siswa tidak ditemukan.')}});
+  inp.addEventListener('blur',()=>setTimeout(tutup,160));
+  box.addEventListener('mousedown',e=>e.preventDefault());
+  box.addEventListener('click',e=>{const b=e.target.closest('button[data-dk]');if(b)ambil(b.dataset.dk)})}
+function gsPilih(k){const s=S.ks[k];if(!s)return;
   if(S.page==='setoran'){if(!urutSetor(ST.j).includes(k))ST.kg[ST.j]=0;ST.i=k;ST.ket='';prefillSt();render()}
   else if(S.page==='nilai'&&S.in.mode==='siswa'){S.in.nkg=0;S.in.i=k;render()}
+  else if(S.page==='nilai'){S.in.nkg=0;render();const b=document.querySelector(`#view [data-s="${s.id}"]`);if(b){const r=b.closest('.it')||b;r.scrollIntoView({block:'center'});r.classList.add('ddhi');setTimeout(()=>r.classList.remove('ddhi'),1800)}}
   else if(S.page==='rapor'){S.rp=k;render()}
   else{if(S.page!=='siswa')go('siswa');SELS=s.id;render();const r=document.querySelector(`.sw[data-r="${s.id}"]`);if(r)r.scrollIntoView({block:'center'})}}
+function gsLompat(){const i=$('#gsIn'),q=i.value.trim();if(!q)return;const f=S.ks.map((s,k)=>[s,k]).find(([s])=>cariCocok(s.nama,q));if(!f)return toast('Siswa tidak ditemukan.');i.value='';gsPilih(f[1])}
 function stQueue(){return '<div class="stq-h">↑/↓ ganti siswa · Enter simpan</div>'+urutSetor(ST.j).map(k=>{const x=S.ks[k],ok=sdHari(x,ST.j);return `<button class="stqi${k===ST.i?' on':''}${ok?' ok':''}" data-sq="${k}"><b>${x.no}</b><span>${esc(x.nama)}</span><i>${ok?'✓':stAda(x,ST.j)?'✗':mdr(x,ST.j)?'⏭':''}</i></button>`}).join('')}
 document.addEventListener('keydown',e=>{if(S.page!=='setoran'||!DESK()||document.querySelector('dialog[open]'))return;const T=e.target.tagName;
   if(e.key==='ArrowDown'||e.key==='ArrowUp'){if(T!=='BODY'&&T!=='BUTTON')return;const q=urutSetor(ST.j);if(q.length<2)return;e.preventDefault();
@@ -1951,10 +1978,9 @@ function cariFilter(key,ph,rows,txt,tempat){const d=document.createElement('div'
   d.innerHTML=`<input type="search" placeholder="${ph}" aria-label="${ph}" autocomplete="off" value="${esc(CARI[key])}">`;
   const inp=d.firstChild,ap=()=>{CARI[key]=inp.value;document.querySelectorAll(rows).forEach(r=>{r.hidden=!cariCocok(txt(r),inp.value)})};
   inp.oninput=ap;tempat(d);ap()}
-function cariLompat(fn,tempat){const d=document.createElement('div'),id='dl'+Math.random().toString(36).slice(2,7);d.className='srch';
-  d.innerHTML=`<input type="search" list="${id}" placeholder="Cari nama siswa…" aria-label="Cari nama siswa" autocomplete="off"><datalist id="${id}">${S.ks.map(s=>`<option value="${esc(s.nama)}"></option>`).join('')}</datalist>`;
-  const inp=d.firstChild;inp.onchange=()=>{const q=inp.value.trim();if(!q)return;const L=S.ks.map((s,i)=>[s,i]),k=L.find(([s])=>s.nama.toLowerCase()===q.toLowerCase())||L.find(([s])=>cariCocok(s.nama,q));
-    if(!k)return toast('Siswa tidak ditemukan.');fn(k[1])};tempat(d)}
+function cariLompat(fn,tempat){const d=document.createElement('div');d.className='srch';
+  d.innerHTML='<input type="search" placeholder="Cari nama siswa…" aria-label="Cari nama siswa" autocomplete="off">';
+  tempat(d);ddCari(d.firstChild,k=>{const s=S.ks[k];if(s)fn(k)})}
 function pasangCari(){if(!S.ks.length)return;const V=$('#view'),p=S.page,h1=V.querySelector('h1');
   if(p==='siswa'){const r=V.querySelector('.sw');if(r)cariFilter('siswa','Cari nama siswa…','#view .sw',e=>e.querySelector('div').textContent,d=>r.closest('.card').before(d))}
   if(p==='setoran'&&h1)cariLompat(i=>{if(!urutSetor(ST.j).includes(i))ST.kg[ST.j]=0;ST.i=i;prefillSt();render()},d=>h1.after(d));
