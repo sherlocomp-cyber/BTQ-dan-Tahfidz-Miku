@@ -784,6 +784,18 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 .ddl button b{min-width:26px;opacity:.6}.ddl button span{flex:1;min-width:0}
 .ddl button.on,.ddl button:hover{background:var(--card2)}
 .ddhi{outline:2px solid var(--ac);outline-offset:2px;border-radius:12px}
+.kbd{display:inline-block;min-width:18px;padding:1px 7px;border-radius:999px;background:#f5a524;color:#3a2600;font-size:11px;font-weight:700;font-style:normal;text-align:center;vertical-align:middle}
+.ktab button{display:flex;align-items:center;justify-content:center;gap:6px}
+.kcnt{display:flex;flex-wrap:wrap;gap:6px}.kc.kz{background:var(--card2);color:var(--mu);border:1px dashed var(--ln)}
+.knm summary{font-size:13px;color:var(--mu);cursor:pointer;margin:2px 0}
+.kql{margin-top:6px}
+.kq{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0 8px 10px;border-bottom:1px solid var(--ln);border-left:3px solid transparent}
+.kq:last-child{border-bottom:0}.kq.kx{border-left-color:#f5a524}
+.kq .kn{font-size:14px;min-width:0;display:flex;gap:8px;align-items:baseline;overflow-wrap:anywhere}.kq .kn b{min-width:22px;text-align:right;opacity:.6;font-weight:600}
+.kq .ksg{flex-wrap:nowrap;gap:4px}.kq .ksg button{flex:none;min-width:48px;min-height:42px;padding:0;font-size:16px;font-weight:700}
+.kq .ksg button.g1.on{background:var(--ac2);border-color:var(--ac2);color:#fff}
+.kq .ksg button.g2.on{background:#f5a524;border-color:#f5a524;color:#3a2600}
+.kr .kg{grid-template-columns:none}
 </style>
 </head>
 <body>
@@ -2024,28 +2036,33 @@ function klpBadge(s){const t=klpAda(s,'tahfidz'),b=klpAda(s,'btq');if(!t&&!b)ret
   return `<span class="klpb">${t?'Tahfidz: '+esc(klpNamaOf('tahfidz',t)):''}${t&&b?' · ':''}${b?'BTQ: '+esc(klpNamaOf('btq',b)):''}</span>`}
 function klpSeg(attr,j,cur){const c=klpHitung(j),N=S.ks.length,b=(v,t)=>`<button class="${cur===v?'on':''}" data-${attr}="${v}">${t}</button>`;
   return `<div class="seg klpsg" style="margin-bottom:12px">${b(0,'Semua ('+N+')')}${b(1,esc(klpNamaOf(j,1))+' ('+c[1]+')')}${b(2,esc(klpNamaOf(j,2))+' ('+c[2]+')')}${c.x?b(-1,'Belum ('+c.x+')'):''}</div>`}
-function klpCard(){const N=S.ks.length;if(!N)return '';const ct=klpHitung('tahfidz'),cb=klpHitung('btq'),Nm=S.set.klpNama,
-  ni=(k,i,l)=>`<label>${l}<input type="text" data-kn="${k}${i}" value="${esc(Nm[k][i])}" maxlength="30" autocomplete="off"></label>`,
-  sg=(s,j)=>[1,2].map(g=>`<button class="${klpAda(s,j)===g?'on':''}" data-ks="${s.id}" data-kj="${j}" data-kv="${g}" aria-label="${j==='btq'?'BTQ':'Tahfidz'} kelompok ${g}">${g}</button>`).join(''),
-  rs=(j,c)=>`<b>${j==='btq'?'BTQ':'Tahfidz'}</b>: ${esc(klpNamaOf(j,1))} ${c[1]} · ${esc(klpNamaOf(j,2))} ${c[2]}${c.x?` · belum diatur ${c.x}`:''}`;
-  return `<div class="card fold"><details id="klpD"${klpOpen?' open':''}><summary>Kelompok Tahfidz & BTQ</summary>
-  <p class="mut" style="margin:8px 0">Satu kelas dibagi menjadi 2 kelompok tahfidz dan 2 kelompok BTQ (anggotanya boleh berbeda). Kelompok dipakai di Setoran dan Rekap.</p>
-  <p class="mut">${rs('tahfidz',ct)}<br>${rs('btq',cb)}</p>
-  <p class="mut" style="margin:10px 0 4px">Nama kelompok (boleh diubah):</p><div class="form" style="grid-template-columns:1fr 1fr;margin:0 0 10px">${ni('t',0,'Tahfidz 1')}${ni('t',1,'Tahfidz 2')}${ni('b',0,'BTQ 1')}${ni('b',1,'BTQ 2')}</div>
-  <div class="row" style="margin:0 0 6px"><button class="sm" data-kauto="tahfidz">Bagi dua otomatis: Tahfidz</button><button class="sm" data-kauto="btq">Bagi dua otomatis: BTQ</button><button class="sm" data-kauto="salin">BTQ ikut Tahfidz</button><button class="sm" data-kauto="reset">Kosongkan</button></div>
-  <p class="mut" style="margin:6px 0 0">Bagi otomatis: separuh pertama menurut nomor absen = kelompok 1, sisanya kelompok 2. Ketuk angka lagi untuk mengosongkan.</p>
-  <div style="margin-top:8px">${S.ks.map(s=>`<div class="kr"><span class="kn"><b>${s.no}.</b> ${esc(s.nama)}</span><span class="kg"><small>Tahfidz</small><span class="seg">${sg(s,'tahfidz')}</span></span><span class="kg"><small>BTQ</small><span class="seg">${sg(s,'btq')}</span></span></div>`).join('')}</div></details></div>`}
+/* v1.96: kartu Kelompok Tahfidz & BTQ dirombak: satu jenis per tab (Tahfidz / BTQ), tombol Kelompok 1 | Kelompok 2 selebar baris dan berwarna sama dengan label di daftar, siswa yang belum diatur ditandai, nama kelompok dilipat. */
+let klpTab='tahfidz';
+function klpCard(){const N=S.ks.length;if(!N)return '';const j=klpTab,k=KJ(j),c=klpHitung(j),Nm=S.set.klpNama,jt=j==='btq'?'BTQ':'Tahfidz',
+  cx=klpHitung('tahfidz').x+klpHitung('btq').x,
+  tab=x=>{const h=klpHitung(x);return `<button class="${x===j?'on':''}" data-kt="${x}">${x==='btq'?'BTQ':'Tahfidz'}${h.x?` <i class="kbd">${h.x}</i>`:''}</button>`},
+  ni=i=>`<label>${esc(jt)} ${i+1}<input type="text" data-kn="${k}${i}" value="${esc(Nm[k][i])}" maxlength="30" autocomplete="off"></label>`,
+  row=s=>{const v=klpAda(s,j);return `<div class="kq${v?'':' kx'}"><span class="kn"><b>${s.no}</b>${esc(s.nama)}</span><span class="seg ksg">${[1,2].map(g=>`<button class="g${g}${v===g?' on':''}" data-ks="${s.id}" data-kj="${j}" data-kv="${g}" aria-pressed="${v===g}" aria-label="${jt} ${esc(klpNamaOf(j,g))}" title="${esc(klpNamaOf(j,g))}">${g}</button>`).join('')}</span></div>`};
+  return `<div class="card fold"><details id="klpD"${klpOpen?' open':''}><summary>Kelompok Tahfidz &amp; BTQ${cx?` <span class="kbd">${cx} belum diatur</span>`:''}</summary>
+  <p class="mut" style="margin:8px 0">Satu kelas dibagi 2 kelompok tahfidz dan 2 kelompok BTQ (anggota boleh berbeda). Dipakai di Setoran, Input Nilai, dan Rekap.</p>
+  <div class="seg ktab" role="tablist" style="margin:0 0 10px">${tab('tahfidz')}${tab('btq')}</div>
+  <div class="kcnt"><span class="kc g1">${esc(klpNamaOf(j,1))} · ${c[1]}</span><span class="kc g2">${esc(klpNamaOf(j,2))} · ${c[2]}</span>${c.x?`<span class="kc kz">Belum diatur · ${c.x}</span>`:''}</div>
+  <div class="row" style="margin:10px 0 6px"><button class="sm" data-kauto="${j}">Bagi dua otomatis</button>${j==='btq'?'<button class="sm" data-kauto="salin">Ikut Tahfidz</button>':''}<button class="sm" data-kauto="reset" data-kj="${j}">Kosongkan</button></div>
+  <details class="knm"><summary>Ubah nama kelompok ${esc(jt)}</summary><div class="form" style="grid-template-columns:1fr 1fr;margin:8px 0 4px">${ni(0)}${ni(1)}</div></details>
+  <p class="mut" style="margin:8px 0 4px;font-size:13px">Ketuk kelompok untuk memilih; ketuk lagi untuk mengosongkan. Bagi otomatis: separuh pertama menurut nomor absen = kelompok 1.</p>
+  <div class="kql">${S.ks.map(row).join('')}</div></details></div>`}
 function klpBagi(j){const k=KJ(j),h=Math.ceil(S.ks.length/2);
   if(S.ks.some(s=>klpAda(s,j))&&!confirm('Kelompok '+(j==='btq'?'BTQ':'tahfidz')+' yang sudah diatur akan diganti. Lanjut?'))return false;
   S.ks.forEach((s,i)=>{s.kel[k]=i<h?1:2});return true}
 function bindKlp(){const D=$('#klpD');if(!D)return;D.ontoggle=()=>{klpOpen=D.open};
   const re=()=>{const y=scrollY;render();scrollTo(0,y)};
   D.onclick=e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+    if(d.kt){klpTab=d.kt;klpOpen=true;return re()}
     if(d.ks){const s=S.ks.find(x=>x.id===d.ks),k=KJ(d.kj),v=+d.kv;s.kel[k]=s.kel[k]===v?0:v;sv(s);return re()}
     if(d.kauto){const a=d.kauto;
       if(a==='tahfidz'||a==='btq'){if(!klpBagi(a))return}
       else if(a==='salin'){if(S.ks.some(s=>klpAda(s,'btq'))&&!confirm('Kelompok BTQ yang sudah diatur akan diganti mengikuti kelompok tahfidz. Lanjut?'))return;S.ks.forEach(s=>{s.kel.b=s.kel.t})}
-      else if(a==='reset'){if(!confirm('Kosongkan semua kelompok tahfidz dan BTQ?'))return;S.ks.forEach(s=>{s.kel.t=0;s.kel.b=0})}
+      else if(a==='reset'){const jj=d.kj==='btq'?'btq':'tahfidz';if(!confirm('Kosongkan semua kelompok '+(jj==='btq'?'BTQ':'tahfidz')+'?'))return;S.ks.forEach(s=>{s.kel[KJ(jj)]=0})}
       svAll();klpOpen=true;return re()}};
   D.oninput=e=>{const t=e.target;if(!t.dataset.kn)return;const k=t.dataset.kn[0],i=+t.dataset.kn[1];S.set.klpNama[k][i]=t.value.trim()||('Kelompok '+(i+1));saved()}}
 /* Impor Rekap Nilai: siswa yang ada di daftar tahfidz/BTQ sumber = kelompok 1, sisanya kelompok 2 (hanya yang belum punya kelompok) */
