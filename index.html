@@ -873,7 +873,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.94';
+const VERSI='v1.95';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -1822,6 +1822,8 @@ function ujRaporJuz(s,tbl,tr,E){const u=ujHitung(s,true),sp=x=>x===''||x==null?'
 /* ----- Halaman Input Nilai › Ujian Tahfidz (bergaya form penilaian) ----- */
 const ujTim=new Map();
 function ujSimpan(s){clearTimeout(ujTim.get(s.id));ujTim.set(s.id,setTimeout(()=>{ujTim.delete(s.id);sv(s)},350))}
+/* v1.95: simpan seketika semua ketikan Ujian Tahfidz yang masih menunggu (dipanggil saat halaman disembunyikan/ditutup dan sebelum muat ulang dari server) */
+function ujFlush(){let n=0;for(const [id,h] of [...ujTim]){clearTimeout(h);ujTim.delete(id);const s=S.siswa.find(x=>x.id===id);if(s){sv(s);n++}}return n}
 /* v1.94: filter kelompok Tahfidz di Ujian Tahfidz. S.in.ukg: 0 = semua (dikelompokkan per kelompok), 1/2 = kelompok, -1 = belum dikelompokkan */
 const ujKg=()=>S.in.ukg||0,ujDaftar=()=>sisKlp('tahfidz',ujKg());
 function ujIsiHTML(){const g=ujKg(),L=ujDaftar(),c=klpHitung('tahfidz');
@@ -2780,9 +2782,26 @@ const Cloud=(()=>{
   function isi(pre,d){if(typeof d==='string'){if(/^(siswa\/|kelas\/|set$)/.test(pre))M[pre]=d}else if(d&&typeof d==='object')for(const k in d)isi(pre?pre+'/'+k:k,d[k])}
   function terapkan(path,data,mode){mKotor=true;const P=String(path||'/').replace(/^\/+|\/+$/g,'');
     if(mode==='put'){kosong(P);isi(P,data)}else if(data&&typeof data==='object')for(const k in data){const q=P?P+'/'+k:k;kosong(q);isi(q,data[k])}}
-  /* gabung 3 arah: r(server) vs b(dasar) vs l(lokal). Server menang bila lokal belum berubah; bentrok langsung = lokal menang (lalu didorong). */
+  /* v1.95: kesamaan SEMANTIK (nilai kosong '', null, {}, [] dianggap tidak ada) dan gabung 3 arah rekursif per field.
+     Dipakai agar salinan lama/ber-migrasi di satu perangkat tidak menimpa blob 'core' di server (mis. kunci uj, nj, aspek, surat, kel). */
+  const kosongV=v=>v==null||v===''||(Array.isArray(v)?v.every(kosongV):(typeof v==='object'&&Object.keys(v).every(k=>kosongV(v[k]))));
+  const nrm=v=>{if(kosongV(v))return undefined;if(Array.isArray(v))return v.map(x=>{const n=nrm(x);return n===undefined?'':n});
+    if(v&&typeof v==='object'){const o={};for(const k of Object.keys(v).sort()){const n=nrm(v[k]);if(n!==undefined)o[k]=n}return o}return v};
+  const sama=(a,b)=>JSON.stringify(nrm(a))===JSON.stringify(nrm(b));
+  const objP=x=>x&&typeof x==='object'&&!Array.isArray(x);
+  /* b=dasar, l=lokal, r=server. Hanya satu sisi berubah -> sisi itu. Dua-duanya berubah: objek digabung per kunci (rekursif);
+     array/nilai tunggal bersifat atomik: yang kosong kalah, bila dua-duanya berisi beda maka lokal menang. */
+  function merge3(b,l,r){
+    if(sama(l,r))return l;if(sama(l,b))return r;if(sama(r,b))return l;
+    if(objP(l)&&objP(r)){const bb=objP(b)?b:{},o={};for(const k of new Set([...Object.keys(l),...Object.keys(r)])){const m=merge3(bb[k],l[k],r[k]);if(m!==undefined)o[k]=m}return o}
+    return kosongV(l)?r:l}
+  function samaStr(a,b){if(typeof a!=='string'||typeof b!=='string')return false;try{return sama(JSON.parse(a),JSON.parse(b))}catch(_){return false}}
+  /* gabung 3 arah: r(server) vs b(dasar) vs l(lokal). Server menang bila lokal belum berubah. v1.95: bila blob core berubah di dua sisi, digabung per field (merge3), bukan "lokal menang" untuk seluruh blob. */
   function rekon(){if(!mKotor)return false;const L=lokal(),ps=[...new Set([...Object.keys(L),...Object.keys(base),...Object.keys(M)])].sort((a,b)=>(+/\/core$/.test(b))-(+/\/core$/.test(a)));let ubah=false;
-    for(const p of ps){const b=base[p],l=L[p],r=M[p];if(r===b||l===r)continue;if(l!==b)continue;
+    for(const p of ps){const b=base[p],l=L[p];let r=M[p];if(r===b||l===r)continue;
+      if(l!==b){if(!/^siswa\/[^/]+\/core$/.test(p)||l===undefined||r===undefined)continue;
+        let B={},Lo,R;try{B=b?JSON.parse(b):{};Lo=JSON.parse(l);R=JSON.parse(r)}catch(_){continue}
+        if(sama(Lo,R))continue;const G=merge3(B,Lo,R);if(sama(G,Lo))continue;r=J(G)}
       {const mk=/^kelas\/([^/]+)$/.exec(p);if(mk){if(r!==undefined&&klsOk(mk[1]))try{S.set.kls||(S.set.kls={});S.set.kls[mk[1]]=JSON.parse(r);if(mk[1]===S.set.kelasAktif)kelasMuat();ubah=true}catch(_){}continue}}
       if(p==='set'){if(r!==undefined)try{klsTerap(r);ubah=true}catch(_){}continue}
       const m=/^siswa\/([^/]+)\/(?:core|setoran\/(.+))$/.exec(p);if(!m)continue;const k=m[1];let s=S.siswa.find(x=>kunci(x.id)===k);
@@ -2812,7 +2831,7 @@ const Cloud=(()=>{
     mine.onerror=()=>{if(es!==mine)return;st=(typeof navigator!=='undefined'&&navigator.onLine===false)?'offline':'putus';tampil();if(mine.readyState===2){clearTimeout(tb);tb=setTimeout(()=>{if(ready)buka()},5000)}};
     const ev=m=>x=>{if(es!==mine)return;try{const o=JSON.parse(x.data);terapkan(o.path,o.data,m);jadwal()}catch(_){}};
     mine.addEventListener('put',ev('put'));mine.addEventListener('patch',ev('patch'));mine.addEventListener('cancel',()=>{st='ditolak';tampil();tutup()})}
-  function selisih(){const L=lokal(),P={};for(const p in L)if(L[p]!==M[p])P[p]=L[p];for(const p in M)if(!(p in L))P[p]=null;return P}
+  function selisih(){const L=lokal(),P={};for(const p in L)if(L[p]!==M[p]){if(/^siswa\//.test(p)&&samaStr(L[p],M[p]))continue;P[p]=L[p]}for(const p in M)if(!(p in L))P[p]=null;return P}
   async function dorong(){const g=gen;if(!ready||busy)return;if(typeof navigator!=='undefined'&&navigator.onLine===false){st='offline';tampil();return}
     busy=true;kotor=false;tampil();let lagi=false;
     try{let u=false;try{u=rekon()}catch(_){}if(u){simpanLokal();segarUI()}
@@ -2826,7 +2845,7 @@ const Cloud=(()=>{
     }catch(e){if(g!==gen)return;if(st!=='ditolak')st=(typeof navigator!=='undefined'&&navigator.onLine===false)?'offline':'putus';kotor=true;backoff=Math.min(30000,(backoff||1000)*2);clearTimeout(tr);tr=setTimeout(dorong,backoff)}
     finally{busy=false;tampil();if(lagi&&g===gen)dorong()}}
   function touch(){kotor=true;tampil();clearTimeout(tp);tp=setTimeout(dorong,350)}
-  function siram(){if(!ready||!kotor)return;try{rekon();const P=selisih(),b=JSON.stringify(P);if(Object.keys(P).length&&b.length<60000)fetch(BASE+'.json?print=silent',{method:'PATCH',keepalive:true,headers:{'Content-Type':'application/json'},body:b})}catch(_){}}
+  const pra=[];function siram(){for(const f of pra)try{f()}catch(_){}if(!ready||!kotor)return;try{rekon();const P=selisih(),b=JSON.stringify(P);if(Object.keys(P).length&&b.length<60000)fetch(BASE+'.json?print=silent',{method:'PATCH',keepalive:true,headers:{'Content-Type':'application/json'},body:b})}catch(_){}}
   async function ambil(){const r=await fetch(BASE+'.json');if(r.status===401||r.status===403){st='ditolak';tampil();pesanTolak();throw new Error('ditolak')}if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}
   async function cadangkan(){if(S.siswa.length)try{await DB.set('cadanganSebelumCloud',{tgl:new Date().toISOString(),pengaturan:S.set,siswa:S.siswa})}catch(_){}}
   /* perangkat baru yang bergabung: ambil pengaturan kelas dari server (jangan ditimpa bawaan lokal); semai juga dari blob 'set' lama yang masih memuat kls */
@@ -2852,6 +2871,8 @@ const Cloud=(()=>{
       ready=true;st='ok';simpanBase();buka();tampil();dorong();
       if(gabung)try{toast('Terhubung ke server. Data lama di perangkat ini dicadangkan lalu diganti data bersama.')}catch(_){}
     }catch(e){if(g!==gen)return;if(st!=='ditolak')st=(typeof navigator!=='undefined'&&navigator.onLine===false)?'offline':'putus';tampil();backoff=Math.min(30000,(backoff||1500)*2);clearTimeout(tr);tr=setTimeout(start,st==='ditolak'?60000:backoff)}}
+  /* v1.95: ada perubahan yang belum terkirim ke server? */
+  const belum=()=>{try{for(const f of pra)try{f()}catch(_){}return kotor||busy||Object.keys(selisih()).length>0}catch(_){return false}};
   function jeda(){gen++;ready=false;tutup();clearTimeout(tp);clearTimeout(tr);clearTimeout(trk);clearTimeout(tbs)}
   async function muatUlang(){jeda();try{await DB.set('cloudBase',null)}catch(_){}tolakSudah=false;return start()}
   DB.put=s=>{const r=rawPut(s);touch();return r};
@@ -2862,11 +2883,17 @@ const Cloud=(()=>{
     window.addEventListener('offline',()=>{st='offline';tampil()});
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')siram();else if(ready){if(!es||es.readyState===2)buka();touch()}});
     window.addEventListener('pagehide',siram)}
-  return {start,jeda,touch,tampil,teks,muatUlang,status:()=>st,_M:()=>M,_base:()=>base,_ready:()=>ready}
+  return {start,jeda,touch,tampil,teks,muatUlang,belum,sebelumSiram:f=>pra.push(f),status:()=>st,_M:()=>M,_base:()=>base,_ready:()=>ready}
 })();
 /* Kartu status di Pengaturan */
-{const sa=VIEWS.setelan;VIEWS.setelan=function(){return sa()+`<div class="card" style="margin-top:14px"><h3>Penyimpanan bersama (server)</h3><p class="mut" id="cloudInfo">${esc(Cloud.teks())}</p><p class="mut" style="margin:8px 0 10px">Semua guru memakai data yang sama dan perubahan muncul otomatis. Bila data di perangkat ini terasa tidak sama dengan guru lain, muat ulang dari server (data server tidak dihapus).</p><button class="btn" id="cloudMuat">Muat ulang dari server</button></div>`}}
-{const bs1=bindSetelan;bindSetelan=function(){bs1();Cloud.tampil();const b=$('#cloudMuat');if(b)b.onclick=async()=>{if(!confirm('Muat ulang semua data dari server? Salinan di perangkat ini dicadangkan lebih dulu.'))return;await Cloud.muatUlang();toast('Memuat ulang dari server…')}}}
+{const sa=VIEWS.setelan;VIEWS.setelan=function(){return sa()+`<div class="card" style="margin-top:14px"><h3>Penyimpanan bersama (server)</h3><p class="mut" id="cloudInfo">${esc(Cloud.teks())}</p><p class="mut" style="margin:8px 0 10px">Semua guru memakai data yang sama dan perubahan muncul otomatis. Bila data di perangkat ini terasa tidak sama dengan guru lain, muat ulang dari server (data server tidak dihapus).</p><button class="btn" id="cloudMuat">Muat ulang dari server</button><p class="mut" style="margin:14px 0 8px" id="snapInfo">Cadangan otomatis di perangkat ini: memeriksa…</p><p class="mut" style="margin:0 0 10px">Bila ada nilai yang hilang (mis. Ujian Tahfidz), tombol ini mengisi field yang KOSONG dari cadangan otomatis di perangkat ini. Nilai yang sudah terisi tidak diubah.</p><button class="btn" id="snapPulih">Pulihkan dari cadangan otomatis</button></div>`}}
+{const bs1=bindSetelan;bindSetelan=function(){bs1();Cloud.tampil();const b=$('#cloudMuat');if(b)b.onclick=async()=>{try{ujFlush()}catch(_){}
+    const blm=Cloud.belum();if(!confirm((blm?'PERINGATAN: ada perubahan di perangkat ini yang BELUM terkirim ke server. Bila dimuat ulang sekarang, perubahan itu tidak ikut ke server (hanya tersimpan di cadangan perangkat dan bisa dipulihkan lewat "Pulihkan dari cadangan otomatis").\n\nSebaiknya batalkan, tunggu indikator "Tersinkron", lalu coba lagi.\n\nTetap muat ulang dari server?':'Muat ulang semua data dari server? Salinan di perangkat ini dicadangkan lebih dulu.')))return;await Cloud.muatUlang();toast('Memuat ulang dari server…')};
+    {const si=$('#snapInfo');if(si)DB.get(SNAP_K).then(a=>{const x=(Array.isArray(a)?a:[]).map(y=>y.tgl).sort().reverse();si.textContent=x.length?'Cadangan otomatis di perangkat ini: '+x.join(', ')+' (maks '+SNAP_MAX+' hari).':'Cadangan otomatis di perangkat ini: belum ada (dibuat sekali sehari saat aplikasi dibuka).'}).catch(()=>{})}
+    const sp=$('#snapPulih');if(sp)sp.onclick=async()=>{const r0=await snPulihkan(false);
+      if(!r0.n)return toast(r0.sumber?'Tidak ada field kosong yang bisa diisi dari cadangan otomatis.':'Belum ada cadangan otomatis di perangkat ini.');
+      if(!confirm('Cadangan otomatis menemukan '+r0.n+' isian pada '+r0.siswa+' siswa yang kosong sekarang. Isi field kosong tersebut? (Nilai yang sudah terisi tidak diubah; isian yang sengaja dikosongkan akan ikut terisi kembali.)'))return;
+      const r=await snPulihkan(true);render();toast('Dipulihkan: '+r.n+' isian pada '+r.siswa+' siswa. Dikirim ke server otomatis.')}}}
 /* ===== v1.28: SETORAN PER KELOMPOK (daftar satu layar) + teks status simpan ===== */
 {
 const GM={rows:{}};
@@ -3070,12 +3097,44 @@ function gSave(s,j,row,qt){const TT=qt?()=>{}:toast,r=gGet(s,j);if(r.tahap)retur
   if(ST.mode==='klp'){V.ontouchstart=null;V.ontouchend=null}}}
 }
 
+/* ===== v1.95: CADANGAN OTOMATIS HARIAN (lokal, maks 3 hari) + PULIHKAN FIELD KOSONG ===== */
+const SNAP_K='snapHarian',SNAP_MAX=3;
+const snKosong=v=>v==null||v===''||(Array.isArray(v)?v.every(snKosong):(typeof v==='object'&&Object.keys(v).every(k=>snKosong(v[k]))));
+const snKlon=v=>JSON.parse(JSON.stringify(v));
+async function snapHarian(){
+  if(!S.siswa.length)return false;
+  let a=[];try{a=(await DB.get(SNAP_K))||[]}catch(_){}
+  if(!Array.isArray(a))a=[];
+  const h=isoHari(new Date());if(a.some(x=>x&&x.tgl===h))return false;
+  a.push({tgl:h,t:Date.now(),siswa:snKlon(S.siswa)});
+  a=a.filter(x=>x&&x.tgl&&Array.isArray(x.siswa)).sort((x,y)=>x.tgl<y.tgl?-1:x.tgl>y.tgl?1:0).slice(-SNAP_MAX);
+  try{await DB.set(SNAP_K,a);return true}catch(_){return false}}
+/* isi field yang KOSONG di dst dari src; field berisi tidak pernah ditimpa. Mengembalikan jumlah field terisi. */
+function snIsi(dst,src,tulis){let n=0;if(!src||typeof src!=='object'||Array.isArray(src))return 0;
+  for(const k of Object.keys(src)){if(k==='id'||k==='no'||k==='setoran')continue;const v=src[k];if(snKosong(v))continue;
+    if(snKosong(dst[k])){if(tulis)dst[k]=snKlon(v);n+=(v&&typeof v==='object'&&!Array.isArray(v))?snHitung(v):1}
+    else if(v&&typeof v==='object'&&!Array.isArray(v)&&dst[k]&&typeof dst[k]==='object'&&!Array.isArray(dst[k]))n+=snIsi(dst[k],v,tulis)}
+  return n}
+function snHitung(o){let n=0;for(const k of Object.keys(o)){const v=o[k];if(snKosong(v))continue;n+=(v&&typeof v==='object'&&!Array.isArray(v))?snHitung(v):1}return n}
+const snNorm=s=>String(s||'').toLowerCase().replace(/\s+/g,' ').trim();
+function snCari(a,x){return a.find(s=>s.id&&s.id===x.id)||(x.nis&&a.find(s=>s.nis&&String(s.nis)===String(x.nis)))||a.find(s=>snNorm(s.nama)&&snNorm(s.nama)===snNorm(x.nama))}
+/* sumber: cadangan harian (terbaru dulu) lalu 'cadanganSebelumCloud' */
+async function snSumber(){const r=[];try{const a=(await DB.get(SNAP_K))||[];if(Array.isArray(a))a.slice().sort((x,y)=>x.tgl<y.tgl?1:-1).forEach(x=>x&&Array.isArray(x.siswa)&&r.push({nama:'cadangan '+x.tgl,siswa:x.siswa}))}catch(_){}
+  try{const c=await DB.get('cadanganSebelumCloud');if(c&&Array.isArray(c.siswa))r.push({nama:'cadangan sebelum tersambung server'+(c.tgl?' ('+String(c.tgl).slice(0,10)+')':''),siswa:c.siswa})}catch(_){}
+  return r}
+async function snPulihkan(tulis){const src=await snSumber();let n=0,sis=new Set();const tgt=tulis?S.siswa:snKlon(S.siswa); /* uji-coba bekerja pada salinan agar hitungan sama dengan hasil nyata */
+  for(const sm of src)for(const x of sm.siswa){const d=snCari(tgt,x);if(!d)continue;const k=snIsi(d,x,true);if(k){n+=k;sis.add(d.id)}}
+  if(tulis&&n){S.siswa.forEach(s=>{if(!s.id)s.id=newId()});try{migrasi()}catch(_){}svAll()}
+  return {n,siswa:sis.size,sumber:src.length}}
+Cloud.sebelumSiram(ujFlush);
+
 /* ===== MULAI ===== */
 (async()=>{
   tampilMuat();oriBuka();korPasang();buildNav();korBrand();
   document.querySelectorAll('#themes button').forEach(b=>b.onclick=()=>{theme(b.dataset.t);saved()});
   try{await DB.open();const p=await DB.get('pengaturan');if(p)S.set={...DEFAULT,...p};S.cad=(await DB.get('cadanganTerakhir'))||'';S.siswa=await DB.all()}
   catch(_){toast('Penyimpanan perangkat tidak tersedia; data tidak akan tersimpan.')}
+  try{await snapHarian()}catch(_){}
   migrasi();await kelasInit();{const t=S.siswa.map(s=>s.id+s.no).join();urutAZ();if(S.siswa.map(s=>s.id+s.no).join()!==t)DB.saveSiswa(S.siswa)}autoSet();theme(S.set.tema);{const d=kdGet();if(d&&d!==S.set.kelasAktif)kelasPilih(d)}
   const h=location.hash.slice(1);go(PAGES.some(p=>p[0]===h)?h:(korAktif()?'koordinator':'dashboard'));
   Cloud.start();
