@@ -873,7 +873,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.94';
+const VERSI='v1.95';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -898,10 +898,10 @@ const FIELDS=[['madrasah','Nama madrasah'],['kelas','Kelas'],['kota','Kota rapor
 /* ===== OTOMATIS: semester, tahun pelajaran, tanggal rapor (mengikuti tanggal hari ini) ===== */
 const AUTO_K=['semester','tp','tempat'],BLN_P=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const isoHari=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`,
-  tglOk=v=>/^\d{4}-\d{2}-\d{2}$/.test(v||'');
+  tglOk=v=>{const x=/^(\d{4})-(\d{2})-(\d{2})$/.exec(typeof v==='string'?v:'');if(!x)return false;const d=new Date(+x[1],+x[2]-1,+x[3]);return d.getFullYear()===+x[1]&&d.getMonth()===+x[2]-1&&d.getDate()===+x[3]};
 function tglParse(tp){const x=String(tp||'').match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);if(!x)return'';
   const b=BLN_P.findIndex(n=>n.toLowerCase()===x[2].toLowerCase());if(b<0)return'';
-  return `${x[3]}-${String(b+1).padStart(2,'0')}-${x[1].padStart(2,'0')}`}
+  const r=`${x[3]}-${String(b+1).padStart(2,'0')}-${x[1].padStart(2,'0')}`;return tglOk(r)?r:''}
 function autoSet(d=new Date()){const m=S.set;
   if(!m.kota)m.kota=String(m.tempat||'').split(',')[0].trim()||'Cikarang Selatan';
   if(m.auto!==false){const y=d.getFullYear(),ganjil=d.getMonth()>=6;
@@ -1065,10 +1065,10 @@ function kelasUI(){const e=$('#kelasSel');if(!e)return;const a=S.set.kelasAktif,
 function urutAZ(){ksBuat();const ac=[S.ks[S.rp],S.ks[S.in.i],typeof ST!=='undefined'?S.ks[ST.i]:0];
   S.siswa.sort((a,b)=>cmpNama(a.nama,b.nama)||(a.no||0)-(b.no||0));const c={};S.siswa.forEach(x=>{c[x.kelas]=(c[x.kelas]||0)+1;x.no=c[x.kelas]});
   ksBuat();const f=o=>{const k=S.ks.indexOf(o);return k<0?0:k};if(ac[0])S.rp=f(ac[0]);if(ac[1])S.in.i=f(ac[1]);if(ac[2])ST.i=f(ac[2])}
-function cek(d,id){if(!d.nama)return'Nama wajib diisi.';
+function cek(d,id,kb){if(!d.nama)return'Nama wajib diisi.';
   if(d.nis&&!/^\d{6}$/.test(d.nis))return'NIS harus 6 angka.';
   if(d.nisn&&!/^\d{9,10}$/.test(d.nisn))return'NISN harus 9–10 angka.';
-  if(S.ks.some(s=>s.id!==id&&s.nama===d.nama))return'Nama sudah ada di daftar.';return''}
+  if((kb?S.siswa.filter(s=>s.kelas===kb):S.ks).some(s=>s.id!==id&&nm(s.nama)===d.nama))return'Nama sudah ada di daftar.';return''}
 function form(id){const s=S.ks.find(x=>x.id===id)||{nama:'',nis:'',nisn:''};const d=document.createElement('dialog');
   d.innerHTML=`<form method="dialog" class="dlg"><h3>${id?'Ubah':'Tambah'} siswa</h3>
   <label>Nama<input type="text" name="nama" value="${esc(s.nama)}" autocomplete="off"></label>
@@ -1078,7 +1078,7 @@ function form(id){const s=S.ks.find(x=>x.id===id)||{nama:'',nis:'',nisn:''};cons
   <p class="err"></p><div class="row"><button class="btn" value="ok">Simpan</button><button class="btn ghost" value="x" formnovalidate>Batal</button></div></form>`;
   const f=d.querySelector('form');
   f.onsubmit=e=>{if(e.submitter.value!=='ok')return;
-    const v={nama:nm(f.nama.value),nis:f.nis.value.trim(),nisn:f.nisn.value.trim()},er=cek(v,id),kb=f.kelas.value;
+    const v={nama:nm(f.nama.value),nis:f.nis.value.trim(),nisn:f.nisn.value.trim()},kb=f.kelas.value,er=cek(v,id,kb);
     if(er){e.preventDefault();d.querySelector('.err').textContent=er;return}
     if(id)Object.assign(s,v);else S.siswa.push(Object.assign(blank(),v));const x=id?s:S.siswa[S.siswa.length-1];if(klsOk(kb)&&x.kelas!==kb){x.kelas=kb;toast(`${v.nama} dipindah ke Kelas ${kb}.`)}persist();render()};
   d.onclose=()=>d.remove();document.body.append(d);d.showModal()}
