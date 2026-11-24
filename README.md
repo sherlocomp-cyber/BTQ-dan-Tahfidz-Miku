@@ -106,3 +106,6 @@ Catatan: kode aplikasi memanggil plugin native `PrintHelper` (dialog cetak Andro
 - **v1.29** — Setoran per kelompok diurutkan otomatis dari yang terlama belum setor.
 - **v1.24** — sinkronisasi antar guru lewat Firebase.
 - **v1.27** — jembatan APK (Capacitor).
+
+## Pengaman data (v1.98)
+Untuk pemakaian banyak guru sekaligus: rem darurat penghapusan massal dari server, cadangan harian dan Sampah 30 hari di server (`btq-cadangan`), serta pemulihan yang hanya menambah data hilang (Pengaturan › Cadangan & sampah di server). Rincian dan langkah untuk pemilik database (Rules Firebase): `docs/RENCANA-DATA-AMAN.md` dan `docs/firebase-rules.json`.

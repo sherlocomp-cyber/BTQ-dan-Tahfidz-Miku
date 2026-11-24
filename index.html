@@ -873,7 +873,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.95';
+const VERSI='v1.98';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -1012,6 +1012,7 @@ const VIEWS={
   <p><b>Kenaikan kelas & pembagian A/B</b> – di halaman Kelas, setelah Naikkan semua kelas, atur siapa masuk A atau B per tingkat: ketuk A/B pada siswa, Tukar seluruh A ↔ B, atau Bagi rata (acak). Tukar dan Bagi rata bisa diurungkan.</p>
   <p><b>Impor template Excel kelas lama</b> – di halaman Kelas › Impor data kelas lama, ketuk Pilih template Excel dan pilih satu atau beberapa file template (nama, NIS/NISN, nilai surat Juz 30 dan paket juz, aspek, pencapaian, tahapan). Kelas baru boleh kosong (naik satu tingkat otomatis, kelas 6 menjadi alumni). Sel yang tidak dikenali dilewati dan dilaporkan; data yang sudah ada tidak ditimpa.</p>
   <p><b>Impor data kelas lama</b> – di halaman Kelas, kartu Impor data kelas lama memuat file .json siswa tahun lalu yang sudah dibagi per kelas baru; kelas 6 menjadi alumni dengan tahun lulus (tampil di halaman Alumni). Siswa yang sudah ada tidak dipindah dan tidak ditimpa, hanya diisi bagian yang kosong; aman diulang. Saat Kenaikan kelas, aplikasi menanyakan tahun kelulusan kelas 6.</p>
+  <p><b>Pengaman data (banyak guru)</b> – bila server meminta perangkat menghapus 5 siswa atau lebih sekaligus (atau semua siswa), aplikasi bertanya dulu; pilih OK untuk mempertahankan data (dikirim balik ke server). Tiap hari satu salinan seluruh data disimpan di server (30 hari), dan siswa/kelas yang dihapus masuk Sampah 30 hari. Di Pengaturan › Cadangan &amp; sampah di server, ketuk Kembalikan untuk menambah kembali yang hilang tanpa menimpa data yang ada. Tombol Pulihkan dari cadangan (JSON) kini membuat salinan pengaman dulu dan meminta konfirmasi bila cadangan berisi lebih sedikit siswa.</p>
   </div></details>
   <p class="mut" style="margin-top:14px">Versi ${VERSI}</p></div></div>`}
 };
@@ -1084,7 +1085,7 @@ function form(id){const s=S.ks.find(x=>x.id===id)||{nama:'',nis:'',nisn:''};cons
   d.onclose=()=>d.remove();document.body.append(d);d.showModal()}
 function hapus(id){const i=S.siswa.findIndex(x=>x.id===id);if(i<0)return;
   if(!confirm(`Hapus ${S.siswa[i].nama}? Semua nilainya ikut terhapus.`))return;
-  const [s]=S.siswa.splice(i,1);S.sel.delete(s.id);persist();render();toast('Siswa dihapus.',()=>{S.siswa.splice(i,0,s);persist();render()})}
+  const [s]=S.siswa.splice(i,1);try{Cloud.sampah('siswa '+s.nama+' ('+s.kelas+')',[s])}catch(_){}S.sel.delete(s.id);persist();render();toast('Siswa dihapus.',()=>{S.siswa.splice(i,0,s);persist();render()})}
 function tempel(){const ok=[];let skip=0;
   $('#bulk').value.split(/\r?\n/).forEach(l=>{if(!l.trim())return;const c=l.split('\t').map(x=>x.trim());
     const d={nama:nm(c.find(x=>/[A-Za-z]/.test(x))),nis:c.find(x=>/^\d{6}$/.test(x))||'',nisn:c.find(x=>/^\d{9,10}$/.test(x))||''};
@@ -1209,6 +1210,7 @@ async function kelasHapus(k){if(!klsOk(k))return;const L=S.siswa.filter(s=>s.kel
   if(!confirm(`Hapus semua siswa Kelas ${k}?\n\n${n} siswa beserta ${st} setoran dan semua nilainya akan dihapus. Bila sinkron antar guru aktif, data ini juga hilang dari perangkat guru lain.\n\nSebelum menghapus, sebaiknya unduh cadangan di Pengaturan. Kelasnya tetap ada (kosong) dan pengaturan gurunya tidak ikut terhapus.`))return;
   if((prompt(`Ketik ${k} untuk menghapus semua siswa Kelas ${k}.`)||'').trim().toUpperCase()!==k)return toast('Dibatalkan.');
   try{await DB.set('cadanganHapusKelas-'+k,{tgl:new Date().toISOString(),kelas:k,siswa:klsKlon(L)})}catch(_){return toast('Cadangan gagal dibuat; penghapusan dibatalkan.')}
+  try{Cloud.sampah('semua siswa kelas '+k,L)}catch(_){}
   const ids=new Set(L.map(s=>s.id));S.siswa=S.siswa.filter(s=>s.kelas!==k);ids.forEach(id=>S.sel.delete(id));S.in.i=0;S.rp=0;if(typeof ST!=='undefined')ST.i=0;
   persist();render();toast(`Semua siswa Kelas ${k} dihapus (${n} siswa).`,()=>{S.siswa=S.siswa.concat(L);persist();render();toast(`Kelas ${k} dikembalikan (${n} siswa).`)})}
 /* ===== v1.79: IMPOR DATA KELAS LAMA. File .json (app 'btq-tahfidz-kelas-lama') disusun di luar aplikasi dari leger tahun lalu; tiap siswa sudah ditentukan kelas barunya (atau 'LULUS' + tahun lulus).
@@ -2730,6 +2732,9 @@ async function restore(e){const f=e.target.files[0];e.target.value='';if(!f)retu
   try{const d=JSON.parse(await f.text());
     if(d.app!=='btq-tahfidz'||!Array.isArray(d.siswa))throw 0;
     if(!confirm(`Pulihkan cadangan (${d.siswa.length} siswa)? Data saat ini akan diganti, termasuk data bersama di server untuk semua guru.`))return;
+    if(d.siswa.length<S.siswa.length&&(prompt(`Cadangan ini berisi LEBIH SEDIKIT siswa (${d.siswa.length}) daripada data sekarang (${S.siswa.length}). Siswa yang tidak ada di cadangan akan dihapus untuk semua guru (salinan pengaman dibuat dulu).\n\nKetik PULIHKAN untuk melanjutkan.`)||'').trim().toUpperCase()!=='PULIHKAN')return toast('Dibatalkan. Data tidak diubah.');
+    try{await DB.set('cadanganSebelumPulih',{tgl:new Date().toISOString(),pengaturan:klsKlon(S.set),siswa:klsKlon(S.siswa)})}catch(_){return toast('Cadangan pengaman gagal dibuat; pemulihan dibatalkan.')}
+    try{Cloud.sampah('semua siswa sebelum Pulihkan dari cadangan JSON',S.siswa)}catch(_){}
     await DB.clear();S.set={...DEFAULT,...d.pengaturan};S.siswa=d.siswa;migrasi();await kelasInit();
     await DB.set('pengaturan',S.set);if(S.cad)await DB.set('cadanganTerakhir',S.cad);for(const s of S.siswa)await DB.put(s);
     theme(S.set.tema);toast('Data berhasil dipulihkan.');render()
@@ -2797,8 +2802,8 @@ const Cloud=(()=>{
     return kosongV(l)?r:l}
   function samaStr(a,b){if(typeof a!=='string'||typeof b!=='string')return false;try{return sama(JSON.parse(a),JSON.parse(b))}catch(_){return false}}
   /* gabung 3 arah: r(server) vs b(dasar) vs l(lokal). Server menang bila lokal belum berubah. v1.95: bila blob core berubah di dua sisi, digabung per field (merge3), bukan "lokal menang" untuk seluruh blob. */
-  function rekon(){if(!mKotor)return false;const L=lokal(),ps=[...new Set([...Object.keys(L),...Object.keys(base),...Object.keys(M)])].sort((a,b)=>(+/\/core$/.test(b))-(+/\/core$/.test(a)));let ubah=false;
-    for(const p of ps){const b=base[p],l=L[p];let r=M[p];if(r===b||l===r)continue;
+  function rekon(){if(!mKotor)return false;const L=lokal(),ps=[...new Set([...Object.keys(L),...Object.keys(base),...Object.keys(M)])].sort((a,b)=>(+/\/core$/.test(b))-(+/\/core$/.test(a)));let ubah=false;const lw=guardHapus(L,ps);
+    for(const p of ps){const b=base[p],l=L[p];let r=M[p];if(r===b||l===r)continue;if(lw&&lw.has(p))continue;
       if(l!==b){if(!/^siswa\/[^/]+\/core$/.test(p)||l===undefined||r===undefined)continue;
         let B={},Lo,R;try{B=b?JSON.parse(b):{};Lo=JSON.parse(l);R=JSON.parse(r)}catch(_){continue}
         if(sama(Lo,R))continue;const G=merge3(B,Lo,R);if(sama(G,Lo))continue;r=J(G)}
@@ -2831,7 +2836,94 @@ const Cloud=(()=>{
     mine.onerror=()=>{if(es!==mine)return;st=(typeof navigator!=='undefined'&&navigator.onLine===false)?'offline':'putus';tampil();if(mine.readyState===2){clearTimeout(tb);tb=setTimeout(()=>{if(ready)buka()},5000)}};
     const ev=m=>x=>{if(es!==mine)return;try{const o=JSON.parse(x.data);terapkan(o.path,o.data,m);jadwal()}catch(_){}};
     mine.addEventListener('put',ev('put'));mine.addEventListener('patch',ev('patch'));mine.addEventListener('cancel',()=>{st='ditolak';tampil();tutup()})}
-  function selisih(){const L=lokal(),P={};for(const p in L)if(L[p]!==M[p]){if(/^siswa\//.test(p)&&samaStr(L[p],M[p]))continue;P[p]=L[p]}for(const p in M)if(!(p in L))P[p]=null;return P}
+  /* ===== v1.98: REM DARURAT + CADANGAN SERVER + SAMPAH =====
+     Penghapusan MASSAL yang datang dari server (>=5 siswa sekaligus, atau semua siswa, atau >=30 setoran/30%) tidak langsung diterapkan di perangkat:
+     ditahan, guru ditanya. Pilihan aman (OK) = data perangkat dipertahankan dan dikirim balik ke server. Penghapusan kecil (1-4 siswa) tetap mengalir seperti biasa.
+     Cadangan harian seluruh data disimpan di server pada jalur terpisah (btq-cadangan/harian/<tanggal>, 30 hari); siswa/kelas yang dihapus dari aplikasi masuk btq-cadangan/sampah (30 hari).
+     Memulihkan dari server hanya MENAMBAH yang hilang (siswa, setoran, pengaturan kelas), tidak menimpa data yang ada. */
+  const ROOT=BASE.replace(/\/btq$/,''),CAD=ROOT+'/btq-cadangan',HARI30=30*864e5;
+  let tahan=null,tanya=0,tmCad=0;
+  const klon=v=>JSON.parse(JSON.stringify(v));
+  function guardHapus(L,ps){
+    const c=[],o=[];let nl=0,no=0;
+    for(const p in L){if(/\/core$/.test(p))nl++;else if(/\/setoran\//.test(p))no++}
+    for(const p of ps){const b=base[p];if(b===undefined||M[p]!==undefined||L[p]!==b)continue;
+      if(/^siswa\/[^/]+\/core$/.test(p))c.push(p);else if(/^siswa\/[^/]+\/setoran\//.test(p))o.push(p)}
+    const massal=c.length>=5||(nl>=3&&c.length>=nl)||o.length>=Math.max(30,Math.ceil(no*.3));
+    if(!tahan&&!massal)return null;
+    if(!tahan)tahan={set:new Set()};
+    c.concat(o).forEach(p=>tahan.set.add(p));
+    if(!tanya)setTimeout(tanyaHapus,60);
+    return tahan.set}
+  const petaSiswa=arr=>{const L={};(arr||[]).forEach(s=>{if(!s||!s.id)return;const k=kunci(s.id),{setoran,...core}=s;L[`siswa/${k}/core`]=J(core);(setoran||[]).forEach(e=>{if(e&&e.id)L[`siswa/${k}/setoran/${kunci(e.id)}`]=J(e)})});return L};
+  const sarang=o=>{const r={};for(const p in o){const ks=p.split('/');let c=r;for(let i=0;i<ks.length-1;i++)c=c[ks[i]]||(c[ks[i]]={});c[ks[ks.length-1]]=o[p]}return r};
+  const datar=(d,pre,out)=>{if(typeof d==='string'){out[pre]=d}else if(d&&typeof d==='object')for(const k in d)datar(d[k],pre?pre+'/'+k:k,out);return out};
+  async function cadangKv(kunciKv,arr){try{await rawSet(kunciKv,{tgl:new Date().toISOString(),pengaturan:klon(S.set),siswa:klon(arr||S.siswa)})}catch(_){}}
+  async function tanyaHapus(){
+    if(tanya||!tahan)return;tanya=1;
+    try{
+      const set=[...tahan.set],kl={},ada=[];let ns=0,nset=0;
+      for(const p of set){const m=/^siswa\/([^/]+)\/core$/.exec(p);
+        if(m){const s=S.siswa.find(x=>kunci(x.id)===m[1]);if(s){ns++;ada.push(s);kl[s.kelas]=(kl[s.kelas]||0)+1}}
+        else if(/^siswa\/[^/]+\/setoran\//.test(p))nset++}
+      const rinci=Object.keys(kl).sort().map(k=>k+': '+kl[k]+' siswa').join(', ')||'tidak ada siswa utuh';
+      let simpan=confirm('PERINGATAN KEAMANAN DATA\n\nServer meminta perangkat ini MENGHAPUS '+ns+' siswa dan '+nset+' setoran sekaligus ('+rinci+').\n\nBila ini DISENGAJA (mis. guru menjalankan "Hapus semua siswa" satu kelas), tekan Batal lalu konfirmasi.\nBila TIDAK disengaja, tekan OK: data di perangkat ini DIPERTAHANKAN dan dikirim kembali ke server.');
+      if(!simpan)simpan=!confirm('Yakin menerapkan penghapusan '+ns+' siswa dan '+nset+' setoran di perangkat ini? Salinan cadangan dibuat dulu dan bisa dipulihkan.');
+      if(simpan){tahan=null;kotor=true;try{toast('Data di perangkat ini dipertahankan dan dikirim kembali ke server.')}catch(_){}touch();return}
+      await cadangKv('cadanganSebelumHapusServer');
+      try{sampah('penghapusan massal dari server (sebelum diterapkan)',ada)}catch(_){}
+      const T=tahan.set;tahan=null;
+      for(const p of T){const m=/^siswa\/([^/]+)\/(?:core|setoran\/(.+))$/.exec(p);if(!m)continue;const s=S.siswa.find(x=>kunci(x.id)===m[1]);if(!s)continue;
+        if(m[2]===undefined)S.siswa.splice(S.siswa.indexOf(s),1);else if(s.setoran){const i=s.setoran.findIndex(e=>kunci(e.id)===m[2]);if(i>=0)s.setoran.splice(i,1)}}
+      try{urutAZ()}catch(_){}simpanLokal();segarUI();touch()
+    }finally{tanya=0}}
+  const TT=(u,o)=>fetch(u,o).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r});
+  async function sampah(label,arr){
+    if(!arr||!arr.length)return false;
+    const id=String(Date.now()).padStart(13,'0')+'-'+Math.random().toString(36).slice(2,6),body={t:Date.now(),label:String(label||''),v:VERSI,n:arr.length,data:sarang(petaSiswa(klon(arr)))};
+    try{await TT(CAD+'/sampah/'+id+'.json',{method:'PUT',body:JSON.stringify(body)});return true}
+    catch(_){try{const a=(await DB.get('sampahTunda'))||[];a.push({id,body});await rawSet('sampahTunda',a.slice(-5))}catch(__){}return false}}
+  async function kirimTunda(){let a=[];try{a=(await DB.get('sampahTunda'))||[]}catch(_){}if(!a.length)return;const sisa=[];
+    for(const x of a){try{await TT(CAD+'/sampah/'+x.id+'.json',{method:'PUT',body:JSON.stringify(x.body)})}catch(_){sisa.push(x)}}
+    try{await rawSet('sampahTunda',sisa)}catch(_){}}
+  async function cadangHarian(){
+    if(!ready||tahan||!S.siswa.length||(typeof navigator!=='undefined'&&navigator.onLine===false))return false;
+    const h=isoHari(new Date()),ls=await(await TT(CAD+'/harian.json?shallow=true')).json()||{};
+    if(ls[h])return false;
+    const ks=Object.keys(ls).sort();let last=null;
+    if(ks.length){try{last=await(await TT(CAD+'/harian/'+ks[ks.length-1]+'/n.json')).json()}catch(_){}}
+    const L=lokal(),n=S.siswa.length;
+    if(last&&n<last*.5)return false;
+    const ns=Object.keys(L).filter(p=>/\/setoran\//.test(p)).length;
+    await TT(CAD+'/harian/'+h+'.json',{method:'PUT',body:JSON.stringify({t:Date.now(),n,ns,v:VERSI,data:sarang(L)})});
+    const semua=ks.concat(h);while(semua.length>30){const k=semua.shift();try{await fetch(CAD+'/harian/'+k+'.json',{method:'DELETE'})}catch(_){}}
+    try{const sp=Object.keys(await(await TT(CAD+'/sampah.json?shallow=true')).json()||{});
+      for(const k of sp)if(+k.slice(0,13)<Date.now()-HARI30)try{await fetch(CAD+'/sampah/'+k+'.json',{method:'DELETE'})}catch(_){}}catch(_){}
+    return true}
+  async function daftar(){
+    const out={harian:[],sampah:[]};
+    const ambilN=async(jenis,ks,ff)=>{for(const k of ks){const o={k};for(const f of ff){try{o[f]=await(await TT(CAD+'/'+jenis+'/'+k+'/'+f+'.json')).json()}catch(_){}}out[jenis].push(o)}};
+    const h=Object.keys(await(await TT(CAD+'/harian.json?shallow=true')).json()||{}).sort().reverse().slice(0,12);
+    const s=Object.keys(await(await TT(CAD+'/sampah.json?shallow=true')).json()||{}).sort().reverse().slice(0,12);
+    await ambilN('harian',h,['t','n','ns']);await ambilN('sampah',s,['t','n','label']);return out}
+  /* hanya MENAMBAH yang hilang: siswa (utuh dengan setoran), setoran yang hilang pada siswa yang ada, pengaturan kelas yang belum ada */
+  async function pulihkan(jenis,key){
+    if(jenis!=='harian'&&jenis!=='sampah')throw new Error('jenis');
+    const d=await(await TT(CAD+'/'+jenis+'/'+key+'/data.json')).json(),map=datar(d,'',{});
+    await cadangKv('cadanganSebelumPulihServer');
+    let ns=0,nset=0,nk=0;
+    for(const p of Object.keys(map).sort((a,b)=>(+/\/core$/.test(b))-(+/\/core$/.test(a)))){
+      let m=/^siswa\/([^/]+)\/core$/.exec(p);
+      if(m){if(!S.siswa.some(x=>kunci(x.id)===m[1]))try{S.siswa.push(Object.assign(JSON.parse(map[p]),{setoran:[]}));ns++}catch(_){}continue}
+      m=/^siswa\/([^/]+)\/setoran\/(.+)$/.exec(p);
+      if(m){const s=S.siswa.find(x=>kunci(x.id)===m[1]);if(!s)continue;s.setoran||(s.setoran=[]);
+        if(!s.setoran.some(e=>kunci(e.id)===m[2]))try{s.setoran.push(JSON.parse(map[p]));nset++}catch(_){}continue}
+      m=/^kelas\/([^/]+)$/.exec(p);
+      if(m&&klsOk(m[1])){S.set.kls||(S.set.kls={});if(!S.set.kls[m[1]])try{S.set.kls[m[1]]=JSON.parse(map[p]);nk++}catch(_){}}}
+    if(ns||nset||nk){S.siswa.forEach(s=>s.setoran&&s.setoran.sort((a,b)=>(a.t||0)-(b.t||0)));try{urutAZ()}catch(_){}try{migrasi()}catch(_){}
+      await DB.saveSiswa(S.siswa);if(nk)await DB.set('pengaturan',S.set)}
+    return {siswa:ns,setoran:nset,kelas:nk}}
+  function selisih(){const L=lokal(),P={};for(const p in L)if(L[p]!==M[p]){if(tahan&&tahan.set.has(p))continue;if(/^siswa\//.test(p)&&samaStr(L[p],M[p]))continue;P[p]=L[p]}for(const p in M)if(!(p in L))P[p]=null;return P}
   async function dorong(){const g=gen;if(!ready||busy)return;if(typeof navigator!=='undefined'&&navigator.onLine===false){st='offline';tampil();return}
     busy=true;kotor=false;tampil();let lagi=false;
     try{let u=false;try{u=rekon()}catch(_){}if(u){simpanLokal();segarUI()}
@@ -2868,7 +2960,7 @@ const Cloud=(()=>{
       let u=false;try{u=rekon()}catch(_){}
       if(gabung){try{ST.mulai=0;S.rp=0;S.in.i=0;S.in.j=0}catch(_){}}
       if(u){simpanLokal();if(gabung)try{render()}catch(_){}else segarUI()}
-      ready=true;st='ok';simpanBase();buka();tampil();dorong();
+      ready=true;st='ok';simpanBase();buka();tampil();dorong();clearTimeout(tmCad);tmCad=setTimeout(()=>{cadangHarian().catch(()=>{});kirimTunda().catch(()=>{})},15000);
       if(gabung)try{toast('Terhubung ke server. Data lama di perangkat ini dicadangkan lalu diganti data bersama.')}catch(_){}
     }catch(e){if(g!==gen)return;if(st!=='ditolak')st=(typeof navigator!=='undefined'&&navigator.onLine===false)?'offline':'putus';tampil();backoff=Math.min(30000,(backoff||1500)*2);clearTimeout(tr);tr=setTimeout(start,st==='ditolak'?60000:backoff)}}
   /* v1.95: ada perubahan yang belum terkirim ke server? */
@@ -2883,7 +2975,8 @@ const Cloud=(()=>{
     window.addEventListener('offline',()=>{st='offline';tampil()});
     document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')siram();else if(ready){if(!es||es.readyState===2)buka();touch()}});
     window.addEventListener('pagehide',siram)}
-  return {start,jeda,touch,tampil,teks,muatUlang,belum,sebelumSiram:f=>pra.push(f),status:()=>st,_M:()=>M,_base:()=>base,_ready:()=>ready}
+  if(typeof window!=='undefined')setInterval(()=>{if(ready)cadangHarian().catch(()=>{})},6*3600*1000);
+  return {start,jeda,touch,tampil,teks,muatUlang,belum,sampah,daftar,pulihkan,cadangHarian,tertahan:()=>tahan?tahan.set.size:0,sebelumSiram:f=>pra.push(f),status:()=>st,_M:()=>M,_base:()=>base,_ready:()=>ready}
 })();
 /* Kartu status di Pengaturan */
 {const sa=VIEWS.setelan;VIEWS.setelan=function(){return sa()+`<div class="card" style="margin-top:14px"><h3>Penyimpanan bersama (server)</h3><p class="mut" id="cloudInfo">${esc(Cloud.teks())}</p><p class="mut" style="margin:8px 0 10px">Semua guru memakai data yang sama dan perubahan muncul otomatis. Bila data di perangkat ini terasa tidak sama dengan guru lain, muat ulang dari server (data server tidak dihapus).</p><button class="btn" id="cloudMuat">Muat ulang dari server</button><p class="mut" style="margin:14px 0 8px" id="snapInfo">Cadangan otomatis di perangkat ini: memeriksa…</p><p class="mut" style="margin:0 0 10px">Bila ada nilai yang hilang (mis. Ujian Tahfidz), tombol ini mengisi field yang KOSONG dari cadangan otomatis di perangkat ini. Nilai yang sudah terisi tidak diubah.</p><button class="btn" id="snapPulih">Pulihkan dari cadangan otomatis</button></div>`}}
@@ -3097,8 +3190,8 @@ function gSave(s,j,row,qt){const TT=qt?()=>{}:toast,r=gGet(s,j);if(r.tahap)retur
   if(ST.mode==='klp'){V.ontouchstart=null;V.ontouchend=null}}}
 }
 
-/* ===== v1.95: CADANGAN OTOMATIS HARIAN (lokal, maks 3 hari) + PULIHKAN FIELD KOSONG ===== */
-const SNAP_K='snapHarian',SNAP_MAX=3;
+/* ===== v1.95: CADANGAN OTOMATIS HARIAN (lokal, maks 7 hari) + PULIHKAN FIELD KOSONG ===== */
+const SNAP_K='snapHarian',SNAP_MAX=7;
 const snKosong=v=>v==null||v===''||(Array.isArray(v)?v.every(snKosong):(typeof v==='object'&&Object.keys(v).every(k=>snKosong(v[k]))));
 const snKlon=v=>JSON.parse(JSON.stringify(v));
 async function snapHarian(){
@@ -3127,6 +3220,19 @@ async function snPulihkan(tulis){const src=await snSumber();let n=0,sis=new Set(
   if(tulis&&n){S.siswa.forEach(s=>{if(!s.id)s.id=newId()});try{migrasi()}catch(_){}svAll()}
   return {n,siswa:sis.size,sumber:src.length}}
 Cloud.sebelumSiram(ujFlush);
+/* v1.98: kartu Cadangan & sampah di server (hanya menambah yang hilang) */
+{const sb=VIEWS.setelan;VIEWS.setelan=function(){return sb()+`<div class="card" style="margin-top:14px"><h3>Cadangan &amp; sampah di server</h3><p class="mut">Tiap hari aplikasi menyimpan salinan seluruh data ke server (30 hari terakhir). Siswa atau kelas yang dihapus dari aplikasi masuk Sampah selama 30 hari. Memulihkan hanya MENAMBAH yang hilang (siswa, setoran, pengaturan kelas); data yang ada tidak ditimpa dan salinan perangkat dibuat dulu.</p><button class="btn" id="cdList">Lihat cadangan &amp; sampah di server</button><div id="cdBox" style="margin-top:12px"></div></div>`}}
+{const b2=bindSetelan;bindSetelan=function(){b2();const b=$('#cdList'),box=$('#cdBox');if(!b)return;
+  const tgl=t=>t?new Date(t).toLocaleString('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+  b.onclick=async()=>{b.disabled=true;box.innerHTML='<p class="mut">Memuat…</p>';
+    try{const d=await Cloud.daftar();
+      box.innerHTML=`<p class="mut"><b>Cadangan harian</b></p>${d.harian.length?d.harian.map(x=>`<div class="row" style="align-items:center;margin:6px 0"><span style="flex:1">${esc(x.k)} · ${x.n??'?'} siswa · ${x.ns??'?'} setoran</span><button class="sm" data-cd="harian" data-k="${esc(x.k)}">Kembalikan yang hilang</button></div>`).join(''):'<p class="mut">Belum ada cadangan harian (dibuat otomatis sekali sehari saat aplikasi tersambung).</p>'}<p class="mut" style="margin-top:12px"><b>Sampah (dihapus dari aplikasi)</b></p>${d.sampah.length?d.sampah.map(x=>`<div class="row" style="align-items:center;margin:6px 0"><span style="flex:1">${esc(x.label||'(tanpa nama)')} · ${x.n??'?'} siswa · ${esc(tgl(x.t))}</span><button class="sm" data-cd="sampah" data-k="${esc(x.k)}">Kembalikan</button></div>`).join(''):'<p class="mut">Sampah kosong.</p>'}`;
+    }catch(_){box.innerHTML='<p class="mut">Gagal memuat dari server. Periksa koneksi, atau Rules Firebase belum mengizinkan jalur btq-cadangan.</p>'}
+    b.disabled=false};
+  box.onclick=async e=>{const x=e.target.closest('button[data-cd]');if(!x)return;
+    if(!confirm('Kembalikan data yang hilang dari cadangan ini? Data yang sudah ada tidak diubah.'))return;
+    x.disabled=true;try{const r=await Cloud.pulihkan(x.dataset.cd,x.dataset.k);render();toast(r.siswa||r.setoran||r.kelas?`Dikembalikan: ${r.siswa} siswa, ${r.setoran} setoran, ${r.kelas} pengaturan kelas.`:'Tidak ada yang hilang; semua sudah ada di perangkat ini.')}
+    catch(_){toast('Gagal memulihkan dari server.');x.disabled=false}}}}
 
 /* ===== MULAI ===== */
 (async()=>{
@@ -3258,6 +3364,7 @@ open('aplikasi-btq-tahfidz-final.html','w',encoding='utf-8').write(t)
 <script type="text/plain" id="proyek-handoff">
 # HANDOFF — sesi 47
 ## Ringkas
+- Catatan sesi 55: v1.98 Pengaman data banyak guru (di Cloud IIFE: guardHapus/tanyaHapus = rem darurat penghapusan massal dari server, cadangHarian/sampah/daftar/pulihkan ke jalur Firebase terpisah btq-cadangan; kartu UI 'Cadangan & sampah di server' sebelum MULAI; hapus(), kelasHapus(), restore() membuat salinan pengaman; SNAP_MAX 3->7). Tanpa perubahan skema IndexedDB. Bagian terlindungi tidak disentuh (hash RP/rval pada HEAD sudah berbeda dari baku sebelum sesi ini; sesi ini hanya memastikan hash sebelum = sesudah). Rules Firebase yang disarankan: docs/firebase-rules.json (dipasang pengguna di Firebase Console). Rencana: docs/RENCANA-DATA-AMAN.md.
 - Catatan sesi 54: v1.94 Ujian Tahfidz bisa per kelompok. Input Nilai › Ujian Tahfidz dapat disaring per kelompok Tahfidz (Semua / Kelompok 1 / Kelompok 2 / Belum; S.in.ukg, ujDaftar, ujIsiHTML, klpSeg('ujkg')). Pilihan Semua menampilkan nama dikelompokkan dengan judul tiap kelompok; ringkasan 'Lengkap X dari Y' ikut kelompok. Data dan rapor tidak berubah; bagian terlindungi tidak disentuh.
 - Catatan sesi 53: v1.89 Ujian Tahfidz. Rapor Bagian B (Juz 30 lewat template RP baris 26-32 + kunci 'u:' di rval; Juz 29-1 lewat ujRaporJuz) diganti jadi "UJIAN TAHFIDZ": Target Hafalan 1 Semester (1-50, melampaui target otomatis 50), Kelancaran (1-30), Makhroj dan Tajwid (1-20), Nilai Akhir = predikat (86-100 Mumtaz, 66-85 Jayyid Jiddan, 41-65 Jayyid, 1-40 Maqbul; pemetaan A-D ke predikat = asumsi, ubah di UJ_SKALA), kolom Keterangan digabung (rowspan) = hafalan sekarang + status; target semester dan skala nilai di bawah tabel. Data siswa baru: s.uj={h,k,m,mel}; aspek lama tjT/mkT/mrT TIDAK dihapus. Input: Input Nilai › Ujian Tahfidz (ujGridHTML/ujBind); tab Aspek Tahfidz disembunyikan; cekLengkap dan RI tidak lagi menghitung aspek lama. BELUM: ekspor Excel leger/rapor (XL_TPL, ASPEK) masih format B lama; radar dasbor masih membaca aspek lama. Cadangan: index.backup-sebelum-ujian-tahfidz.html (v1.88).
 - Catatan sesi 52: versi sebenarnya = const VERSI di file (v1.82). Impor template leger Excel kelas lama selesai di kode (klXlsxBaca, klXlsx, klProses hasil pecahan klImpor; kartu Impor di halaman Kelas punya tombol Pilih template Excel). Template dibuat di luar aplikasi per kelas lama (12 file berisi nama + nilai yang sudah masuk, plus 1 file kosong). Perlu dicek manual: alur impor di HP/APK dan keterbacaan template di Excel/WPS/Google Sheets.
