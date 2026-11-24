@@ -1,0 +1,23 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "btq": {
+      ".read": true,
+      ".write": "newData.exists()"
+    },
+    "btq-cadangan": {
+      ".read": true,
+      "harian": {
+        "$tgl": {
+          ".write": "!data.exists() || (!newData.exists() && data.child('t').val() < now - 2592000000)"
+        }
+      },
+      "sampah": {
+        "$id": {
+          ".write": "!data.exists() || (!newData.exists() && data.child('t').val() < now - 2592000000)"
+        }
+      }
+    }
+  }
+}
