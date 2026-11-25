@@ -873,7 +873,7 @@ html:not([data-theme=angkasa]):not([data-theme=dunia]) button.sm.red{color:#c930
 </script>
 <script>
 'use strict';
-const VERSI='v1.99';
+const VERSI='v1.100';
 /* ===== DATA: IndexedDB (stores: kv = pengaturan, siswa) ===== */
 const DB={
   db:null,
@@ -1428,8 +1428,8 @@ const chipIn=(k,t)=>{const its=itemsJuz(k),n=nbBisa(k)?nbHitung(NK(),its):0;
 /* v1.97: Nilai Tahap I-IV (Juz 30) otomatis = rata-rata nilai surat di tahap itu (thRata/thKunci). Tahap V tetap manual. Berjalan saat nilai surat diubah (Input Nilai, isi massal, Setoran) dan mengisi tahap yang masih kosong saat tab Tahapan dibuka; tombol "Hitung dari nilai surat" menimpa ulang. */
 const thOf=i=>{for(const t in TH_SR)if(i>=TH_SR[t][0]&&i<=TH_SR[t][1])return +t;return 0};
 const thAuto=(s,i)=>{const t=thOf(i);if(t)thHitung(s,t)},thAll=s=>{[1,2,3,4].forEach(t=>thHitung(s,t))};
-function thIsiKosong(L){L.forEach(s=>{let ch=false;const th=s.tahap||(s.tahap=['','','','','']);[1,2,3,4].forEach(t=>{if(!th[t-1]&&thSampai(s,t)){const k=thKunci(thRata(s,t));if(k){th[t-1]=k;ch=true}}});if(ch)sv(s)})}
-const thInfo=(s,j)=>{if(S.in.tab!=='tahap'||jzIn()!==30||j>3)return '';const ix=thIdx(j+1),n=ix.filter(i=>NILAI[(s.surat||{})[i]]!==undefined).length,r=thRata(s,j+1);
+function thIsiKosong(L){L.forEach(s=>{let ch=false;const th=s.tahap||(s.tahap=['','','','','']);[1,2,3,4].forEach(t=>{if(TH_OTO&&!th[t-1]&&thSampai(s,t)){const k=thKunci(thRata(s,t));if(k){th[t-1]=k;ch=true}}});if(ch)sv(s)})}
+const thInfo=(s,j)=>{if(!TH_OTO)return '';if(S.in.tab!=='tahap'||jzIn()!==30||j>3)return '';const ix=thIdx(j+1),n=ix.filter(i=>NILAI[(s.surat||{})[i]]!==undefined).length,r=thRata(s,j+1);
   if(!thSampai(s,j+1))return `<small class="thi">belum sampai tahap ini · isi manual${n?` (rata-rata surat ${Math.round(r)} tidak dipakai)`:''}</small>`;
   return `<small class="thi">${n?`otomatis dari ${n}/${ix.length} surat · rata-rata ${Math.round(r)}`:'belum ada nilai surat'}</small>`};
 const row=(l,s,j)=>`<div class="it"><span>${esc(l)}${belumNilai(s,ITEMS[j])?nbTag:''}${thInfo(s,j)}</span>${ctl(s,j)}</div>`;
@@ -1472,7 +1472,7 @@ function viewNilai(){const N=NK().length;
   const chips=TABS.filter(x=>x[0]!=='tah'&&(x[0]!=='pc'||jzIn()===30)).map(([k,t])=>`<button class="chip${k===I.tab?' on':''}" data-tab="${k}">${chipIn(k,t)}</button>`).join('');
   const sw=m=>`<button class="${I.mode===m?'on':''}" data-mode="${m}">${m==='siswa'?'Per siswa':'Per kolom'}</button>`;
   const o=ITEMS[I.mode==='siswa'?0:I.j],fill=`<div class="seg">${(o.pc?PO:o.o).map(([v,l])=>`<button data-fill="${esc(v)}">${l}</button>`).join('')}</div>`;
-  const fb=fbOn(),tools=`<div class="gtool"><button class="sm${I.cp?' on':''}" data-qm="1">⚡ Mode cepat${I.cp?' (aktif)':''}</button>${nbBisa(I.tab)?`<button class="sm${I.fb?' on':''}" data-fb="1">${fbLabel()}</button>`:''}${I.tab==='tahap'&&jzIn()===30?'<button class="sm" data-thauto="1">∑ Hitung dari nilai surat</button><button class="sm" data-thbersih="1">Kosongkan tahap yang belum dicapai</button>':''}</div>`;
+  const fb=fbOn(),tools=`<div class="gtool"><button class="sm${I.cp?' on':''}" data-qm="1">⚡ Mode cepat${I.cp?' (aktif)':''}</button>${nbBisa(I.tab)?`<button class="sm${I.fb?' on':''}" data-fb="1">${fbLabel()}</button>`:''}${I.tab==='tahap'&&jzIn()===30?'<button class="sm" data-thbersih="1">Kosongkan tahap hasil hitung otomatis lama</button>':''}</div>`;
   let body;
   if(I.cp)body=viewCepat();
   else if(I.mode==='siswa'){const s=ks[I.i],R=ITEMS.map((it,j)=>[it,j]).filter(([it])=>!fb||belumNilai(s,it));
@@ -1482,7 +1482,7 @@ function viewNilai(){const N=NK().length;
     body=`<div class="card"><label class="stk">Kolom<select id="colsel">${ITEMS.map((x,j)=>{const n=nbBisa(I.tab)?nbHitung(ks,[x]):0;return `<option value="${j}"${j===I.j?' selected':''}>${esc(x.l)}${n?` ⚠${n}`:''}</option>`}).join('')}</select></label><p class="mut" style="margin-top:6px" id="nlInfo">${infoNl()}</p>${R.length?R.map(s=>row(`${s.no}. ${s.nama}`,s,I.j)).join(''):'<p class="mut">Semua siswa sudah dinilai untuk kolom ini.</p>'}</div>
     <details class="nsum card" open style="margin-top:14px"><summary>Ringkasan kolom</summary><div id="nlSum">${ringkasKolom()}</div></details>
     <div class="card" style="margin-top:14px"><details><summary>Isi massal & salin</summary><p class="mut" style="margin:8px 0">Isi semua siswa untuk "${esc(it.l)}":</p>${fill}${it.pc?'':`<p class="mut" style="margin:12px 0 6px">Salin dari kolom lain:</p><div class="row"><select id="cp"><option value="">Pilih kolom…</option>${ITEMS.map((x,j)=>j===I.j?'':`<option value="${j}">${esc(x.l)}</option>`).join('')}</select><button class="btn ghost" data-cp="1">Salin</button></div>`}</details></div>`}
-  return `<h1>Input Nilai</h1><div class="seg" style="margin-bottom:12px">${sw('siswa')}${sw('kolom')}</div>${klpSeg('nkg',nkJ(),I.nkg||0)}<label style="margin-bottom:10px">Juz<select id="juzsel">${rjOpsi().map(n=>`<option value="${n}"${n===jzIn()?' selected':''}>Juz ${juzLbl(n)}${n===30?' (rapor lama)':''}</option>`).join('')}</select></label><div class="chips">${chips}</div>${tools}${jzIn()!==30?'<p class="mut" style="margin:0 0 10px">Pencapaian paket juz ini otomatis: tahfidz = Melampaui target; BTQ mengikuti setoran BTQ terakhir.</p>':I.tab==='tahap'?'<p class="mut" style="margin:0 0 10px">Tahap I–IV otomatis dari rata-rata nilai surat di tahap itu (A=95, A-=85, B=75, C=65; surat "–" tidak dihitung), tetapi HANYA untuk siswa yang sudah sampai tahap itu (sudah ada setoran tahap di Setoran Tahfidz). Mumtaz ≥ 90, Jayyid Jiddan ≥ 80, Jayyid ≥ 70, Maqbul ≥ 60. Siswa yang belum sampai tahap, dan Tahap V, diisi manual.</p>':''}${body}`}
+  return `<h1>Input Nilai</h1><div class="seg" style="margin-bottom:12px">${sw('siswa')}${sw('kolom')}</div>${klpSeg('nkg',nkJ(),I.nkg||0)}<label style="margin-bottom:10px">Juz<select id="juzsel">${rjOpsi().map(n=>`<option value="${n}"${n===jzIn()?' selected':''}>Juz ${juzLbl(n)}${n===30?' (rapor lama)':''}</option>`).join('')}</select></label><div class="chips">${chips}</div>${tools}${jzIn()!==30?'<p class="mut" style="margin:0 0 10px">Pencapaian paket juz ini otomatis: tahfidz = Melampaui target; BTQ mengikuti setoran BTQ terakhir.</p>':I.tab==='tahap'?'<p class="mut" style="margin:0 0 10px">Predikat Tahap I–V diisi manual (ketuk pilihan; ketuk lagi untuk mengosongkan). Tidak dihitung otomatis dari nilai surat.</p>':''}${body}`}
 function bindNilai(){const V=$('#view');let x0=0;
   V.onclick=e=>{if(S.page!=='nilai')return;const b=e.target.closest('button');if(!b)return;const I=S.in,d=b.dataset,N=NK().length,sy=scrollY,re=()=>{render();scrollTo(0,sy)};
     if(d.nkg!==undefined){I.nkg=+d.nkg;I.i=0;return re()}
@@ -1490,9 +1490,9 @@ function bindNilai(){const V=$('#view');let x0=0;
     if(d.mode){I.mode=d.mode;return re()}
     if(d.qm){I.cp=!I.cp;return re()}
     if(d.thauto){const L=NK(),sn=nlSnap(L,ITEMS);L.forEach(thAll);svAll();re();return toast('Tahap I–IV dihitung dari rata-rata nilai surat.',()=>nlUndo(sn))}
-    if(d.thbersih){const L=S.ks,n=L.reduce((a,s)=>a+[1,2,3,4].filter(t=>(s.tahap||[])[t-1]&&!thSampai(s,t)&&s.tahap[t-1]===thKunci(thRata(s,t))).length,0);
-      if(!n)return toast('Tidak ada predikat tahap otomatis untuk siswa yang belum sampai tahap.');
-      if(!confirm(`Kosongkan ${n} predikat tahap yang sama persis dengan hasil hitung otomatis, untuk siswa yang belum punya setoran tahap? Predikat yang Anda ketik berbeda dari rata-rata tidak disentuh. Bisa diurungkan.`))return;
+    if(d.thbersih){const L=S.ks,n=L.reduce((a,s)=>a+[1,2,3,4].filter(t=>(s.tahap||[])[t-1]&&s.tahap[t-1]===thKunci(thRata(s,t))).length,0);
+      if(!n)return toast('Tidak ada predikat tahap hasil hitung otomatis lama.');
+      if(!confirm(`Kosongkan ${n} predikat tahap yang sama persis dengan hasil hitung otomatis lama (rata-rata nilai surat)? Predikat yang Anda ketik berbeda dari rata-rata tidak disentuh. Bisa diurungkan.`))return;
       const sn=thBersih(L);svAll();re();return toast(`${sn.length} predikat tahap dikosongkan.`,()=>{sn.forEach(([s,t,v])=>{(s.tahap||(s.tahap=['','','','','']))[t-1]=v});svAll();if(S.page==='nilai')render()})}
     if(d.fb){I.fb=!I.fb;return re()}
     if(d.qn){cpGo(cpIdx()+ +d.qn);return re()}
@@ -2570,8 +2570,9 @@ function thRata(s,t){const v=thIdx(t).map(i=>NILAI[(s.surat||{})[i]]).filter(n=>
 function thKunci(m){if(m==null)return '';const k=THK.find(x=>m>=x[0]);return k?k[1]:''}
 /* v1.99: predikat tahap otomatis HANYA bila siswa sudah sampai tahap itu (ada setoran tahfidz bertahap >= t). Selain itu predikat diisi manual. */
 function thSampai(s,t){return (s.setoran||[]).some(e=>e.j==='tahfidz'&&e.tahap&&+e.tahap>=+t)}
-function thHitung(s,t){if(!thSampai(s,t))return '';const k=thKunci(thRata(s,t));if(k)(s.tahap||(s.tahap=['','','','','']))[+t-1]=k;return k}
-function thBersih(L){const sn=[];L.forEach(s=>{const th=s.tahap;if(!th)return;[1,2,3,4].forEach(t=>{if(th[t-1]&&!thSampai(s,t)&&th[t-1]===thKunci(thRata(s,t)))sn.push([s,t,th[t-1]])})});sn.forEach(([s,t])=>{s.tahap[t-1]=''});return sn}
+const TH_OTO=false;/* v1.100: nilai tahap SEMUA manual; ubah ke true untuk mengaktifkan lagi hitung otomatis (hanya bila thSampai) */
+function thHitung(s,t){if(!TH_OTO||!thSampai(s,t))return '';const k=thKunci(thRata(s,t));if(k)(s.tahap||(s.tahap=['','','','','']))[+t-1]=k;return k}
+function thBersih(L){const sn=[];L.forEach(s=>{const th=s.tahap;if(!th)return;[1,2,3,4].forEach(t=>{if(th[t-1]&&th[t-1]===thKunci(thRata(s,t)))sn.push([s,t,th[t-1]])})});sn.forEach(([s,t])=>{s.tahap[t-1]=''});return sn}
 function thLengkap(s,t){return thIdx(t).every(i=>!!(s.surat||{})[i])}
 function thSetSurat(s,i,v){if(!s.surat)s.surat={};if(v)s.surat[i]=v;else delete s.surat[i]}
 function thNilai(s,e,i,v){if(!s||!e||!e.tahap||!TH_SR[+e.tahap]||!thIdx(e.tahap).includes(i)||!SO.some(x=>x[0]===v))return null;
@@ -2579,7 +2580,7 @@ function thNilai(s,e,i,v){if(!s||!e||!e.tahap||!TH_SR[+e.tahap]||!thIdx(e.tahap)
   if(!e.ksb){e.ksb={};e.sb0=(s.tahap||[])[t-1]||''}
   if(e.ksb[i]===undefined)e.ksb[i]=(s.surat||{})[i]||'';
   thSetSurat(s,i,v);const k=thHitung(s,t);
-  if(k&&thLengkap(s,t))e.kor=e.kor?{...e.kor,nilai:k}:{nilai:k,t:Date.now(),sb:e.sb0};
+  if(thLengkap(s,t))e.kor=e.kor?{...e.kor,nilai:k||''}:{nilai:k||'',t:Date.now(),sb:e.sb0};
   return U}
 function thUndo(s,e,U){Object.keys(U.surat).forEach(i=>thSetSurat(s,+i,U.surat[i]));
   if(U.ksb)e.ksb=U.ksb;else delete e.ksb;if(U.sb0!==undefined)e.sb0=U.sb0;else delete e.sb0;
@@ -3520,6 +3521,7 @@ print(subprocess.run(['node',p],capture_output=True,text=True).stdout.strip() or
 3. Opsional (butuh keputusan pengguna): E6 rapikan CSS (10 blok style, override per tema) tanpa menyentuh bagian terlindungi; atau ubah tema bawaan ke Terang (DEFAULT.tema='angkasa' sejak v1.32).
 4. Tawarkan 'rilis bersih' bila pengguna puas. Tulis handoff_baru.md (sesi 48), tanam, simpan sebagai aplikasi-btq-tahfidz-s48.html, ulangi uji, serahkan satu file.
 ## Riwayat sesi
+- Sesi 54: v1.100 Nilai Tahap I-V SEMUA manual: TH_OTO=false (thHitung/thIsiKosong tidak mengisi), tombol Hitung dari nilai surat dihapus, koordinator tetap menilai per surat tetapi tidak lagi mengisi predikat tahap (selesai bila semua surat tahap terisi). Tombol 'Kosongkan tahap hasil hitung otomatis lama' tersedia (Urungkan).
 - Sesi 53: v1.99 Predikat Tahap I-IV otomatis (rata-rata nilai surat) hanya untuk siswa yang sudah sampai tahap (thSampai: ada setoran tahfidz bertahap >= tahap); selain itu isi manual. thHitung/thIsiKosong digating, thInfo menjelaskan, tombol 'Kosongkan tahap yang belum dicapai' (thBersih, hanya nilai yang sama persis dengan hasil hitung otomatis, bisa Urungkan). Bagian terlindungi tidak disentuh.
 - Sesi 0: mempelajari file v1.5, menyusun rencana 6 tahap, menghitung sidik jari rapor Juz 30, menanam blok proyek.
 - Sesi 1: Tahap 1 (v1.6) selesai: migrasi idempoten, tanggal rapor via kalender, semester/tahun dropdown, tempat diturunkan otomatis; sidik jari dan golden tetap SAMA.
